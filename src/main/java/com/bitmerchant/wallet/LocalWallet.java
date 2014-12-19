@@ -9,7 +9,7 @@ package com.bitmerchant.wallet;
  * - Create an HTML5 GUI with which to view/send/receive moneys
  *
  */
-public class App 
+public class LocalWallet 
 {
     public static void main( String[] args )
     {
