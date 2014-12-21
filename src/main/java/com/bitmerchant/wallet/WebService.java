@@ -39,12 +39,12 @@ public class WebService {
 		
 		get("/recieve_address", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
-			return lw.controller.getAddress();
+			return lw.controller.getAddressText();
 		});
 		
 		get("/balance", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
-			return lw.controller.getBalance();
+			return lw.controller.getBalanceText();
 		});
 		
 	}

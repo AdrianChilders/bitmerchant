@@ -4,7 +4,6 @@ package com.bitmerchant.wallet;
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
@@ -21,23 +20,18 @@ public class Controller {
 
 	static final Logger log = LoggerFactory.getLogger(Controller.class);
 	
-	public String balance;
-	public String address;
 	public String statusText; 
 	public Double statusProgress;
 	private ProgressBarUpdater syncProgressUpdater = new ProgressBarUpdater();
-	private Address addressA = null;
-	private Coin balanceC = Coin.ZERO;
+	private Address address = null;
+	private Coin balance = Coin.ZERO;
 
 
 
 
 	public void onBitcoinSetup() {
 		setWallet(bitcoin.wallet());
-		address = getAddressA().toString();
-		balance = MonetaryFormat.BTC.noCode().format(getBalanceC()).toString();
-
-
+	
 		TorClient torClient = bitcoin.peerGroup().getTorClient();
 		if (torClient != null) {
 			
@@ -89,27 +83,6 @@ public class Controller {
 		}
 	}
 
-	public DownloadListener getDownloadListener() { return syncProgressUpdater; }
-	
-    public DownloadListener progressBarUpdater() {
-        return getDownloadListener();
-    }
-    
-	public String getBalance() {
-		return balance;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public String getStatusText() {
-		return statusText;
-	}
-	public ProgressBarUpdater getSyncProgressUpdater() {
-		return syncProgressUpdater;
-	}
-	
 
 	public void setWallet(Wallet wallet) {
 		wallet.addEventListener(new AbstractWalletEventListener() {
@@ -123,18 +96,41 @@ public class Controller {
 	}
 
 	private void update(Wallet wallet) {
-		balanceC = wallet.getBalance();
-		addressA = wallet.currentReceiveAddress();
+		balance = wallet.getBalance();
+		address = wallet.currentReceiveAddress();
 	}
+	
+	public DownloadListener getDownloadListener() { return syncProgressUpdater; }
+	
+    public DownloadListener progressBarUpdater() {
+        return getDownloadListener();
+    }
+    
+	public String getBalanceText() {
+		return MonetaryFormat.BTC.noCode().format(getBalance()).toString();
+	}
+
+	public String getAddressText() {
+		return getAddress().toString();
+	}
+
+	public String getStatusText() {
+		return statusText;
+	}
+	public ProgressBarUpdater getSyncProgressUpdater() {
+		return syncProgressUpdater;
+	}
+	
+
 
 	
 
-	public Address getAddressA() {
-		return addressA;
+	public Address getAddress() {
+		return address;
 	}
 
-	public Coin getBalanceC() {
-		return balanceC;
+	public Coin getBalance() {
+		return balance;
 	}
 
 	
