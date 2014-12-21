@@ -14,9 +14,7 @@ public class WebService {
 		
 		staticFileLocation("/web"); // Static files
 
-		
 
-		
 		get("/hello", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
 			return "hi from the bitmerchant wallet web service";
@@ -37,6 +35,16 @@ public class WebService {
 		get("/status_text", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
 			return lw.controller.getStatusText();
+		});
+		
+		get("/recieve_address", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			return lw.controller.getAddress();
+		});
+		
+		get("/balance", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			return lw.controller.getBalance();
 		});
 		
 	}

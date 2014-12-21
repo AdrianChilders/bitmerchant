@@ -6,7 +6,11 @@ import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.bitcoinj.core.AbstractWalletEventListener;
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DownloadListener;
+import org.bitcoinj.core.Wallet;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +26,16 @@ public class Controller {
 	public String statusText; 
 	public Double statusProgress;
 	private ProgressBarUpdater syncProgressUpdater = new ProgressBarUpdater();
+	private Address addressA = null;
+	private Coin balanceC = Coin.ZERO;
 
 
-	public BitcoinUIModel model = new BitcoinUIModel();
+
 
 	public void onBitcoinSetup() {
-		model.setWallet(bitcoin.wallet());
-		address = model.getAddress().toString();
-		balance = MonetaryFormat.BTC.noCode().format(model.getBalance()).toString();
+		setWallet(bitcoin.wallet());
+		address = getAddressA().toString();
+		balance = MonetaryFormat.BTC.noCode().format(getBalanceC()).toString();
 
 
 		TorClient torClient = bitcoin.peerGroup().getTorClient();
@@ -104,6 +110,32 @@ public class Controller {
 		return syncProgressUpdater;
 	}
 	
+
+	public void setWallet(Wallet wallet) {
+		wallet.addEventListener(new AbstractWalletEventListener() {
+			@Override
+			public void onWalletChanged(Wallet wallet) {
+				super.onWalletChanged(wallet);
+				update(wallet);
+			}
+		});
+		update(wallet);
+	}
+
+	private void update(Wallet wallet) {
+		balanceC = wallet.getBalance();
+		addressA = wallet.currentReceiveAddress();
+	}
+
+	
+
+	public Address getAddressA() {
+		return addressA;
+	}
+
+	public Coin getBalanceC() {
+		return balanceC;
+	}
 
 	
 	public Double getStatusProgress() {
