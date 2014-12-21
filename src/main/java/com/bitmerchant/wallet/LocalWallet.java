@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bitmerchant.tools.DataSources;
+import com.bitmerchant.tools.Tools;
 
 
 /**
@@ -108,6 +109,9 @@ public class LocalWallet {
 		
 		// Start the web service
 		WebService.start(lw);
+		
+		
+//		Tools.openWebpage("http://localhost:4567/garp");
 		
 	}
 }

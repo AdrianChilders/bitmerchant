@@ -19,7 +19,7 @@ public class WebService {
 			Tools.allowResponseHeaders(req, res);
 			return "hi from the bitmerchant wallet web service";
 		});
-		get("/", (req, res) -> {
+		get("/garp", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
 			res.redirect("/html/main2.html");
 			return null;

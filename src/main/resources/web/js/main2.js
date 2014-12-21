@@ -5,6 +5,8 @@ $(document).ready(function() {
         console.log("result = " + result);
     });
 
-    fillSimpleText('status_text', '#test1');
+    fillStatusText('status_text', '#status_text');
+
+    fillProgressBar('status_progress','#progress_bar');
 
 });

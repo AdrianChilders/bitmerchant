@@ -35,7 +35,7 @@ public class Controller {
 		TorClient torClient = bitcoin.peerGroup().getTorClient();
 		if (torClient != null) {
 			
-			String torMsg = "Initialising Tor";
+			String torMsg = "Initialising Tor...";
 
 			torClient.addInitializationListener(new TorInitializationListener() {
 				@Override
@@ -49,13 +49,13 @@ public class Controller {
 				@Override
 				public void initializationCompleted() {
 
-					statusProgress = -1d;
-					statusText = "Synchronising with the Bitcoin network";
+					statusProgress = 0.05d;
+					statusText = "Synchronising with the Bitcoin network...";
 
 				}
 			});
 		} else {
-			statusText = "Synchronising with the Bitcoin network";
+			statusText = "Synchronising with the Bitcoin network...";
 		}
 		
 		
@@ -70,15 +70,13 @@ public class Controller {
 			
 			statusProgress = pct / 100.0;
 			log.info("Progress = " + statusProgress);
-			System.out.println("DERP = " + statusProgress);
 		}
 
 		@Override
 		protected void doneDownload() {
 			super.doneDownload();
-			System.out.println("DERP DONE");
 			statusProgress = 1.0;
-			statusText = "";
+			statusText = "Sync Complete";
 			
 		}
 	}
