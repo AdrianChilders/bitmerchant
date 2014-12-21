@@ -26,3 +26,25 @@ function getJson(shortUrl) {
     }
   });
 }
+
+function fillSimpleText(url, divId) {
+    var url = sparkService + url // the script where you handle the form input.
+    $.ajax({
+        type: "GET",
+        url: url,
+        xhrFields: {
+            withCredentials: true
+        },
+        // data: seriesData, 
+        success: function(data, status, xhr) {
+            // console.log(data);
+            $(divId).html(data);
+
+
+        },
+        error: function(request, status, error) {
+
+            toastr.error(request.responseText);
+        }
+    });
+}

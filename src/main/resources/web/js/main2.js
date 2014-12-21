@@ -5,4 +5,6 @@ $(document).ready(function() {
         console.log("result = " + result);
     });
 
+    fillSimpleText('status_text', '#test1');
+
 });

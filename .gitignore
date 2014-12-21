@@ -1,1 +1,8 @@
 /target/
+/bitmerchant-wallet.spvchain
+/bitmerchant-wallet.wallet
+/cached-microdescs
+/cached-microdescs.new
+/certificates
+/consensus-microdesc
+/npm-debug.log
