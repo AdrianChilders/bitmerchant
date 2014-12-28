@@ -25,6 +25,8 @@ import com.bitmerchant.tools.Tools;
  * - Create an HTML5 GUI with which to view/send/receive moneys
  * - Do a wizard dialog in bootstrap on first run to set up the wallet, set a password,
  * 	 and then set up your merchant properties
+ * - Use base 36 for order numbers, or customer presented number values
+ * - 
  */
 public class LocalWallet {
 
@@ -111,7 +113,7 @@ public class LocalWallet {
 		WebService.start(lw);
 		
 		
-//		Tools.openWebpage("http://localhost:4567/garp");
+		Tools.openWebpage("http://localhost:4567/garp");
 		
 	}
 }

@@ -20,7 +20,9 @@
     <!--   toastr css -->
     <link href="../bower_components/toastr/toastr.min.css" rel="stylesheet" />
 
-
+    <!-- Pickadate -->
+    <link href="../bower_components/pickadate/lib/themes/default.css" rel="stylesheet" />
+    <link href="../bower_components/pickadate/lib/themes/default.date.css" rel="stylesheet" />
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -76,6 +78,11 @@
                 <span class="sr-only">45% Complete</span>
             </div>
         </div>
+        <h1 id="balance"></h1>
+        <h1 id="recieve_address"></h1>
+        <h1 id="wallet_words"></h1>
+        <!-- <h1 id="wallet_creation_date"></h1> -->
+        <input id="wallet_creation_date" class="datepicker"></input>
     </div>
     <!-- /.container -->
 
@@ -87,7 +94,11 @@
     <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 
+    <script src="../bower_components/pickadate/lib/picker.js"></script>
+    <script src="../bower_components/pickadate/lib/picker.date.js"></script>
     <script src="../bower_components/toastr/toastr.min.js"></script>
+
+
     <script src="../js/tools.js"></script>
     <script src="../js/main2.js"></script>
 

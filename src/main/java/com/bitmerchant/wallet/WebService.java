@@ -47,5 +47,16 @@ public class WebService {
 			return lw.controller.getBalanceText();
 		});
 		
+		get("/wallet_words", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			return lw.controller.getWalletWords();
+		});
+		
+		get("/wallet_creation_date", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			return lw.controller.getWalletCreationDateStr();
+		});
+		
+		
 	}
 }

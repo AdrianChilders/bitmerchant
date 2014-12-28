@@ -68,6 +68,7 @@ function fillStatusText(url, divId) {
             error: function(request, status, error) {
 
                 // toastr.error(request.responseText);
+                clearInterval(intervalID);
             }
         });
     }, 300); // 1000 milliseconds = 1 second.
@@ -96,6 +97,7 @@ function fillProgressBar(url, divId) {
             error: function(request, status, error) {
 
                 // toastr.error(request.responseText);
+                clearInterval(intervalID);
             }
         });
     }, 300); // 1000 milliseconds = 1 second.
