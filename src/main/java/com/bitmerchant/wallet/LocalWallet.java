@@ -112,7 +112,7 @@ public class LocalWallet {
 		// Start the web service
 		WebService.start(lw);
 		
-		
+		// TODO poll some of the url's every .5 seconds, and load the page when they come back with a result
 		Tools.openWebpage("http://localhost:4567/garp");
 		
 	}

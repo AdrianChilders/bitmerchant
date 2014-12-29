@@ -1,0 +1,14 @@
+{
+  "name": "tablesorter",
+  "homepage": "https://github.com/christianbach/tablesorter",
+  "_release": "d8b374dfdb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d8b374dfdba20d3023ca8d99bd873d027638dda1"
+  },
+  "_source": "git://github.com/christianbach/tablesorter.git",
+  "_target": "*",
+  "_originalSource": "tablesorter",
+  "_direct": true
+}

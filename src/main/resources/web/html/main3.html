@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <title>BitMerchant</title>
+
+  <!-- favicon -->
+  <!-- <link rel="shortcut icon" href="https://bitpieces.com/favicon.ico" type="image/x-icon" /> -->
+
+  <!-- Bootstrap core CSS -->
+  <link href="../css/united.bootstrap.min.css" rel="stylesheet">
+
+  <!-- Link to font awesome -->
+  <link rel="stylesheet" href="../bower_components/fontawesome/css/font-awesome.min.css">
+
+  <!-- Bootstrap social css -->
+  <link href="../bower_components/bootstrap-social/bootstrap-social.css" rel="stylesheet">
+
+  <!--   Bootstrap validator -->
+  <link rel="stylesheet" href="../bower_components/bootstrap-validator/dist/css/bootstrapValidator.min.css" />
+
+  <!--   toastr css -->
+  <link href="../bower_components/toastr/toastr.css" rel="stylesheet" />
+
+  <!--   typeahead css -->
+  <!-- <link href="typeaheadjs.css" rel="stylesheet" /> -->
+
+  <!-- Pickadate -->
+  <link href="../bower_components/pickadate/lib/themes/default.css" rel="stylesheet" />
+  <link href="../bower_components/pickadate/lib/themes/default.date.css" rel="stylesheet" />
+
+  <!-- Summernote -->
+  <link href="../bower_components/summernote/dist/summernote.css" rel="stylesheet" />
+
+  <!-- This main css -->
+  <link href="../css/main.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+  <!-- Navbars -->
+
+  <!-- the start of the doc -->
+  <div id="wrapper">
+
+    <!-- plug into here -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">BitMerchant</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a>
+            </li>
+            <li><a href="/contact">API</a>
+            </li>
+            <li class="active"><a href="/userdashboard_overview" id="dashboardhref" class="hide">Dashboard</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/about">About BitMerchant</a>
+                </li>
+                <li><a href="/contact">API Reference</a>
+                </li>
+                <li><a href="/FAQ">Frequently Asked Questions</a>
+                </li>
+                <li><a href="/contact">Bugs/Feature requests</a>
+                </li>
+                <li><a href="/contact">Contact</a>
+                </li>
+
+
+              </ul>
+            </li>
+          </ul>
+          <form id="creator_search" class="navbar-form navbar-left navbar-input-group" role="search">
+            <div class="form-group">
+              <input name="search_input" type="text" class="form-control typeahead" placeholder="Search API...">
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa fa-search"></i>
+            </button>
+          </form>
+
+
+          <ul class="nav navbar-nav navbar-right">
+            <li id="userDropdown" class="dropdown user-dropdown">
+              <li><a href="#login" id="loginhref" data-toggle="modal" data-target="#userloginModal">Login/Register</a>
+              </li>
+              <script id="usernameTemplate" type="x-tmpl-mustache">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{.}} <b class="caret"></b></a>
+
+
+                <ul class="dropdown-menu">
+                  <li><a id="settings" href="userdashboard_settings"><i class="fa fa-gear"></i> Settings</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li><a id="logouthref" href="#logout"><i class="fa fa-power-off"></i> Log Out</a>
+                  </li>
+
+                </ul>
+              </script>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+
+    <!-- The full page with teh sidebar -->
+    <div class="container-fluid">
+      <div class="row">
+
+        <!-- The sidebar -->
+        <div id="side_col" class="col-md-2 sidebar">
+
+          <div class="mini-submenu">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </div>
+          <div class="list-group">
+            <li class="list-group-item">
+              <a href="/creators/overview" rel="keep-params"><i class="fa fa-dashboard fa-fw"></i> &nbsp; Overview</a>
+              <span class="badge" id="slide-submenu"><i class="fa fa-times"></i></span>
+            </li>
+            <a class="list-group-item active" href="/creators/main" rel="keep-params"><i class="fa fa-bar-chart-o fa-fw"></i> &nbsp; Main</a>
+            <a class="list-group-item" href="/creators/pricing" rel="keep-params"><i class="fa fa-money fa-fw"></i> &nbsp; Price</a>
+            <a class="list-group-item" href="/creators/worth" rel="keep-params"><i class="fa fa-building-o fa-fw"></i> &nbsp; Worth</a>
+            <a class="list-group-item" href="/creators/rewards" rel="keep-params"><i class="fa fa-trophy fa-fw"></i> &nbsp; Rewards</a>
+            <a class="list-group-item" href="/creators/funds" rel="keep-params"><i class="fa fa-bank fa-fw"></i> &nbsp; Funds</a>
+            <a class="list-group-item" href="/creators/pieces" rel="keep-params"><i class="fa fa-cubes fa-fw"></i> &nbsp; Pieces</a>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- stop plugging in -->
+
+
+      <!-- Sidebar -->
+      <!--   <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+      <li class="active"><a href="userdashboard_overview.html"><i class="fa fa-dashboard"></i> Overview</a></li>
+      <li><a href="userdashboard_funds.html"><i class="fa fa-bar-chart-o"></i> Funds</a></li>
+      <li><a href="userdashboard_pieces.html"><i class="fa fa-table"></i> Pieces</a></li>
+      <li><a href="userdashboard_prices.html"><i class="fa fa-edit"></i> Prices</a></li>
+    </ul>
+
+  </div> -->
+
+
+
+      <!-- The sidebar -->
+
+
+
+      <!-- The Page -->
+      <div class="row-fluid">
+        <div class="othermain-col col-md-8 col-md-offset-2">
+
+
+
+          <div class="row">
+
+
+            <div class="col-md-6">
+              <h1 id="page_title"> </h1>
+            </div>
+            <div class="col-md-6">
+              <div class="col-md-12">
+                <button id="askBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#askModal">Ask</button>
+                <button id="bidBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#bidModal">Bid</button>
+                <button id="buyBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#buyModal">Buy</button>
+                <button id="raiseFundsBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#raiseFundsModal">Raise funds</button>
+                <button id="issueBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#issueModal">Issue Pieces</button>
+                <button id="changeRewardBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#rewardModal">Change Reward</button>
+                <button id="withdrawBtn" type="button" class="btn btn-primary btn-lg hide pull-right" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+
+              <ol class="breadcrumb">
+                <li><a href="/creators/overview" rel="keep-params"><i class="fa fa-dashboard fa-fw"></i> &nbsp; Overview</a>
+                </li>
+                <li class="active"><i class="fa fa-table"></i> Main</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="first-timers alert alert-warning alert-dismissible hide" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <strong>Your main page is empty.</strong> Create one below.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="unverified alert alert-danger alert-dismissible hide" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <strong>Your account is Unverified.</strong> You need to link your content/products with this account. Send an email to <a href="mailto:bitpieces22verify@gmail.com?Subject=VerifyMe" target="_top">
+          bitpieces22verify@gmail.com</a> with either:
+                <ul>
+                  <li> A picture of you, your content, and your bitpieces creator name. </li>
+                  <li> A link to a post or a page from your website or youtube channel, containing your creator name. </li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stuff for the creator only -->
+          <div id="creator_edit_content" class="hide">
+            <h3> Youtube link &nbsp;&nbsp;&nbsp; </h3>
+            <small> The thumbnail of the video will be your main image. </small>
+
+            <form id="youtubeLinkForm" class="form-horizontal" role="form">
+              <div id="youtubeLinkDiv" class="form-group">
+                <label for="youtubeLink3" class="col-sm-2 control-label">Youtube link</label>
+                <div class="col-sm-10">
+                  <input id="youtubeLinkInput" name="youtube_link" type="url" class="form-control" placeholder="Your video link" data-bv-message="The link is not valid" data-bv-notempty="true" data-bv-notempty-message="The link is required and cannot be empty" data-bv-uri-message="The link address is not valid">
+                </div>
+              </div>
+
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="youtubeLinkBtn" type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>">Save</button>
+                </div>
+              </div>
+            </form>
+
+            <h3> Description &nbsp;&nbsp;&nbsp; </h3>
+            <small> A short description of your brand. </small>
+
+            <form id="shortDescriptionForm" class="form-horizontal" role="form">
+              <div id="shortDescriptionDiv" class="form-group">
+                <label for="shortDescription3" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                  <textarea id="shortDescriptionInput" name="shortDescription" rows="3" type="name" class="form-control" placeholder="140 characters max" data-bv-message="Not valid" data-bv-notempty="true" data-bv-notempty-message="Can't be empty" data-bv-stringlength="true" data-bv-stringlength-min="1" data-bv-stringlength-max="140" data-bv-stringlength-message="The description must be more than 1 and less than 140 characters long"></textarea>
+                </div>
+              </div>
+
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="shortDescriptionBtn" type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>">Save</button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+
+
+          <!-- Stuff for everyone -->
+
+          <!-- A centered panel -->
+          <div class="row">
+            <div class="col-md-12">
+              <div id="videoFrame" class="embed-responsive embed-responsive-16by9">
+                <iframe id="youtubeFrame" frameborder="0" allowfullscreen="">
+                </iframe>
+              </div>
+
+            </div>
+          </div>
+
+          <div id="social_buttons" class="row">
+            <div class="col-md-12">
+
+              <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=&t=" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><i class="fa fa-facebook"></i></a>
+              <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/intent/tweet?source=&text=:%20" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><i class="fa fa-twitter"></i></a>
+              <a class="btn btn-social-icon btn-google-plus" href="https://plus.google.com/share?url=" target="_blank" title="Share on Google+" onclick="window.open('https://plus.google.com/share?url=' + encodeURIComponent(document.URL)); return false;"><i class="fa fa-google-plus"></i></a>
+              <a class="btn btn-social-icon btn-reddit" href="http://www.reddit.com/submit?url=&title=" target="_blank" title="Submit to Reddit" onclick="window.open('http://www.reddit.com/submit?url=' + encodeURIComponent(document.URL) + '&title=' +  encodeURIComponent(document.title)); return false;"><i class="fa fa-reddit"></i></a>
+
+            </div>
+          </div>
+          <br>
+
+          <h3 id="main_body_title" class="hide">Page body</h3>
+          <div id="main_body" class="row">
+
+            <script id="main_body_template" type="x-tmpl-mustache">
+
+              <p class="lead">{{.}}</p>
+            </script>
+          </div>
+          <div class="row">
+            <button id="saveBtn" type="submit" class="btn btn-primary hide">Save</button>
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <!-- <div class="col-md-2 col-md-offset-10">   -->
+        <div id="midCol" class="col-md-2" data-spy="affix">
+
+          <!-- <div class="span2 col-md-2 col-md-offset-10">   -->
+          <!-- The boxes on the right this time-->
+          <!-- a main one -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="row">
+
+                    <div class="col-xs-12 text-left">
+
+                      <p id="verified" class="announcement-heading"></p>
+                      <hr>
+
+                      <p id="funds_raised" class="announcement-heading"></p>
+                      <p class="announcement-text">Funds raised</p>
+
+                      <p id="price_per_piece_current" class="announcement-heading"></p>
+                      <p class="announcement-text">Price per piece</p>
+
+                      <p id="backers_current_count" class="announcement-heading"></p>
+                      <p class="announcement-text">Backers</p>
+
+                      <p id="creators_safety_current" class="announcement-heading"></p>
+                      <p class="announcement-text">Safety rating
+                        <a href="/FAQ#how_do_i_know_if_a_creator_is_safe">
+                          <i class="fa fa-info-circle"></i>
+                        </a>
+                      </p>
+
+                      <p>
+                        <div style="display:inline-block;" class="announcement-heading" id="pieces_held_current"></div>
+                        <div style="display:inline-block;" class="announcement-heading">/</div>
+                        <div style="display:inline-block;" class="announcement-heading" id="pieces_available_current"></div>
+                      </p>
+                      <p class="announcement-text">Pieces held</p>
+
+                      <p id="worth_current" class="announcement-heading"></p>
+                      <p class="announcement-text">Worth</p>
+
+                      <p id="rewards_current_yield" class="announcement-heading"></p>
+                      <p class="announcement-text">Reward yield(est)</p>
+
+                      <p id="rewards_current" class="announcement-heading"></p>
+                      <p class="announcement-text">Reward / piece / year</p>
+
+                      <p id="rewards_paid" class="announcement-heading"></p>
+                      <p class="announcement-text">Rewards paid</p>
+
+
+
+                      <p id="creators_reputation" class="announcement-heading"></p>
+                      <p class="announcement-text">Reputation</p>
+
+
+                    </div>
+                  </div>
+                </div>
+                <a href="/creators/overview" rel="keep-params">
+                  <div class="panel-footer announcement-bottom">
+                    <div class="row">
+                      <div class="col-xs-6">
+                        View Overview
+                      </div>
+                      <div class="col-xs-6 text-right">
+                        <i class="fa fa-arrow-circle-right"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+
+        <div class="othermain-col col-md-8 col-md-offset-2">
+          <div class="row">
+            <div id="disqus_thread">
+              <p></p>
+            </div>
+            <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+
+            var creatorName = window.location.pathname.split('/').pop();
+
+
+            var disqus_shortname = 'bitpieces'; // Required - Replace example with your forum shortname
+            var disqus_identifier = creatorName;
+            var disqus_title = creatorName;
+            // var disqus_url = 'a unique URL for each page where Disqus is present';
+            console.log(disqus_shortname);
+            // var disqus_shortname = 'bitpieces';
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+              var dsq = document.createElement('script');
+              dsq.type = 'text/javascript';
+              dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+            </noscript>
+
+            <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+            <!-- FOOTER -->
+          </div>
+          <div class="row">
+            <hr class="featurette-divider">
+            <footer>
+              <p class="pull-right"><a href="#">Back to top</a>
+              </p>
+              <p>&copy; 2014 Bitpieces, Inc. &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/FAQ">Support</a> &middot; <a href="https://github.com/tchoulihan/bitpieces">Github</a>
+              </p>
+            </footer>
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+      <!-- Modals -->
+      <div id="bidModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Bid</h4>
+            </div>
+            <div class="modal-body">
+              <form id="bidForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Price</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <span id="bidSymbol" class="input-group-addon">$</span>
+                      <input name="bid" class="form-control" type="text" id="formGroupInputLarge" placeholder="Last price" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                      <span class="input-group-addon">per piece</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Pieces</label>
+                  <div class="col-sm-10">
+                    <input name="bidPieces" class="form-control" type="text" id="formGroupInputLarge" placeholder="Pieces" type="text" data-bv-integer="true" data-bv-integer-message="Must be a whole number" data-bv-notempty="true" data-bv-notempty-message="Must be a whole number" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Date</label>
+                  <div class="col-sm-10">
+                    <input name="validUntil" class="form-control datepicker" type="text" id="formGroupInputLarge" placeholder="Valid Until...">
+
+
+                  </div>
+                </div>
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Total</label>
+                  <div id="bidTotal" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Funds</label>
+                  <div name="usersFunds" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Potential Funds left</label>
+                  <div id="bidFundsLeft" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+                <button id="placebidBtn" type="submit" class="btn btn-primary">Place Bid</button>
+              </form>
+              <button data-toggle="modal" href="#depositModal" class="btn btn-primary hide">Add Funds</button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+      <div id="buyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">buy</h4>
+            </div>
+            <div class="modal-body">
+              <form id="buyForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Price</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <span id="buySymbol" class="input-group-addon">$</span>
+                      <input readonly name="buy" class="form-control" type="text" id="formGroupInputLarge" placeholder="Last price">
+                      <span class="input-group-addon">per piece</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Pieces</label>
+                  <div class="col-sm-10">
+                    <input name="buyPieces" class="form-control" type="text" id="formGroupInputLarge" placeholder="Pieces" type="text" data-bv-integer="true" data-bv-integer-message="Must be a whole number" data-bv-notempty="true" data-bv-notempty-message="Must be a whole number" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Total</label>
+                  <div id="buyTotal" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Funds</label>
+                  <div name="usersFunds" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Funds left</label>
+                  <div id="buyFundsLeft" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <button id="placebuyBtn" type="submit" class="btn btn-primary">Place buy</button>
+              </form>
+              <button data-toggle="modal" href="#depositModal" class="btn btn-primary hide">Add Funds</button>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div id="depositModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Deposit</h4>
+            </div>
+            <div id="deposit_div" class="modal-body">
+              <script id="deposit_template" type="x-tmpl-mustache">
+                <iframe src="https://coinbase.com/inline_payments/{{.}}" style="width: 500px; height: 160px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); overflow: hidden;" scrolling="no" allowtransparency="true" frameborder="0"></iframe>
+              </script>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div id="askModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Ask</h4>
+            </div>
+            <div class="modal-body">
+              <form id="askForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Price</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <span id="askSymbol" class="input-group-addon">$</span>
+                      <input name="ask" class="form-control" type="text" id="formGroupInputLarge" placeholder="Last price" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                      <span class="input-group-addon">per piece</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Pieces</label>
+                  <div class="col-sm-10">
+                    <input name="askPieces" class="form-control" type="text" id="formGroupInputLarge" placeholder="Pieces" type="text" data-bv-integer="true" data-bv-integer-message="Must be a whole number" data-bv-notempty="true" data-bv-notempty-message="Must be a whole number" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Date</label>
+                  <div class="col-sm-10">
+                    <input name="validUntil" class="form-control datepicker" type="text" id="formGroupInputLarge" placeholder="Valid Until...">
+
+
+                  </div>
+                </div>
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Total</label>
+                  <div id="askTotal" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Funds</label>
+                  <div name="usersFunds" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Potential Funds left</label>
+                  <div id="askFundsLeft" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+                <button id="placeaskBtn" type="submit" class="btn btn-primary">Place Ask</button>
+
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <div id="issueModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Issue Pieces</h4>
+            </div>
+            <div class="modal-body">
+              <form id="issueForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Price</label>
+                  <div class="col-sm-10">
+                    <input name="issuePrice" class="form-control" type="text" id="formGroupInputLarge" placeholder="Last price" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Pieces</label>
+                  <div class="col-sm-10">
+                    <input name="issuePieces" class="form-control" type="text" id="formGroupInputLarge" placeholder="Pieces" type="text" data-bv-integer="true" data-bv-integer-message="Must be a whole number" data-bv-notempty="true" data-bv-notempty-message="Must be a whole number" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Total</label>
+                  <div id="issueTotal" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Funds</label>
+                  <div name="creatorsFunds" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Potential Funds After</label>
+                  <div id="creatorsFundsLeft" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+                <button id="placeIssuePiecesBtn" type="submit" class="btn btn-primary">Issue Pieces</button>
+
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div id="withdrawModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">withdraw</h4>
+            </div>
+            <div class="modal-body">
+              Make sure your creator safety after withdrawal doesn't go below 5, or you will be labeled as <b> unsafe </b>.
+              <br>
+              <form id="withdrawForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Amount</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <div id="withdrawSymbol" class="input-group-addon">?</div>
+                      <input name="withdrawAmount" class="form-control" type="text" id="formGroupInputLarge" placeholder="Current funds">
+                    </div>
+                  </div>
+
+
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Bitcoin Address</label>
+
+
+                  <div class="col-sm-10">
+                    <input name="address" type="text" class="form-control" placeholder="Bitcoin Address or Coinbase Email">
+                  </div>
+                </div>
+
+
+                <div class="form-group form-group-lg">
+
+                  <label id="fee_pct" class="col-sm-2 control-label" for="formGroupInputLarge"></label>
+                  <div id="withdrawAmountAfterFee" class="col-sm-10 form-control-static">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Your Funds</label>
+                  <div id="funds" class="col-sm-10 form-control-static">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Potential Funds After</label>
+                  <div id="fundsLeft" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Safety Rating After</label>
+                  <div id="safetyRatingAfter" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <button id="placeWithdrawBtn" type="submit" class="btn btn-primary">Withdraw</button>
+
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <div id="raiseFundsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Raise Funds</h4>
+            </div>
+            <div class="modal-body">
+              <div class="text">
+                Read through the <a href="/FAQ">FAQ</a> to learn about <a href="/FAQ#what_are_rewards">rewards</a>. A 0.5% reward percentage is standard for startup projects.
+                <br>
+                <br>
+              </div>
+
+              <form id="raiseFundsForm" class="form-horizontal" role="form">
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Reward per piece per year</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <span name="curr_iso" class="input-group-addon">$</span>
+                      <input name="reward_per_piece_per_year" class="form-control" type="text" id="formGroupInputLarge" placeholder="Reward/piece/year" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                      <span class="input-group-addon">per piece per year</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Price per piece</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <span name="curr_iso" class="input-group-addon">$</span>
+                      <input name="raisePrice" class="form-control" type="text" id="formGroupInputLarge" placeholder="Price per piece" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                      <span class="input-group-addon">per piece </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Pieces</label>
+                  <div class="col-sm-10">
+                    <input name="raisePieces" class="form-control" type="text" id="formGroupInputLarge" placeholder="Pieces" type="text" data-bv-integer="true" data-bv-integer-message="Must be a whole number" data-bv-notempty="true" data-bv-notempty-message="Must be a whole number" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Total</label>
+                  <div id="raiseTotal" class="col-sm-10 form-control-static">
+
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Reward %</label>
+                  <div id="rewardPct" class="col-sm-10 form-control-static">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Potential Rewards owed</label>
+                  <div id="rewardsOwedPerYear" class="col-sm-10 form-control-static">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <button id="raiseFundsBtn" type="submit" class="btn btn-primary">Raise funds</button>
+                  </div>
+                </div>
+
+
+
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div id="rewardModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Change Reward</h4>
+            </div>
+            <div class="modal-body">
+              <div class="text">
+                Note, this will essentially cash every piece of yours owned out at the current rate at this moment, then all pieces will start earning rewards at the new rate from now on.
+              </div>
+              <form id="rewardForm" class="form-horizontal" role="form">
+                <div class="form-group form-group-lg">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Reward per piece per year</label>
+                  <div class="col-sm-10">
+                    <input name="reward_per_piece_per_year" class="form-control" type="text" id="formGroupInputLarge" placeholder="Last reward" data-bv-notempty="true" data-bv-notempty-message="Must be > 0" data-bv-greaterthan="true" data-bv-greaterthan-inclusive="false" data-bv-greaterthan-value="0" data-bv-greaterthan-message="Must be > 0">
+                  </div>
+
+                  <button id="placeChangeRewardBtn" type="submit" class="btn btn-primary">Change Reward</button>
+
+              </form>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <!-- end of wrapper -->
+      </div>
+
+
+
+    </div>
+
+    <!-- Login Modal -->
+
+    <div class="modal fade bs-example-modal-lg" id="userloginModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="userloginModalLabel">Sign in or Register</h4>
+          </div>
+
+          <div class="modal-body">
+
+            <h3> Sign in &nbsp;&nbsp;&nbsp; 
+                      <small> <a href="#" data-toggle="modal" data-target="#recoverPasswordModal">Recover password </a> </small></h3>
+
+            <form id="loginForm" class="form-horizontal" role="form">
+              <div id="userLoginDiv" class="form-group">
+                <label for="inputUsername3" class="col-sm-2 control-label">Username</label>
+                <div class="col-sm-10">
+                  <input name="username" type="Username" class="form-control" id="inputUsername3" placeholder="Username or Email" data-bv-message="The username is not valid" data-bv-notempty="true" data-bv-notempty-message="The username is required and cannot be empty" data-bv-regexp="true" data-bv-regexp-regexp="^[a-zA-Z0-9\._-]+$" data-bv-regexp-message="The username can only consist of alphabetical, number, dot and underscore" data-bv-stringlength="true" data-bv-stringlength-min="3" data-bv-stringlength-max="30" data-bv-stringlength-message="The username must be more than 3 and less than 30 characters long">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                  <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password" data-bv-notempty="true" data-bv-notempty-message="The password is required and cannot be empty" data-bv-different="true" data-bv-different-field="username" data-bv-different-message="The password cannot be the same as username">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div class="checkbox">
+                    <label>
+                      <input name="remember" type="checkbox"> Remember me
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div class="checkbox">
+
+                    <label>
+                      <input name="creatorCheckbox" type="checkbox" id="creatorCheckbox" value="creator"> I'm a Creator
+                    </label>
+
+                  </div>
+                </div>
+              </div>
+
+
+
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="signinBtn" type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>">Sign in</button>
+                </div>
+              </div>
+            </form>
+
+            <!-- The different sign ins 
+                <table style="width:100%">
+                  <tr>
+                    <td>
+                      <a class="btn btn-primary btn-social btn-facebook">
+                        <i class="fa fa-facebook"></i> Sign in with Facebook
+                      </a>
+                    </td>
+                    <td>
+                     <a class="btn btn-primary btn-social btn-twitter">
+                      <i class="fa fa-twitter"></i> Sign in with Twitter
+                    </a>
+                  </td>
+                  <td>
+                   <a class="btn btn-primary btn-social btn-google-plus">
+                    <i class="fa fa-google-plus"></i> Sign in with Google
+                  </a>
+                </td>
+              </td>
+              <td>
+               <a class="btn btn-primary btn-social btn-reddit">
+                <i class="fa fa-reddit"></i> Sign in with Reddit
+              </a>
+            </td>
+          </tr>
+        </table>-->
+            <hr>
+            <h3> Register &nbsp;&nbsp;&nbsp; <small><a href="/creators_register">Creator register</a> </small></h3>
+
+            <form id="registerForm" class="form-horizontal" role="form" data-bv-message="This value is not valid" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+
+              <div class="form-group">
+                <label for="inputUsername4" class="col-sm-2 control-label">Username</label>
+                <div class="col-sm-10">
+                  <input name="username" type="Username" class="form-control" id="inputUsername4" placeholder="Username" data-bv-message="The username is not valid" data-bv-notempty="true" data-bv-notempty-message="The username is required and cannot be empty" data-bv-regexp="true" data-bv-regexp-regexp="^[a-zA-Z0-9\._-]+$" data-bv-regexp-message="The username can only consist of alphabetical, number, dot and underscore" data-bv-stringlength="true" data-bv-stringlength-min="3" data-bv-stringlength-max="30" data-bv-stringlength-message="The username must be more than 3 and less than 30 characters long" />
+
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Email address</label>
+                <div class="col-sm-10">
+                  <input name="email" type="inputEmail3" class="form-control" id="inputEmail3" placeholder="Email" data-bv-emailaddress="true" data-bv-emailaddress-message="The input is not a valid email address" data-bv-notempty="true" data-bv-notempty-message="An email is required" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                  <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password" data-bv-notempty="true" data-bv-notempty-message="The password is required and cannot be empty" data-bv-identical="true" data-bv-identical-field="verifyPassword" data-bv-identical-message="The password and its confirm are not the same" data-bv-different="true" data-bv-different-field="username" data-bv-different-message="The password cannot be the same as username" />
+
+
+
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">Verify password</label>
+                <div class="col-sm-10">
+                  <input name="verifyPassword" type="password" class="form-control" id="inputPassword3" placeholder="Verify Password" data-bv-notempty="true" data-bv-notempty-message="The confirm password is required and cannot be empty" data-bv-identical="true" data-bv-identical-field="password" data-bv-identical-message="The password and its confirm are not the same" data-bv-different="true" data-bv-different-field="username" data-bv-different-message="The password cannot be the same as username" />
+
+
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div class="checkbox">
+                    <label>
+                      <input name="remember" type="checkbox"> Remember me
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div class="checkbox">
+                    <label>
+                      <input name="terms" type="checkbox" data-bv-notempty="true" data-bv-notempty-message="You must accept the terms and conditions">
+                      <a href="#" data-toggle="modal" data-target="#userDisclaimerModal">I accept these terms and conditions </a>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div id="recaptcha_div" class="col-sm-offset-2 col-sm-10"> </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="registerBtn" type="submit" class="btn btn-primary">Register</button>
+                </div>
+              </div>
+            </form>
+
+
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- end of login modal -->
+
+    <div id="userDisclaimerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">Disclaimer</h4>
+          </div>
+          <div class="modal-body">
+            <div class="text">
+              <ul>
+                <li>All transactions are performed in BTC, using currency conversions updated every 15 minutes from https://bitcoinaverage.com/ </li>
+                <li>Bitpieces does not guarantee the value of your pieces. </li>
+                <li>Bitpieces does not guarantee that a creator has the funds to pay rewards. Buying pieces is a contract between you and the creator. Read about creator safety
+                  <a href='/FAQ#how_do_i_know_if_a_creator_is_safe'>here</a>. </li>
+                <li>Legal action must be taken against the creator directly, if they fail to provide you with rewards, or if the value of their pieces decreases dramatically. </li>
+                <li> Your bitcoin wallet may charge you a small fee for making a deposit. </li>
+              </ul>
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Okay, I accept</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="recoverPasswordModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">Recover Password</h4>
+          </div>
+          <div class="modal-body">
+            <div class="text">
+              Enter your username below to receive your login information
+              </br>
+            </div>
+            <form id="recoverPasswordForm" class="form-horizontal" role="form" data-bv-message="This value is not valid" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+
+              <div class="form-group">
+                <label for="inputUsername4" class="col-sm-2 control-label">Username</label>
+                <div class="col-sm-10">
+                  <input name="username" type="Username" class="form-control" id="inputUsername4" placeholder="Username or Email" data-bv-message="The username is not valid" data-bv-notempty="true" data-bv-notempty-message="The username is required and cannot be empty" data-bv-regexp="true" data-bv-regexp-regexp="^[a-zA-Z0-9\._-]+$" data-bv-regexp-message="The username can only consist of alphabetical, number, dot and underscore" data-bv-stringlength="true" data-bv-stringlength-min="3" data-bv-stringlength-max="30" data-bv-stringlength-message="The username must be more than 3 and less than 30 characters long" />
+
+
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="recoverPasswordBtn" type="submit" class="btn btn-primary">Email me</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- Bootstrap core JavaScript
+      ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../bower_components/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
+    <script src="../bower_components/toastr/toastr.js"></script>
+    <script src="../bower_components/mustache/mustache.js"></script>
+    <script src="holder/holder.js"></script>
+    <script src="json.date-extensions.js"></script>
+    <script src="tablesorter/jquery.tablesorter.js"></script>
+    <script src="highcharts/js/highcharts.js"></script>
+    <script src="highcharts/js//modules/exporting.js"></script>
+    <script src="typeahead.js/typeahead.bundle.js"></script>
+    <script src="../bower_components/pickadate/lib/picker.js"></script>
+    <script src="../bower_components/pickadate/lib/picker.date.js"></script>
+    <script src="../bower_components/summernote/dist/summernote.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+
+    <!-- my scripts -->
+    <script src="../js/tools.js"></script>
+    <script src="../js/main3.js"></script>
+
+
+
+</body>
+
+</html>

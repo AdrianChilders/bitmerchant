@@ -13,7 +13,7 @@ public class WebService {
 		setPort(DataSources.SPARK_WEB_PORT);
 		
 		staticFileLocation("/web"); // Static files
-
+		
 
 		get("/hello", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
