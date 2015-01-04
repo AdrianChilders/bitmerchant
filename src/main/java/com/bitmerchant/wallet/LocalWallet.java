@@ -36,6 +36,8 @@ public class LocalWallet {
 	public static NetworkParameters params = TestNet3Params.get();
 	public static WalletAppKit bitcoin;
 	public Controller controller;
+	
+	public static LocalWallet instance = new LocalWallet();
 
 	public void init() {
 
@@ -104,16 +106,13 @@ public class LocalWallet {
 	public static void main( String[] args ) {
 
 		// Start the wallet
-		LocalWallet lw = new LocalWallet();
-		lw.init();
-		
-		
-		
+		instance.init();
+				
 		// Start the web service
-		WebService.start(lw);
+		WebService.start();
 		
 		// TODO poll some of the url's every .5 seconds, and load the page when they come back with a result
-		Tools.openWebpage("http://localhost:4567/garp");
+		Tools.openWebpage("http://localhost:4567/html/wallet.html");
 		
 	}
 }

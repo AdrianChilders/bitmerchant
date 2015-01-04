@@ -17,8 +17,16 @@
       position:relative; 
       bottom:0;
       }*/
-
-
+      .wallet-words {
+        font-size: 20pt;
+      }
+      .navbar-top {
+        border-radius: 0px;
+      }
+      .breadcrumb-small {
+        height:36px;
+        margin-bottom: -15px;
+      }
       .neg-margins {
         margin: -15px;
         border-top-left-radius:4px;
