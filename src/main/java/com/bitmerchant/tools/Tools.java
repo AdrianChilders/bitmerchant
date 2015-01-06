@@ -27,6 +27,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.tz.DateTimeZoneBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,8 @@ public class Tools {
 	public static final Gson GSON = new Gson();
 	public static final Gson GSON2 = new GsonBuilder().setPrettyPrinting().create();
 	static final Logger log = LoggerFactory.getLogger(Tools.class);
-	public static final DateTimeFormatter DTF2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+	public static final DateTimeFormatter DTF2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").
+			withZone(DateTimeZone.UTC);
 
 
 	public static void allowResponseHeaders(Request req, Response res) {
@@ -156,14 +158,9 @@ public class Tools {
 	}
 	
 	public static String adjustUpdateTime(long time) {
-		
-		DateTimeZone tz = DateTimeZone.getDefault();
-		Long instant = DateTime.now().getMillis();
-		long offsetInMilliseconds = tz.getOffset(instant);
-		Integer hours = (int) TimeUnit.MILLISECONDS.toHours( offsetInMilliseconds);
-		DateTime dt = new DateTime(time).minusHours(hours);
-
-		return dt.toString(DTF2);
+		DateTime dt = new DateTime(time);//.minusHours(hours);
+		String dateStr = dt.toString(DTF2);
+		return dateStr;
 	}
 
 	public static String convertLOMtoJson(List<Map<String, String>> lom) {
