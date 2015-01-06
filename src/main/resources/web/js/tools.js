@@ -1,4 +1,6 @@
 var sparkService = "http://localhost:4567/"
+var pageNumbers = {};
+
 
 function getJson(shortUrl, noToast) {
 
@@ -208,5 +210,101 @@ function standardFormPost(shortUrl, formId, modalId, reload, successFunctions) {
 
   // event.preventDefault();
 
+
+}
+
+function setupPagedTable(shortUrl, templateHtml, divId, tableId) {
+    var pageNum = pageNumbers[tableId];
+
+    var nextId = divId + "_pager_next";
+    var prevId = divId + "_pager_prev";
+    // console.log(nextId);
+    // TODO get page numbers here
+    // fillTableFromMustache(shortUrl + pageNum,
+        fillTableFromMustache(shortUrl,
+        templateHtml, divId, tableId);
+
+    $(nextId).click(function(e) {
+        pageNum++;
+        $(prevId).removeClass('disabled');
+
+        fillTableFromMustache(shortUrl + pageNum,
+            templateHtml, divId, tableId);
+
+    });
+    $(prevId).click(function(e) {
+        if (pageNum > 1) {
+            pageNum--;
+
+            fillTableFromMustache(shortUrl + pageNum,
+                templateHtml, divId, tableId);
+        }
+        if (pageNum == 1) {
+            $(this).addClass('disabled');
+            return;
+        }
+
+
+    });
+}
+
+function fillTableFromMustache(url, templateHtml, divId, tableId) {
+    //         $.tablesorter.addParser({ 
+    //           id: 'my_date_column', 
+    //           is: function(s) { 
+    //       // return false so this parser is not auto detected 
+    //       return false; 
+    //     }, 
+    //     format: function(s) { 
+    //       console.log(s);
+    //       var timeInMillis = new Date.parse(s);
+
+    //       // var date = new Date(parseInt(s));
+    //       return date;         
+    //     }, 
+    //   // set type, either numeric or text 
+    //   type: 'numeric' 
+    // });
+
+    var url = sparkService + url // the script where you handle the form input.
+    $.ajax({
+        type: "GET",
+        url: url,
+        xhrFields: {
+            withCredentials: true
+        },
+        // data: seriesData, 
+        success: function(data, status, xhr) {
+            // console.log(data);
+            // var jsonObj = JSON.parse(data);
+            // JSON.useDateParser();
+            // var jsonObj = jQuery.parseJSON(data);
+            // JSON.useDateParser();
+            var jsonObj = JSON.parseWithDate(data);
+
+
+            Mustache.parse(templateHtml); // optional, speeds up future uses
+            var rendered = Mustache.render(templateHtml, jsonObj);
+            $(divId).html(rendered);
+            $(tableId).tablesorter({
+                debug: false
+                // textExtraction: extractData
+                //     headers: { 
+                //   0: {       // Change this to your column position
+                //     sorter:'my_date_column' 
+                //   } 
+                // }
+            });
+            // console.log(jsonObj);
+            // console.log(templateHtml);
+            // console.log(rendered);
+
+
+        },
+        error: function(request, status, error) {
+
+            toastr.error(request.responseText);
+        }
+    });
 
 }

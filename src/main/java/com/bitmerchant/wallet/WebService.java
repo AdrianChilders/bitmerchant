@@ -5,8 +5,11 @@ import static spark.Spark.post;
 import static spark.SparkBase.setPort;
 import static spark.SparkBase.staticFileLocation;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.bitcoinj.crypto.MnemonicException;
 
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
@@ -41,7 +44,7 @@ public class WebService {
 			return LocalWallet.instance.controller.getStatusText();
 		});
 		
-		get("/recieve_address", (req, res) -> {
+		get("/receive_address", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
 			return LocalWallet.instance.controller.getAddressText();
 		});
@@ -78,11 +81,17 @@ public class WebService {
 		});
 		
 		post("/remove_wallet_password", (req, res) -> {
+			try {
 			Tools.allowResponseHeaders(req, res);
 				String password = Tools.createMapFromAjaxPost(req.body()).get("password");
 				String message = LocalWallet.instance.controller.removeWalletPassword(password);
 
 				return message;
+				
+			} catch (NoSuchElementException e) {
+				res.status(666);
+				return e.getMessage();
+			}
 		});
 		
 		post("/unlock_wallet", (req, res) -> {
@@ -140,9 +149,37 @@ public class WebService {
 			
 		});
 		
+		
+		post("/send_money_encrypted", (req, res) -> {
+			try {
+			Tools.allowResponseHeaders(req, res);
+				
+				Map<String, String> formItems = Tools.createMapFromAjaxPost(req.body());
+				
+				String amount = formItems.get("sendAmount");
+				String toAddress = formItems.get("address");
+				String password = formItems.get("password");
+				
+				LocalWallet.instance.controller.unlockWallet(password);
+				String message = LocalWallet.instance.controller.sendMoney(amount, toAddress);
+				
+				return message;
+				
+			} catch (NoSuchElementException e) {
+					res.status(666);
+					return e.getMessage();
+				}
+			
+		});
+		
 		get("/send_status", (req, res) -> {
 			Tools.allowResponseHeaders(req, res);
 			return LocalWallet.instance.controller.getSendStatus();
+		});
+		
+		get("/get_transactions", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			return LocalWallet.instance.controller.getTransactionsJSON();
 		});
 	
 		

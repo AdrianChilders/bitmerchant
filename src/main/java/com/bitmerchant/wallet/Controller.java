@@ -4,6 +4,7 @@ package com.bitmerchant.wallet;
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -27,13 +28,18 @@ import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionConfidence;
 import org.bitcoinj.core.Wallet;
+import org.bitcoinj.crypto.KeyCrypterException;
 import org.bitcoinj.crypto.KeyCrypterScrypt;
+import org.bitcoinj.crypto.MnemonicCode;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.params.KeyParameter;
 
+import com.bitmerchant.tools.Tools;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.primitives.Longs;
@@ -210,8 +216,11 @@ public class Controller {
 		final KeyCrypterScrypt keyCrypter = (KeyCrypterScrypt) bitcoin.wallet().getKeyCrypter();
 		checkNotNull(keyCrypter);   // We should never arrive at this GUI if the wallet isn't actually encrypted.
 		KeyDerivationTasks tasks = new KeyDerivationTasks(keyCrypter, password, getTargetTime());
-
+		try {
 		bitcoin.wallet().decrypt(tasks.getAesKey());
+		} catch(KeyCrypterException e) {
+			throw new NoSuchElementException("Incorrect password");
+		}
 		walletIsEncrypted = false;
 
 		// re-init the wallet
@@ -251,6 +260,18 @@ public class Controller {
 		// much complexity, even though WalletAppKit will keep the current one as a backup file in case of disaster.
 		// TODO notify user if there is a balance in their current wallet
 
+		// check to see if wallet words are okay
+		try {
+		MnemonicCode codec = new MnemonicCode();
+	
+			codec.check(Splitter.on(' ').splitToList(walletWords));
+		} catch (MnemonicException | IOException e) {
+			throw new NoSuchElementException("Incorrect wallet words");
+		}
+	
+
+
+		
 		if (aesKey != null) {
 			// This is weak. We should encrypt the new seed here.
 			return ("Wallet is encrypted. " + 
@@ -359,6 +380,19 @@ public class Controller {
 			realTargetTime = Duration.ofMillis((long) (time * 1.1));
 		}
 	}
+	
+	
+	
+
+	
+	public String getTransactionsJSON() {
+		List<Transaction> transactions = bitcoin.wallet().getTransactionsByTime();
+		
+		return Tools.convertLOMtoJson(Tools.convertTransactionsToLOM(transactions));
+	}
+	
+	
+
 
 	// Reads target time or throws if not set yet (should never happen).
 	public static Duration getTargetTime() throws IllegalArgumentException {
