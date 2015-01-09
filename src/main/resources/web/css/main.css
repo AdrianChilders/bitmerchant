@@ -15,7 +15,9 @@
       position:relative; 
       bottom:0;
       }*/
-
+.no-margin-bottom {
+  margin-bottom: 0px;
+}
 .wallet-words {
   font-size: 20pt;
 }

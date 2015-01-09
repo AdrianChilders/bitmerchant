@@ -183,33 +183,43 @@
               </ol>
             </div>
           </div>
-          <hr>
+          <br>
 
           <div class="row sync-complete">
-            <div class="col-md-6">
-              <h4>Balance 
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="col-md-6">
+                    <h4>Balance 
               <span class="text-primary"> &nbsp; &nbsp; <span class="balance"></span> BTC</span> 
               <span class="text-muted"> &nbsp; &asymp; &nbsp; <span id="converted_balance"></span> USD</span> 
               </h4>
 
-            </div>
+                  </div>
 
-            <div class="col-md-6">
+                  <div class="col-md-6">
 
-              <button id="receieveBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal" data-target="#receiveModal"><i class="fa fa-arrow-circle-o-left fa-fw"></i> Receive</button>
-              <button id="sendBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal" ><i class="fa fa-arrow-circle-o-right fa-fw"></i> Send</button>
+                    <button id="receieveBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal" data-target="#receiveModal"><i class="fa fa-arrow-circle-o-left fa-fw"></i> Receive</button>
+                    <button id="sendBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal"><i class="fa fa-arrow-circle-o-right fa-fw"></i> Send</button>
 
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="row sync-incomplete">
             <div class="col-md-12">
+                        <div class="panel panel-default">
+                <div class="panel-body">
               <h4 class="text-muted" id="status_text"></h4>
               <!-- Show the TOR progress bar -->
               <div class="progress">
                 <div id="progress_bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                   <span class="sr-only">0% Complete</span>
                 </div>
+              </div>
+              </div>
               </div>
             </div>
           </div>
@@ -221,7 +231,7 @@
           </div>
 
 
-          <hr>
+
 
           <div class="row">
             <div class="col-md-12">
@@ -229,7 +239,7 @@
                 <div class="panel-heading">
                   <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Transactions</h3>
                 </div>
-                <div id="transactions" class="panel-body small-table">
+                <div id="transactions" class="panel-body large-table">
                   <script id="transactions_template" type="x-tmpl-mustache">
                     <table id="transactions_table" class="table table-hover table-striped tablesorter">
                       <thead>
@@ -414,30 +424,30 @@
             </div>
             <button name="placeSendBtn" type="submit" class="btn btn-primary" data-loading-text="Sending &nbsp;<i class='fa fa-circle-o-notch fa-spin'></i>">Send</button>
 
-          </form>
-        </div>
+                            </form>
+                </div>
 
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade bs-example-modal-lg" id="receiveModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title" id="userloginModalLabel">Receive Money</h4>
-        </div>
-
-        <div class="modal-body">
-        <div class="row">
-          <div id="qrcode" class="text-center"></div>
-          <h4 id="receive_address" class="text-center well"></h4>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
+          <div class="modal fade bs-example-modal-lg" id="receiveModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title" id="userloginModalLabel">Receive Money</h4>
+                </div>
+
+                <div class="modal-body">
+                  <div class="row">
+                    <div id="qrcode" class="text-center"></div>
+                    <h4 id="receive_address" class="text-center well"></h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
 
@@ -445,29 +455,29 @@
 
 
 
-  <!-- Bootstrap core JavaScript
+          <!-- Bootstrap core JavaScript
       ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
-  <script src="../bower_components/toastr/toastr.js"></script>
-  <script src="../bower_components/mustache/mustache.js"></script>
-  <script src="../bower_components/holderjs/holder.js"></script>
-  <script src="../js/json.date-extensions.min.js"></script>
-  <script src="../bower_components/tablesorter/jquery.tablesorter.min.js"></script>
-  <script src="../bower_components/highcharts/highcharts.js"></script>
-  <script src="../bower_components/highcharts/modules/exporting.js"></script>
-  <script src="../bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
-  <script src="../bower_components/pickadate/lib/picker.js"></script>
-  <script src="../bower_components/pickadate/lib/picker.date.js"></script>
-  <script src="../bower_components/summernote/dist/summernote.min.js"></script>
-  <script src="../bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-  <script src="../bower_components/jquery.qrcode/dist/jquery.qrcode.min.js"></script>
+          <!-- Placed at the end of the document so the pages load faster -->
+          <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+          <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+          <script type="text/javascript" src="../bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
+          <script src="../bower_components/toastr/toastr.js"></script>
+          <script src="../bower_components/mustache/mustache.js"></script>
+          <script src="../bower_components/holderjs/holder.js"></script>
+          <script src="../js/json.date-extensions.min.js"></script>
+          <script src="../bower_components/tablesorter/jquery.tablesorter.min.js"></script>
+          <script src="../bower_components/highcharts/highcharts.js"></script>
+          <script src="../bower_components/highcharts/modules/exporting.js"></script>
+          <script src="../bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+          <script src="../bower_components/pickadate/lib/picker.js"></script>
+          <script src="../bower_components/pickadate/lib/picker.date.js"></script>
+          <script src="../bower_components/summernote/dist/summernote.min.js"></script>
+          <script src="../bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+          <script src="../bower_components/jquery.qrcode/dist/jquery.qrcode.min.js"></script>
 
-  <!-- my scripts -->
-  <script src="../js/tools.js"></script>
-  <script src="../js/wallet.js"></script>
+          <!-- my scripts -->
+          <script src="../js/tools.js"></script>
+          <script src="../js/wallet.js"></script>
 
 
 

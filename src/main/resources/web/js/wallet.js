@@ -1,3 +1,5 @@
+var transactionsTemplate = null;
+
 $(document).ready(function() {
 
 
@@ -8,39 +10,48 @@ $(document).ready(function() {
 
   fillSimpleText('balance', '.balance');
 
-  fillSimpleText('receive_address', '#receive_address');
+  qrCodeAndReceiveAddress();
 
-  transactionsTable();
+  // have to only call this once :(
+  transactionsTemplate = $('#transactions_template').html();
 
-  qrCode();
+  fetchReceivedTransactions('newest_received_tx', transactionsTemplate);
+
+  transactionsTable(transactionsTemplate);
+
+  
 
 });
 
-function qrCode() {
+function qrCodeAndReceiveAddress() {
 
   getJson('receive_address').done(function(result) {
     var btcText = "bitcoin:" + result;
+    $('#qrcode').html('');
     $('#qrcode').qrcode({
       "width": 100,
       "height": 100,
       "color": "#3a3",
       "text": btcText
     });
+    $('#receive_address').html(result);
 
   });
 }
 
-function transactionsTable() {
-  var template = $('#transactions_template').html();
+function transactionsTable(templateHTML) {
+
   pageNumbers['#transactions_table'] = 1;
-  setupPagedTable('get_transactions', template, '#transactions', '#transactions_table');
+  setupPagedTable('get_transactions', templateHTML, '#transactions', '#transactions_table');
 
 }
 
+
 function sendStatus() {
+
   fillSendMoneyStatusText('send_status', '#send_status');
   fillSimpleText('balance', '.balance');
-  transactionsTable();
+  transactionsTable(transactionsTemplate);
 }
 
 function setupSendForm() {
@@ -122,4 +133,58 @@ function setupSendForm() {
   // });
 
 
+}
+
+function fetchReceivedTransactions(url, templateHTML) {
+  var url = sparkService + url // the script where you handle the form input.
+  var lastReceivedHash = getCookie("newestReceivedTransaction");
+  var intervalID = setInterval(function() {
+    $.ajax({
+      type: "GET",
+      url: url,
+      xhrFields: {
+        withCredentials: true
+      },
+      // data: seriesData, 
+      success: function(data, status, xhr) {
+
+        xhr.getResponseHeader('Set-Cookie');
+        var tx = JSON.parse(data);
+
+        var nextReceivedHash = tx['hash'];
+        var amount = tx['amount'];
+
+        // console.log(tx);
+        // console.log('next: ' + nextReceivedHash);
+        // console.log('last: ' + lastReceivedHash);
+
+        if (nextReceivedHash != lastReceivedHash) {
+          if (nextReceivedHash != 'none yet') {
+            var message = 'You were sent ' + amount;
+            toastr.success(message);
+          }
+
+
+
+
+          
+		qrCodeAndReceiveAddress();
+          fillSimpleText('balance', '.balance');
+          transactionsTable(templateHTML);
+
+          // Now set the vars to be the same
+          // lastReceivedHash = nextReceivedHash;
+          lastReceivedHash = getCookie("newestReceivedTransaction");
+        }
+
+      },
+      error: function(request, status, error) {
+
+        // toastr.error(request.responseText);
+        clearInterval(intervalID);
+      }
+    });
+
+    // console.log(getCookies());
+  }, 60000); // 1000 milliseconds = 1 second.
 }

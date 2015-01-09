@@ -16,6 +16,10 @@ import com.bitmerchant.tools.Tools;
 
 
 public class WebService {
+	
+	// How long to keep the cookies
+	public static final Integer COOKIE_EXPIRE_SECONDS = Tools.cookieExpiration(1440);
+	
 	public static void start() {
 		setPort(DataSources.SPARK_WEB_PORT);
 		
@@ -181,6 +185,17 @@ public class WebService {
 			Tools.allowResponseHeaders(req, res);
 			return LocalWallet.instance.controller.getTransactionsJSON();
 		});
+		
+		get("/newest_received_tx", (req, res) -> {
+			Tools.allowResponseHeaders(req, res);
+			// use a cookie, not a return
+//			res.cookie("newestReceivedTransaction", LocalWallet.instance.controller.getNewestReceivedTransaction(),
+//					COOKIE_EXPIRE_SECONDS, true);
+			res.cookie("newestReceivedTransaction", LocalWallet.instance.controller.getNewestReceivedTransactionHash(),
+					COOKIE_EXPIRE_SECONDS);
+			return LocalWallet.instance.controller.getNewestReceivedTransaction();
+		});
+		
 	
 		
 		

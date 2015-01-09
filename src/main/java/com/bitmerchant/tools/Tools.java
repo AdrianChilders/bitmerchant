@@ -15,28 +15,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.utils.BtcFormat;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.tz.DateTimeZoneBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import spark.Request;
+import spark.Response;
 
 import com.bitmerchant.wallet.LocalWallet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import spark.Request;
-import spark.Response;
 
 public class Tools {
 	public static final Gson GSON = new Gson();
@@ -156,7 +154,7 @@ public class Tools {
 
 		return map;
 	}
-	
+
 	public static String adjustUpdateTime(long time) {
 		DateTime dt = new DateTime(time);//.minusHours(hours);
 		String dateStr = dt.toString(DTF2);
@@ -199,4 +197,67 @@ public class Tools {
 		}
 	}
 
+	public static String getTransactionOutputAddress(TransactionOutput txo) {
+		return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
+	}
+
+	public static String getTransactionInputAddress(TransactionInput txi) {
+		return getTransactionOutputAddress(txi.getConnectedOutput());
+	}
+	public static String getTransactionInfo(Transaction tx) {
+		List<TransactionOutput> txos = tx.getOutputs();
+		List<TransactionInput> txis = tx.getInputs();
+		
+		StringBuilder s = new StringBuilder();
+		s.append("Inputs: \n");
+		for (TransactionInput txi : txis) {
+			s.append(getTransactionInputAddress(txi) + "\n");
+		}
+
+		s.append("Outputs: \n");
+		for (TransactionOutput txo : txos) {
+			s.append(getTransactionOutputAddress(txo) + "\n");
+		}
+		
+		s.append("Hash: " + tx.getHashAsString() + "\n");
+	
+		
+	
+	
+
+		return s.toString();
+	}
+	
+	public static class TransactionJSON {
+		String hash;
+		String amount;
+		
+		public TransactionJSON(Transaction tx) {
+			if (tx != null) {
+			hash = tx.getHashAsString();
+			amount = mBtcFormat(tx.getValue(bitcoin.wallet()));
+			} else {
+				hash = "none yet";
+				amount = "none yet";
+			}
+		}
+		
+		public String json() {
+			return GSON.toJson(this);
+		}
+
+		public String getHash() {
+			return hash;
+		}
+
+		public String getAmount() {
+			return amount;
+		}
+		
+		
+	}
+
+	public static Integer cookieExpiration(Integer minutes) {
+		return minutes*60;
+	}
 }

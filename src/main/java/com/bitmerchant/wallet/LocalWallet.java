@@ -1,19 +1,33 @@
 package com.bitmerchant.wallet;
 
+import static com.bitmerchant.wallet.LocalWallet.bitcoin;
+
 import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
+import org.bitcoinj.core.AbstractWalletEventListener;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.Wallet;
+import org.bitcoinj.core.WalletEventListener;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.Service;
 
 
 /**
@@ -36,14 +50,14 @@ public class LocalWallet {
 	public static NetworkParameters params = TestNet3Params.get();
 	public static WalletAppKit bitcoin;
 	public Controller controller;
-	
+
 	public static LocalWallet instance = new LocalWallet();
 
 	public void init() {
 
 		setupDirectories();
-		
-		
+
+
 		setupWalletKit(null);
 
 
@@ -54,13 +68,14 @@ public class LocalWallet {
 
 	public void setupDirectories() {
 		log.info("Setting up dirs");
-		new File(DataSources.DIR).mkdirs();
+		new File(DataSources.HOME_DIR).mkdirs();
 	}
 
 	public void setupWalletKit(@Nullable DeterministicSeed seed) {
 		controller = new Controller();
 		// If seed is non-null it means we are restoring from backup.
-		bitcoin = new WalletAppKit(params, new File(DataSources.DIR), DataSources.APP_NAME) {
+		bitcoin = new WalletAppKit(params, new File(DataSources.HOME_DIR), DataSources.APP_NAME) {
+
 			@Override
 			protected void onSetupCompleted() {
 				// Don't make the user wait for confirmations for now, as the intention is they're sending it
@@ -72,6 +87,7 @@ public class LocalWallet {
 				controller.onBitcoinSetup();
 				//                Platform.runLater(controller::onBitcoinSetup);
 			}
+
 		};
 		// Now configure and start the appkit. This will take a second or two - we could show a temporary splash screen
 		// or progress widget to keep the user engaged whilst we initialise, but we don't.
@@ -84,16 +100,22 @@ public class LocalWallet {
 		}
 
 		// The progress bar stuff
-		
+
 		bitcoin.setDownloadListener(controller.progressBarUpdater())
 		.setBlockingStartup(false)
 		.setUserAgent(DataSources.APP_NAME, "1.0");
 
 		if (seed != null)
 			bitcoin.restoreWalletFromSeed(seed);
-		
+
+
+
 
 	}
+
+
+
+
 
 
 	public void stop() throws Exception {
@@ -107,12 +129,12 @@ public class LocalWallet {
 
 		// Start the wallet
 		instance.init();
-				
+
 		// Start the web service
 		WebService.start();
-		
+
 		// TODO poll some of the url's every .5 seconds, and load the page when they come back with a result
 		Tools.openWebpage("http://localhost:4567/html/wallet.html");
-		
+
 	}
 }

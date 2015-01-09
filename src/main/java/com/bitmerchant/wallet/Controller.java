@@ -22,7 +22,8 @@ import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.DownloadListener;
+import org.bitcoinj.core.DownloadProgressTracker;
+import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
@@ -45,6 +46,7 @@ import com.google.common.base.Splitter;
 import com.google.common.primitives.Longs;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 import com.google.protobuf.ByteString;
 import com.subgraph.orchid.TorClient;
@@ -65,6 +67,8 @@ public class Controller {
 	private String passwordBtnText;
 	private Boolean walletIsEncrypted = false;
 	private Boolean walletIsLocked = false;
+	
+	private Transaction newestReceivedTransaction;
 
 	public static final String TAG = Controller.class.getName() + ".target-time";
 
@@ -108,12 +112,22 @@ public class Controller {
 			statusText = "Synchronising with the Bitcoin network...";
 		}
 
+		// for receiving money
+		bitcoin.wallet().addEventListener(new AbstractWalletEventListener() {
+			@Override
+			public void onCoinsReceived(Wallet wallet, Transaction tx,
+					Coin prevBalance, Coin newBalance) {
+				log.info("u received coins");
+				newestReceivedTransaction = tx;
+				log.info(Tools.getTransactionInfo(tx));
 
 
+			}
+		});
 
 	}
 
-	private class ProgressBarUpdater extends DownloadListener {
+	private class ProgressBarUpdater extends DownloadProgressTracker {
 		@Override
 		protected void progress(double pct, int blocksLeft, Date date) {
 			super.progress(pct, blocksLeft, date);
@@ -290,14 +304,13 @@ public class Controller {
 		DeterministicSeed seed = new DeterministicSeed(Splitter.on(' ').splitToList(walletWords), null, "", birthday);
 
 		// Shut down bitcoinj and restart it with the new seed.
-		ExecutorService executor = Executors.newFixedThreadPool(2);
 		bitcoin.addListener(new Service.Listener() {
 			@Override
 			public void terminated(Service.State from) {
 				LocalWallet.instance.setupWalletKit(seed);
 				bitcoin.startAsync();
 			}
-		},executor);
+		},MoreExecutors.sameThreadExecutor());
 
 		bitcoin.stopAsync();
 
@@ -386,11 +399,21 @@ public class Controller {
 
 	
 	public String getTransactionsJSON() {
+
+		
 		List<Transaction> transactions = bitcoin.wallet().getTransactionsByTime();
 		
 		return Tools.convertLOMtoJson(Tools.convertTransactionsToLOM(transactions));
 	}
 	
+	public String getNewestReceivedTransaction() {
+//		log.info("newest transaction = " + Tools.GSON.toJson(newestReceivedTransaction));
+		return new Tools.TransactionJSON(newestReceivedTransaction).json();
+	}
+	
+	public String getNewestReceivedTransactionHash() {
+		return new Tools.TransactionJSON(newestReceivedTransaction).getHash();
+	}
 	
 
 
@@ -405,10 +428,10 @@ public class Controller {
 		bitcoin.wallet().setTag(TAG, bytes);
 	}
 
-	public DownloadListener getDownloadListener() { return syncProgressUpdater; }
+	public DownloadProgressTracker getDownloadProgressTracker() { return syncProgressUpdater; }
 
-	public DownloadListener progressBarUpdater() {
-		return getDownloadListener();
+	public DownloadProgressTracker progressBarUpdater() {
+		return getDownloadProgressTracker();
 	}
 
 	public String getBalanceText() {
