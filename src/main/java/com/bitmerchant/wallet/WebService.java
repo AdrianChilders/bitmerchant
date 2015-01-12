@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 
 import org.bitcoinj.crypto.MnemonicException;
 
+import com.bitmerchant.db.Actions;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 
@@ -196,7 +197,11 @@ public class WebService {
 			return LocalWallet.instance.controller.getNewestReceivedTransaction();
 		});
 		
-	
+//		post("/create_button", (req, res) -> {
+//			Tools.allowResponseHeaders(req, res);
+//			return Actions.createButton(req.body());
+//			
+//		});
 		
 		
 	}

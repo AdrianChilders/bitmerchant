@@ -3,12 +3,21 @@ package com.bitmerchant.tools;
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 
 import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,6 +31,9 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.utils.MonetaryFormat;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -33,14 +45,18 @@ import spark.Request;
 import spark.Response;
 
 import com.bitmerchant.wallet.LocalWallet;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 public class Tools {
 	public static final Gson GSON = new Gson();
 	public static final Gson GSON2 = new GsonBuilder().setPrettyPrinting().create();
 	static final Logger log = LoggerFactory.getLogger(Tools.class);
 	public static final DateTimeFormatter DTF2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").
+			withZone(DateTimeZone.UTC);
+	public static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").
 			withZone(DateTimeZone.UTC);
 
 
@@ -260,4 +276,99 @@ public class Tools {
 	public static Integer cookieExpiration(Integer minutes) {
 		return minutes*60;
 	}
+	
+	public static final String httpGet(String url) {
+		String res = "";
+		try {
+			URL externalURL = new URL(url);
+
+			URLConnection yc = externalURL.openConnection();
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(
+							yc.getInputStream()));
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null) 
+				res+="\n" + inputLine;
+			in.close();
+
+			return res;
+		} catch(IOException e) {}
+		return res;
+	}
+	
+	public static List<Map<String, String>> ListOfMapsPOJO(String json) {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+
+			List<Map<String,String>> myObjects = mapper.readValue(json, 
+					new TypeReference<ArrayList<LinkedHashMap<String,String>>>(){});
+
+			return myObjects;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Map<String, String> mapPOJO(String json) {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+
+			Map<String,String> myObjects = mapper.readValue(json, 
+					new TypeReference<LinkedHashMap<String,String>>(){});
+
+			return myObjects;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Map<String, Object> mapPOJO2(String json) {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+
+			Map<String,Object> myObjects = mapper.readValue(json, 
+					new TypeReference<LinkedHashMap<String,Object>>(){});
+
+			return myObjects;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static JsonNode jsonToNode(String json) {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+
+			JsonNode root = mapper.readTree(json);
+
+			return root;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void runSQLFile(Connection c,File sqlFile) throws SQLException, IOException {
+		Statement stmt = null;
+		stmt = c.createStatement();
+		String sql =Files.toString(sqlFile, Charset.defaultCharset());
+		stmt.executeUpdate(sql);
+		stmt.close();
+	}
+
 }
+
+
+

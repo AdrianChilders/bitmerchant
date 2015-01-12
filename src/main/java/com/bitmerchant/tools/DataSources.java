@@ -16,6 +16,8 @@ public class DataSources {
 	
 	public static final String SQL_FILE = CODE_DIR + "/src/main/resources/bitmerchant-wallet.sql";
 	
+	public static final String SQL_VIEWS_FILE = CODE_DIR + "/src/main/resources/bitmerchant-wallet-views.sql";
+	
 	
 	
 	

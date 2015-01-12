@@ -139,6 +139,16 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+	<dependency>
+  <groupId>org.joda</groupId>
+  <artifactId>joda-money</artifactId>
+  <version>0.10.0</version>
+</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
 	 <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
@@ -185,6 +195,11 @@
 		<dependency>
 			<groupId>org.bitcoinj</groupId>
 			<artifactId>bitcoinj-core</artifactId>
+			<version>0.13-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bitcoinj</groupId>
+			<artifactId>bitcoinj-tools</artifactId>
 			<version>0.13-SNAPSHOT</version>
 		</dependency>
 		<dependency>
