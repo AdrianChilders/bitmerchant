@@ -78,9 +78,6 @@ public class Controller {
 
 	public void onBitcoinSetup() {
 
-
-
-
 		setWallet(bitcoin.wallet());
 
 		// Set the wallet words
@@ -307,7 +304,7 @@ public class Controller {
 		bitcoin.addListener(new Service.Listener() {
 			@Override
 			public void terminated(Service.State from) {
-				LocalWallet.instance.setupWalletKit(seed);
+				LocalWallet.INSTANCE.setupWalletKit(seed);
 				bitcoin.startAsync();
 			}
 		},MoreExecutors.sameThreadExecutor());

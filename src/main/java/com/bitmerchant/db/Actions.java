@@ -1,8 +1,17 @@
 package com.bitmerchant.db;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+
+import org.bitcoinj.core.Coin;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.node.ObjectNode;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bitmerchant.db.Tables.Button;
 import com.bitmerchant.db.Tables.ButtonStyle;
@@ -10,37 +19,18 @@ import com.bitmerchant.db.Tables.ButtonType;
 import com.bitmerchant.db.Tables.ButtonView;
 import com.bitmerchant.db.Tables.Currency;
 import com.bitmerchant.db.Tables.Order;
+import com.bitmerchant.db.Tables.OrderStatus;
+import com.bitmerchant.db.Tables.OrderView;
+import com.bitmerchant.tools.CurrencyConverter;
+import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.bitmerchant.wallet.LocalWallet;
+import com.google.protobuf.ByteString;
 
 public class Actions {
 
-	//	public static void createPaymentRequest() {
-	//		PaymentProtocol.createPaymentRequest(params, outputs, memo, paymentUrl, merchantData)
-	//
-	//	}
-
-
-	//	   private PaymentRequest newSimplePaymentRequest(NetworkParameters params,
-	//			   Coin amount, String receiveAddress, DateTime time, @Nullable DateTime expireTime, 
-	//			   String paymentUrl, @Nullable String memo, @Nullable String merchantData) {
-	//	        Output.Builder outputBuilder = Output.newBuilder()
-	//	                .setAmount(coin.value)
-	//	                .setScript(ByteString.copyFrom(outputToMe.getScriptBytes()));
-	//	        PaymentDetails paymentDetails = PaymentDetails.newBuilder()
-	//	                .setNetwork(netID)
-	//	                .setTime(time)
-	//	                .setExpires(expireTime)
-	//	                .setPaymentUrl(simplePaymentUrl)
-	//	                .addOutputs(outputBuilder)
-	//	                .setMemo(paymentRequestMemo)
-	//	                .setMerchantData(merchantData)
-	//	                .build();
-	//	        return PaymentRequest.newBuilder()
-	//	                .setPaymentDetailsVersion(1)
-	//	                .setPkiType("none")
-	//	                .setSerializedPaymentDetails(paymentDetails.toByteString())
-	//	                .build();
-	//	    }
+	static final Logger log = LoggerFactory.getLogger(Actions.class);
+	
 
 
 	public static class ButtonActions {
@@ -79,16 +69,11 @@ public class Actions {
 				b.set("variable_price", n.get("variable_price").asText());
 			if (n.get("price_select") != null)
 				b.set("price_select", n.get("price_select").asText());
-			if (n.get("price_1") != null)
-				b.set("price_1",  n.get("price_1").asText());
-			if (n.get("price_2") != null)
-				b.set("price_2",  n.get("price_2").asText());
-			if (n.get("price_3") != null)
-				b.set("price_3",  n.get("price_3").asText());
-			if (n.get("price_4") != null)
-				b.set("price_4",  n.get("price_4").asText());
-			if (n.get("price_5") != null)
-				b.set("price_5",  n.get("price_5").asText());
+			for (int i=1;  i<=5; i++) {
+				if (n.get("price_" + i) != null)
+					b.set("price_" + i,  n.get("price_" + i).asText());
+			}
+
 
 			return b;
 		}
@@ -142,12 +127,129 @@ public class Actions {
 
 	}
 
+
 	public static class OrderActions {
 
-		//				public static Order createOrderObj(JsonNode root) {
-		//					
-		//				
-		//				}
+		/**
+		 * This is a shortcut of 
+		 * @param root
+		 * @return
+		 */
+		public static Order createOrderObj(Integer buttonId) {
+
+			 Button b = Button.findById(buttonId);
+		
+			Currency currency = Currency.findById(b.getInteger("native_currency_id"));
+			String currencyIso = currency.getString("iso");
+
+			Order o = new Order();
+
+			o.set("status_id", OrderStatus.findFirst("status=?", "new").getId().toString());
+
+			// TODO For now, set the memo to the button description
+			o.set("memo", b.getString("description"));
+
+			// Set the currency to the most recent currency
+			long satoshis;
+			if (!currencyIso.equals("BTC")) {
+				CurrencyConverter cc = CurrencyConverter.INSTANCE;
+				Money amountM = Money.of(CurrencyUnit.of(currencyIso), 
+						b.getBigDecimal("total_native"));
+
+				// Convert to BTC using the currency converter
+				Money amountBTC = cc.convertMoneyForToday(CurrencyUnit.of("BTC"), amountM);
+
+				// Convert to satoshis
+				satoshis = amountBTC.getAmount().multiply(BigDecimal.valueOf(1E8)).longValue();
+
+			} else {
+				satoshis = b.getBigDecimal("total_native").multiply(BigDecimal.valueOf(1E8)).longValue();
+			}
+			o.set("total_satoshis", satoshis);
+
+			o.set("expire_time", System.currentTimeMillis() + 600000);
+			o.set("button_id", Integer.valueOf(b.getId().toString()));
+
+			o.set("merchant_data", "DickTowel.com");
+			
+			
+
+			// needs to be left for later until the file is created
+//			String paymentURL = DataSources.WEB_SERVICE_URL + "/payment_request/" + 
+//					o.getId().toString() + ".bitcoinpaymentrequest";
+//			o.set("payment_url", paymentURL);
+			
+			// log.info("params = " + LocalWallet.params.getId());
+			
+		
+			return o;
+		}
+
+		/**
+		 * A combination of create button and create order
+		 * @param root
+		 * @return
+		 */
+		public static Order createOrderObj(JsonNode root) {
+			Button b = ButtonActions.createButtonObj(root);
+			
+			if (b.getId() ==  null) {
+				b.saveIt();
+			}
+
+			Order o = createOrderObj(Integer.valueOf(b.getId().toString()));
+			
+			return o;
+			
+			
+		}
+		
+		public static String showOrder(Integer id) {
+			
+			OrderView ov = OrderView.findById(id);
+
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode a = mapper.createObjectNode();
+
+
+			JsonNode n = Tools.jsonToNode(ov.toJson(false));
+			a.put("order", n);
+			
+			try {
+				return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+
+		
+		}
+		
+		public static String createOrder(String jsonReq) {
+
+			// Parse the JSON into a tree
+			JsonNode root = Tools.jsonToNode(jsonReq);
+
+			// Create the button and  object, save it to the db
+			Order o = createOrderObj(root);
+			o.saveIt();
+			
+			// Fetch the view back for the user
+			String json = showOrder(Integer.valueOf(o.getId().toString()));
+
+			return json;
+
+		}
+
+
+
+
+
+
+		//			o.set(namesAndValues)
 
 	}
+
 }
+

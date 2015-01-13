@@ -4,8 +4,10 @@ import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -14,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,6 +37,8 @@ import org.bitcoinj.utils.MonetaryFormat;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.DBException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -48,12 +53,12 @@ import com.bitmerchant.wallet.LocalWallet;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 public class Tools {
 	public static final Gson GSON = new Gson();
 	public static final Gson GSON2 = new GsonBuilder().setPrettyPrinting().create();
 	static final Logger log = LoggerFactory.getLogger(Tools.class);
+	
 	public static final DateTimeFormatter DTF2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").
 			withZone(DateTimeZone.UTC);
 	public static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").
@@ -61,13 +66,20 @@ public class Tools {
 
 
 	public static void allowResponseHeaders(Request req, Response res) {
+//		Connections.INSTANCE.open();
+		
 		String origin = req.headers("Origin");
-		res.header("Access-Control-Allow-Credentials", "true");
+		String host = req.headers("Host");
+		log.info("request host: " + host);
+		log.info("request origin: " + origin);
+		
+//		res.header("Access-Control-Allow-Credentials", "true");
 		//		System.out.println("origin = " + origin);
 		//		if (DataSources.ALLOW_ACCESS_ADDRESSES.contains(req.headers("Origin"))) {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
-		res.header("Access-Control-Allow-Origin", origin);
+//		res.header("Access-Control-Allow-Origin", origin);
+
 
 	}
 
@@ -297,6 +309,46 @@ public class Tools {
 		return res;
 	}
 	
+	public static ByteBuffer getAsByteArray(String urlStr) throws IOException {
+		URL url = new URL(urlStr);
+		
+	    URLConnection connection = url.openConnection();
+	    // Since you get a URLConnection, use it to get the InputStream
+	    InputStream in = connection.getInputStream();
+	    // Now that the InputStream is open, get the content length
+	    int contentLength = connection.getContentLength();
+
+	    // To avoid having to resize the array over and over and over as
+	    // bytes are written to the array, provide an accurate estimate of
+	    // the ultimate size of the byte array
+	    ByteArrayOutputStream tmpOut;
+	    if (contentLength != -1) {
+	        tmpOut = new ByteArrayOutputStream(contentLength);
+	    } else {
+	        tmpOut = new ByteArrayOutputStream(16384); // Pick some appropriate size
+	    }
+
+	    byte[] buf = new byte[512];
+	    while (true) {
+	        int len = in.read(buf);
+	        if (len == -1) {
+	            break;
+	        }
+	        tmpOut.write(buf, 0, len);
+	    }
+	    in.close();
+	    tmpOut.close(); // No effect, but good to do anyway to keep the metaphor alive
+
+	    byte[] array = tmpOut.toByteArray();
+
+	    //Lines below used to test if file is corrupt
+	    //FileOutputStream fos = new FileOutputStream("C:\\abc.pdf");
+	    //fos.write(array);
+	    //fos.close();
+
+	    return ByteBuffer.wrap(array);
+	}
+	
 	public static List<Map<String, String>> ListOfMapsPOJO(String json) {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -366,6 +418,20 @@ public class Tools {
 		String sql =Files.toString(sqlFile, Charset.defaultCharset());
 		stmt.executeUpdate(sql);
 		stmt.close();
+	}
+	
+	public static final void dbInit() {
+		try {
+			Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + DataSources.DB_FILE, "root", "p@ssw0rd");
+		} catch (DBException e) {
+			dbClose();
+			dbInit();
+		}
+
+	}
+	
+	public static final void dbClose() {
+		Base.close();
 	}
 
 }

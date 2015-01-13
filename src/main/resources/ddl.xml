@@ -21,16 +21,9 @@
 <row name="total_satoshis" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="total_native" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="native_currency_id" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default><relation table="currencies" row="id" />
-</row>
-<row name="receive_address" null="0" autoincrement="0">
+<row name="receive_address" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
-<default>'NULL'</default></row>
+<default>NULL</default></row>
 <row name="button_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="buttons" row="id" />
@@ -39,10 +32,9 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="transactions" row="id" />
 </row>
-<row name="network_id" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default><relation table="networks" row="id" />
-</row>
+<row name="network" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <row name="payment_url" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
@@ -52,6 +44,9 @@
 <row name="memo" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="expire_time" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>(CURRENT_TIMESTAMP + 600000)</default></row>
 <row name="created_at" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>CURRENT_TIMESTAMP</default></row>
@@ -138,7 +133,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="300" y="366" name="buttons">
+<table x="308" y="312" name="buttons">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -218,20 +213,6 @@
 <row name="style" null="0" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>'NULL'</default></row>
-<row name="created_at" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>CURRENT_TIMESTAMP</default></row>
-<key type="PRIMARY" name="">
-<part>id</part>
-</key>
-</table>
-<table x="94" y="102" name="networks">
-<row name="id" null="0" autoincrement="1">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="name" null="1" autoincrement="0">
-<datatype>TEXT</datatype>
-<default>NULL</default></row>
 <row name="created_at" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>CURRENT_TIMESTAMP</default></row>

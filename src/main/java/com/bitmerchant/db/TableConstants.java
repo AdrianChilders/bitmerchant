@@ -7,6 +7,9 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 public class TableConstants {
+	
+
+	
 	public static final Map<String, String> CURRENCY_MAP = ImmutableMap.<String, String>builder()
 			.put("BTC", "Bitcoin")
 			//			.put("mBTC", "MilliBits")
@@ -78,6 +81,7 @@ public class TableConstants {
 	public static final String BUTTON_STYLE_DEFAULT = "buy_now_large";
 	
 	public static final List<String> ORDER_STATUSES = Arrays.asList(
+			"new",
 			"completed",
 			"cancelled",
 			"mispaid",

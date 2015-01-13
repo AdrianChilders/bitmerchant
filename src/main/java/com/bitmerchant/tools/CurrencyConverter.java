@@ -22,7 +22,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-public class CurrencyConverter {
+public enum CurrencyConverter {
+
+	INSTANCE;
 
 	static final Logger log = LoggerFactory.getLogger(CurrencyConverter.class);
 
@@ -67,15 +69,15 @@ public class CurrencyConverter {
 
 		Money m = Money.of(BTC, 5.12);
 
-		Money m1 = Money.parse("BTC 6.1823");
+		Money m1 = Money.parse("BTC 6.18");
 
 		System.out.println(m1);
 
 		System.out.println(m);
 		
-		CurrencyConverter cc = new CurrencyConverter();
+		CurrencyConverter cc = CurrencyConverter.INSTANCE;
 		
-		Money convertedMoney = cc.convertMoneyForToday(CurrencyUnit.USD, m);
+		Money convertedMoney = cc.convertMoneyForToday(CurrencyUnit.of("USD"), m1);
 		
 		System.out.println(convertedMoney);
 		Thread.sleep(6000);
@@ -192,8 +194,12 @@ public class CurrencyConverter {
 		try {
 			DateTime startOfDay = getStartOfDay(dt);
 			Double rate;
-
-			rate = getBtcRatesCache().get(cu).get(startOfDay);
+			if (!cu.getCode().equals("BTC")) {
+				rate = getBtcRatesCache().get(cu).get(startOfDay);
+			} else {
+				CurrencyUnit fromCurr = unconverted.getCurrencyUnit();
+				rate = 1d/getBtcRatesCache().get(fromCurr).get(startOfDay);
+			}
 
 			converted = unconverted.convertedTo(cu, BigDecimal.valueOf(rate), 
 					RoundingMode.FLOOR);

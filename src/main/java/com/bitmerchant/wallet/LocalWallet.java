@@ -24,6 +24,7 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -51,10 +52,12 @@ public class LocalWallet {
 	public static WalletAppKit bitcoin;
 	public Controller controller;
 
-	public static LocalWallet instance = new LocalWallet();
+	public static LocalWallet INSTANCE = new LocalWallet();
 
 	public void init() {
 
+	
+		
 		setupDirectories();
 
 
@@ -128,7 +131,7 @@ public class LocalWallet {
 	public static void main( String[] args ) {
 
 		// Start the wallet
-		instance.init();
+		INSTANCE.init();
 
 		// Start the web service
 		WebService.start();

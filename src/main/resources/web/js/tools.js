@@ -337,7 +337,13 @@ function getCookies() {
 }
 
 function getCookie(name) {
-    return getCookies()[name].replace(/"/g, "");
+    var cookie = getCookies()[name];
+    if (cookie != null) {
+      return cookie.replace(/"/g, "");
+    } else {
+      return cookie;
+    }
+  
 }
 
 function delete_cookie(name) {

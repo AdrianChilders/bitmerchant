@@ -8,6 +8,9 @@ public class Tables {
 	@Table("orders") 
 	public static class Order extends Model {}
 	
+	@Table("orders_view") 
+	public static class OrderView extends Model {}
+	
 	@Table("order_statuses") 
 	public static class OrderStatus extends Model {}
 	
