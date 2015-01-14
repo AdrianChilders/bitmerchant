@@ -98,7 +98,7 @@ public class LocalWallet {
 			bitcoin.connectToLocalHost();   // You should run a regtest mode bitcoind locally.
 		} else if (params == TestNet3Params.get()) {
 			// As an example!
-			bitcoin.useTor();
+//			bitcoin.useTor();
 			// bitcoin.setDiscovery(new HttpDiscovery(params, URI.create("http://localhost:8080/peers"), ECKey.fromPublicOnly(BaseEncoding.base16().decode("02cba68cfd0679d10b186288b75a59f9132b1b3e222f6332717cb8c4eb2040f940".toUpperCase()))));
 		}
 

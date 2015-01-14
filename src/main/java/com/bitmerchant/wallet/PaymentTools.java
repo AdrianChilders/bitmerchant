@@ -2,6 +2,12 @@ package com.bitmerchant.wallet;
 
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.bitcoin.protocols.payments.Protos.Output;
 import org.bitcoin.protocols.payments.Protos.PaymentDetails;
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
@@ -52,23 +58,23 @@ public class PaymentTools {
 		o.set("network", network);
 		pdB.setNetwork(network);
 
-		pdB.setTime(o.getLong("created_at"));
+		pdB.setTime(o.getLong("created_at")/1000L);
 
 
-		pdB.setExpires(o.getLong("expire_time"));
+//		pdB.setExpires(o.getLong("expire_time")/1000L);
 
 		// Generate the payment URL
 		String paymentURL = DataSources.WEB_SERVICE_URL + "payment_request/" + o.getId().toString();
-		pdB.setPaymentUrl(paymentURL);
-		o.set("payment_url", paymentURL);
+//		pdB.setPaymentUrl(paymentURL);
+//		o.set("payment_url", paymentURL);
 
 		pdB.addOutputs(ob);
 
-		if (o.getString("memo") != null) 
-			pdB.setMemo(o.getString("memo"));
+//		if (o.getString("memo") != null) 
+//			pdB.setMemo(o.getString("memo"));
 
-		if (o.getString("merchant_data") != null) 
-			pdB.setMerchantData(ByteString.copyFromUtf8(o.getString("merchant_data")));
+//		if (o.getString("merchant_data") != null) 
+//			pdB.setMerchantData(ByteString.copyFromUtf8(o.getString("merchant_data")));
 		
 		PaymentDetails pd = pdB.build();
 		
@@ -83,7 +89,31 @@ public class PaymentTools {
 	    
 	    return pr;
 		
+	}
+	/**
+	 *  @deprecated No need to write to a file anymore, just build the request from the order row
+	 */
+	@Deprecated 
+	public static String writePaymentRequestToFile(Integer orderNum,
+			PaymentRequest pr) {
+		OutputStream os;
+		File btcRequestFolder = new File(DataSources.HOME_DIR + 
+				"/orders/" );
+		btcRequestFolder.mkdirs();
 		
+		String orderPath = "/order_" + orderNum + ".bitcoinpaymentrequest";
+		File btcFile = new File(btcRequestFolder.getAbsolutePath().concat(orderPath));
+		try {
+		os = new FileOutputStream(btcFile);
+
+		pr.writeTo(os);
+		os.flush();
+		os.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return orderPath;
+	}
 
 
 
@@ -116,5 +146,5 @@ public class PaymentTools {
 		//	                .build();
 		//	    }
 
-	}
+	
 }

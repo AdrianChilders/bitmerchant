@@ -2,36 +2,43 @@ package com.bitmerchant.wallet;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.SparkBase.externalStaticFileLocation;
 import static spark.SparkBase.setPort;
 import static spark.SparkBase.staticFileLocation;
-import static spark.SparkBase.externalStaticFileLocation;
 
 
 
 
+
+import java.awt.image.renderable.RenderableImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 
 
 
+
+import javax.servlet.http.HttpServletResponse;
+
+
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
-import org.bitcoinj.crypto.MnemonicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 
 
-import com.bitmerchant.db.Actions;
-import com.bitmerchant.tools.Connections;
+
 import com.bitmerchant.tools.DataSources;
-import com.bitmerchant.tools.Tools;import com.google.protobuf.ByteString;
+import com.bitmerchant.tools.Tools;
 
 
 /*
@@ -42,13 +49,16 @@ public class WebService {
 	// How long to keep the cookies
 	public static final Integer COOKIE_EXPIRE_SECONDS = Tools.cookieExpiration(1440);
 	static final Logger log = LoggerFactory.getLogger(WebService.class);
+	
+	public static final String PROTOCOL_CONTENT_TYPE = "application/octet-stream";
+	public static final String PAYMENTREQUEST_CONTENT_TYPE = "application/bitcoin-paymentrequest";
 
 	public static void start() {
 		setPort(DataSources.SPARK_WEB_PORT);
 
 		staticFileLocation("/web"); // Static files
 		externalStaticFileLocation(DataSources.HOME_DIR);
-//		externalStaticFileLocation(DataSources.CODE_DIR);
+		//		externalStaticFileLocation(DataSources.CODE_DIR);
 
 
 
@@ -223,44 +233,67 @@ public class WebService {
 			return LocalWallet.INSTANCE.controller.getNewestReceivedTransaction();
 		});
 
-		get("/payment_request/:order", "application/octet-stream", (req, res) -> {
-			res.type("application/octet-stream");
-			
+	
+		get("/create_order/:order",PAYMENTREQUEST_CONTENT_TYPE , (req, res) -> {
+			res.type(PAYMENTREQUEST_CONTENT_TYPE);
+
 			Tools.allowResponseHeaders(req, res);
 			Tools.dbInit();
-			
-			
+
 			Integer orderNum = Integer.valueOf(req.params(":order"));
 			PaymentRequest pr = PaymentTools.createPaymentRequestFromOrder(orderNum);
 
 			Tools.dbClose();
 			log.info("paymentreq : " + pr.toString());
-			OutputStream os;
-			try {
-				File btcRequestFolder = new File(DataSources.HOME_DIR + 
-						"/payment_requests/" );
-				btcRequestFolder.mkdirs();
-				
-				File btcFile = new File(btcRequestFolder.getAbsolutePath().concat("/" + orderNum + ".bitcoinpaymentrequest"));
-				
-				
-				os = new FileOutputStream(btcFile);
 			
-				pr.writeTo(os);
-				os.flush();
-				os.close();
+
+			String orderPath = PaymentTools.writePaymentRequestToFile(orderNum, pr);
+
+			res.redirect("/payment_requests" + orderPath);
+
+			return "can not touch this code . jpg";
+
+		});
+		
+		get("/orders_alt/:order",PAYMENTREQUEST_CONTENT_TYPE , (req, res) -> {
+			res.type(PAYMENTREQUEST_CONTENT_TYPE);
+			res.header("Content-Transfer-Encoding", "binary");
+			
+			Integer orderNum = Integer.valueOf(req.params(":order"));
+			String orderPath = DataSources.HOME_DIR + 
+					"/orders/order_" + orderNum + ".bitcoinpaymentrequest";
+//			res.redirect("/payment_requests" + orderPath);
+			
+			// try to return the bytes of the file
+//			Files.readAllBytes(new File(orderPath));
+			try {
+				byte[] bytes = Files.readAllBytes(Paths.get(orderPath));			
 				
-				res.redirect("/payment_requests/" + orderNum + ".bitcoinpaymentrequest");
+				HttpServletResponse raw = res.raw();
 				
-				return "";
+				PaymentRequest pr = PaymentRequest.parseFrom(bytes);
+				
+				pr.writeTo(raw.getOutputStream());
+				
+				raw.getOutputStream().flush();
+				raw.getOutputStream().close();
+				
+				
+				return res.raw();
+				
+				
+				
+				
+//				return new File(orderPath);
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-			
 				e.printStackTrace();
-				return null;
 			}
+			
+			
+			return "can not touch this code . jpg";
 		});
-
 		//		post("/create_button", (req, res) -> {
 		//			Tools.allowResponseHeaders(req, res);
 		//			return Actions.createButton(req.body());
@@ -269,4 +302,6 @@ public class WebService {
 
 
 	}
+
+
 }

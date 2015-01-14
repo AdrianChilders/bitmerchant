@@ -129,13 +129,23 @@ public class Tools {
 
 			// TODO grab order number from SQL
 			map.put("order", "asdf");
-
+			map.put("amount", "<span class=\"text-success\"> +" + mBtcFormat(value) + "</span>");
 
 		} else if (value.isNegative()) {
 			map.put("message", "You sent bitcoin to an external account");
 			Address address = tx.getOutput(0).getAddressFromP2PKHScript(LocalWallet.params);
 			//			address = tx.getOutput(0).getScriptPubKey().getFromAddress(LocalWallet.params);
 			map.put("address", address.toString());
+			
+			if (fee != null) {
+
+				map.put("fee", "<span class=\"text-muted\">-" + mBtcFormat(fee) + "</span>");
+
+
+				// Subtract the fee from the net amount(in negatives)
+				Coin amountBeforeFee = value.add(fee);
+				map.put("amount", "<span class=\"text-danger\">" + mBtcFormat(amountBeforeFee) + "</span>");
+			} 
 
 		}
 
@@ -143,20 +153,8 @@ public class Tools {
 
 		//		String date = Tools.DTF2.print(dtStr);
 		map.put("date", dateStr);
+		map.put("longDate", String.valueOf(tx.getUpdateTime().getTime()));
 
-		if (fee != null) {
-
-			map.put("fee", "<span class=\"text-muted\">-" + mBtcFormat(fee) + "</span>");
-
-
-			// Subtract the fee from the net amount(in negatives)
-			Coin amountBeforeFee = value.add(fee);
-			map.put("amount", "<span class=\"text-danger\">" + mBtcFormat(amountBeforeFee) + "</span>");
-		} 
-		// If there was no fee, then you received btc
-		else {
-			map.put("amount", "<span class=\"text-success\"> +" + mBtcFormat(value) + "</span>");
-		}
 
 
 		String status = tx.getConfidence().getConfidenceType().name();

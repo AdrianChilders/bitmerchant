@@ -19,17 +19,18 @@ public class ReadPaymentRequest {
 		
 	}
 	
-	public static void main2(String[] args) {
+	public static void main(String[] args) {
 
 				String[] asdf = new String[5];
-				asdf[0] = "bitcoin:myTYR6DG7V3EQvwHLDYbnP4BuwVTKHwg1h?"
-						+ "r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php"
-						+ "%3Fh%3D56f25b7d2103000312496610d0e23dd0&amount=2";
+//				asdf[0] = "bitcoin:mg7siucRD8SQPq264kYed5nY6D8qABdx6K?r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php%3Fh%3Dbfa0fb0a2dc8985d84b2fe8c8140c894&amount=1";
+				String[] orderReq = new String[]{"bitcoin:mg7siucRD8SQPq264kYed5nY6D8qABdx6K?r=http%3A%2F%2F96.28.13.51%3A4567%2Forders_alt%2F1"};
+				String[] orderReq2 = new String[]{"bitcoin:mg7siucRD8SQPq264kYed5nY6D8qABdx6K?r=http%3A%2F%2F96.28.13.51%3A4567%2Forders%2Forder_1.bitcoinpaymentrequest"};
+				String[] orderReq3 = new String[]{"bitcoin:n2KoQQ45AsXwukKqJJCuw358PfAakgXU8J?r=http%3A%2F%2F96.28.13.51%3A4567%2Forders_alt%2F1&amount=0.00451541"};
 				
-				PaymentProtocolTool.main(asdf);
+				PaymentProtocolTool.main(orderReq);
 			
 	}
-	public static void main(String[] args) throws IOException {
+	public static void main2(String[] args) throws IOException {
 		
 		Connections.INSTANCE.open();
 //		LocalWallet.INSTANCE.init();
@@ -71,14 +72,14 @@ public class ReadPaymentRequest {
 		
 		// ---
 		
-		ByteBuffer b = Tools.getAsByteArray("http://localhost:4567/payment_request/1");
+		ByteBuffer b = Tools.getAsByteArray("http://localhost:4567/payment_requests/r1.bitcoinpaymentrequest");
 		
 //		ByteString a = ByteString.copyFrom(Tools.httpGet(, "UTF-8");
 //		System.out.println(a.toByteArray());
 		
-		PaymentRequest pr2 = PaymentRequest.parseFrom(new ByteArrayInputStream(b.array()));
+		PaymentRequest pr2 = PaymentRequest.parseFrom(b.array());
 		
-		System.out.println(pr2);
+		System.out.println("pr file = " + pr2);
 
 		
 		
