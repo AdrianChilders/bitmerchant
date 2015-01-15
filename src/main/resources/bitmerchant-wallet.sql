@@ -85,7 +85,8 @@ CREATE TABLE 'payments' (
 'order_id' INTEGER NOT NULL  DEFAULT NULL REFERENCES 'orders' ('id'),
 'merchant_data' NONE DEFAULT NULL,
 'memo' TEXT DEFAULT NULL,
-'current_timestamp' INTEGER DEFAULT CURRENT_TIMESTAMP
+'current_timestamp' INTEGER DEFAULT CURRENT_TIMESTAMP,
+'created_at' INTEGER DEFAULT CURRENT_TIMESTAMP
 );
 
 

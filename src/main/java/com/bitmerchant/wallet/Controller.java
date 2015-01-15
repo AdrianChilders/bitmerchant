@@ -121,7 +121,7 @@ public class Controller {
 				
 				// TODO for now, just associate the send addresses with the orders
 				// Since the payment_url unfortunately requires SSL
-				PaymentTools.updateOrderFromTransactionReceived(tx);
+//				PaymentTools.updateOrderFromTransactionReceived(tx);
 
 				
 		

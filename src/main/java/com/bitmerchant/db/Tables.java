@@ -29,6 +29,9 @@ public class Tables {
 	@Table("currencies") 
 	public static class Currency extends Model {}
 	
+	@Table("payments") 
+	public static class Payment extends Model {}
+	
 	@Table("transactions") 
 	public static class Transaction extends Model {}
 	

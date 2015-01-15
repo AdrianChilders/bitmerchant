@@ -2,12 +2,23 @@ package com.bitmerchant.db;
 
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.bitcoin.protocols.payments.Protos.Output;
+import org.bitcoin.protocols.payments.Protos.Payment;
+import org.bitcoin.protocols.payments.Protos.PaymentACK;
+import org.bitcoin.protocols.payments.Protos.PaymentDetails;
+import org.bitcoin.protocols.payments.Protos.PaymentRequest;
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.kits.WalletAppKit;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -28,6 +39,7 @@ import com.bitmerchant.db.Tables.Currency;
 import com.bitmerchant.db.Tables.Order;
 import com.bitmerchant.db.Tables.OrderStatus;
 import com.bitmerchant.db.Tables.OrderView;
+import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.CurrencyConverter;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
@@ -289,7 +301,7 @@ public class Actions {
 			}
 		}
 		
-		public static Order createOrder(String jsonReq, WalletAppKit bitcoin) {
+		public static Order createOrder(String jsonReq) {
 
 			// Parse the JSON into a tree
 			JsonNode root = Tools.jsonToNode(jsonReq);
@@ -300,16 +312,13 @@ public class Actions {
 			
 			// Add the payment_url from the order id(can only be done after its saved to get the id)
 			// and the receive address
-			o = updateExtraInfo(o, bitcoin);
+			o = updateExtraInfo(o);
 			
-			// Fetch the view back for the user
-//			String json = showOrder(Integer.valueOf(o.getId().toString()));
-
 			return o;
 
 		}
 		
-		public static Order createOrderFromButton(Integer buttonId, WalletAppKit bitcoin) {
+		public static Order createOrderFromButton(Integer buttonId) {
 			
 			
 			Order o = createOrderObj(buttonId);
@@ -317,10 +326,8 @@ public class Actions {
 			
 			// Add the payment_url from the order id(can only be done after its saved to get the id)
 			// and the receive address
-			o = updateExtraInfo(o, bitcoin);
-			
-			// Fetch the view back for the user
-//			String json = showOrder(Integer.valueOf(o.getId().toString()));
+			o = updateExtraInfo(o);
+		
 
 			return o;
 			
@@ -328,12 +335,12 @@ public class Actions {
 			
 		}
 		
-		public static Order updateExtraInfo(Order o, WalletAppKit bitcoin) {
+		public static Order updateExtraInfo(Order o) {
 			String id = o.getId().toString();
 			String paymentRequestURL = DataSources.WEB_SERVICE_URL + "payment_request/" + id;
 			o.set("payment_request_url", paymentRequestURL);
 			
-			String paymentURL = DataSources.WEB_SERVICE_URL + "payment";
+			String paymentURL = DataSources.WEB_SERVICE_URL + "create_payment/" + id;
 			o.set("payment_url", paymentURL);
 			
 			
@@ -352,8 +359,208 @@ public class Actions {
 			
 			return o;
 		}
+		
+
+		public static PaymentRequest createPaymentRequestFromOrder(Integer orderNum) {
+			Order o = Order.findById(orderNum);
+			return createPaymentRequestFromOrder(o);
+		}
+
+		public static PaymentRequest createPaymentRequestFromOrder(Order o) {
+
+			// Remember, need to make some updates to the order row too
+
+			Output.Builder ob = Output.newBuilder();
+
+			Coin amount = Coin.valueOf(o.getLong("total_satoshis"));
+			ob.setAmount(amount.value);
 
 
+			Transaction tx = new Transaction(bitcoin.params());		
+
+			try {
+				Address receiveAddr = new Address(bitcoin.params(), o.getString("receive_address"));
+
+				TransactionOutput outputToMe = new TransactionOutput(bitcoin.params(), tx, amount, receiveAddr);
+				ob.setScript(ByteString.copyFrom(outputToMe.getScriptBytes()));
+			} catch (AddressFormatException e) {
+				e.printStackTrace();
+			}
+
+			PaymentDetails.Builder pdB = PaymentDetails.newBuilder();
+
+			String network = (bitcoin.params().getId().equals("org.bitcoin.test")) ? "test" : "main";
+			pdB.setNetwork(network);
+
+			pdB.setTime(o.getLong("created_at")/1000L);
+
+
+			pdB.setExpires(o.getLong("expire_time")/1000L);
+		
+			// TODO can't do this due to SSL
+			pdB.setPaymentUrl(o.getString("payment_url"));
+
+
+			pdB.addOutputs(ob);
+
+			if (o.getString("memo") != null) 
+				pdB.setMemo(o.getString("memo"));
+
+			if (o.getString("merchant_data") != null) 
+				pdB.setMerchantData(ByteString.copyFromUtf8(o.getString("merchant_data")));
+			
+			PaymentDetails pd = pdB.build();
+			
+			PaymentRequest pr = PaymentRequest.newBuilder()
+					.setPaymentDetailsVersion(1)
+					.setPkiType("none")
+					.setSerializedPaymentDetails(pd.toByteString())
+					.build();
+
+			return pr;
+
+		}
+
+
+
+		/**
+		 *  @deprecated No need to write to a file anymore, just build the request from the order row
+		 */
+		@Deprecated 
+		public static String writePaymentRequestToFile(Integer orderNum,
+				PaymentRequest pr) {
+			OutputStream os;
+			File btcRequestFolder = new File(DataSources.HOME_DIR + 
+					"/orders/" );
+			btcRequestFolder.mkdirs();
+
+			String orderPath = "/order_" + orderNum + ".bitcoinpaymentrequest";
+			File btcFile = new File(btcRequestFolder.getAbsolutePath().concat(orderPath));
+			try {
+				os = new FileOutputStream(btcFile);
+
+				pr.writeTo(os);
+				os.flush();
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return orderPath;
+		}
+
+		/**
+		 *  @deprecated No need to do this anymore
+		 */
+		@Deprecated 
+		public static void updateOrderFromTransactionReceived(Transaction tx) {
+			// associate the tx outputs with the order receive_addresses 
+			// Get addresses
+			
+			Connections.INSTANCE.open();
+
+			
+			for (TransactionOutput txo : tx.getOutputs()) {
+				String txReceive = Tools.getTransactionOutputAddress(txo);
+				
+				Order o = Order.findFirst("receive_address=?", txReceive);
+				
+				if (o != null) {
+					// Found it! now update the row
+					log.info("Associating order #" + o.getId() + " with tx " +  tx.getHashAsString());
+					o.set("transaction_hash", tx.getHashAsString());
+					System.out.println("tx value = " + tx.getValue(bitcoin.wallet()));
+					System.out.println("order value = " + o.getInteger("total_satoshis"));
+				
+					o.saveIt();
+				}
+			}
+			
+
+			
+		}
+
+
+		// TODO finish some updates to the order row
+
+		//	   private PaymentRequest newSimplePaymentRequest(NetworkParameters params,
+		//			   Coin amount, String receiveAddress, DateTime time, @Nullable DateTime expireTime, 
+		//			   String paymentUrl, @Nullable String memo, @Nullable String merchantData) {
+		//	        Output.Builder outputBuilder = Output.newBuilder()
+		//	                .setAmount(coin.value)
+		//	                .setScript(ByteString.copyFrom(outputToMe.getScriptBytes()));
+		//	        PaymentDetails paymentDetails = PaymentDetails.newBuilder()
+		//	                .setNetwork(netID)
+		//	                .setTime(time)
+		//	                .setExpires(expireTime)
+		//	                .setPaymentUrl(simplePaymentUrl)
+		//	                .addOutputs(outputBuilder)
+		//	                .setMemo(paymentRequestMemo)
+		//	                .setMerchantData(merchantData)
+		//	                .build();
+		//	        return PaymentRequest.newBuilder()
+		//	                .setPaymentDetailsVersion(1)
+		//	                .setPkiType("none")
+		//	                .setSerializedPaymentDetails(paymentDetails.toByteString())
+		//	                .build();
+		//	    }
+
+	}
+	
+	public static class PaymentActions {
+
+		public static void savePaymentToRow(Payment p, Integer orderNum) {
+			com.bitmerchant.db.Tables.Payment pRow = new com.bitmerchant.db.Tables.Payment();
+			
+			pRow.set("order_id", orderNum);
+			
+			if (p.getMerchantData() != null) 
+			pRow.set("merchant_data", p.getMerchantData().toByteArray());
+			
+			if (p.getMemo() != null) 
+				pRow.set("memo", p.getMemo());
+			
+			pRow.saveIt();
+			
+			// Get the pRow id for downstream
+			Integer pRowId = Integer.valueOf(pRow.getId().toString());
+			
+			// Loop over the transactions
+			for (int i = 0; i < p.getTransactionsCount(); i++) {
+				byte[] tBytes = p.getTransactions(i).toByteArray();
+				com.bitmerchant.db.Tables.Transaction.createIt(
+						"payment_id", pRowId,
+						"index", i,
+						"bytes", tBytes);
+			}
+			
+			// Loop over the refund data
+			for (int i = 0; i < p.getRefundToCount(); i++) {
+				
+				Output o = p.getRefundTo(i);
+				long amount = o.getAmount();
+				byte[] sBytes = o.getScript().toByteArray();
+				com.bitmerchant.db.Tables.Refund.createIt(
+						"payment_id", pRowId,
+						"index", i,
+						"amount", amount,
+						"script_bytes", sBytes);
+			}
+			
+			
+			
+		}
+
+		public static PaymentACK createPaymentAck(Payment payment) {
+			PaymentACK.Builder paB = PaymentACK.newBuilder();
+			paB.setPayment(payment);
+			paB.setMemo("I need less week and more weekend");
+
+			PaymentACK pa = paB.build();
+			
+			return pa;
+		}
+		
+		
 	}
 
 }

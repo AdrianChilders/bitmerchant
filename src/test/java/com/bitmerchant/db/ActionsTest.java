@@ -34,7 +34,7 @@ public class ActionsTest extends TestCase {
 		
 		if (o == null) {
 
-			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ, bitcoin);
+			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ);
 		}
 	}
 	

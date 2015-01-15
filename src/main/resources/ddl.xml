@@ -73,7 +73,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="489" y="263" name="order_statuses">
+<table x="507" y="210" name="order_statuses">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -112,7 +112,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="754" y="19" name="transactions">
+<table x="730" y="15" name="transactions">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -223,7 +223,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="506" y="22" name="payments">
+<table x="507" y="21" name="payments">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -238,6 +238,9 @@
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
 <row name="current_timestamp" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>CURRENT_TIMESTAMP</default></row>
+<row name="created_at" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>CURRENT_TIMESTAMP</default></row>
 <key type="PRIMARY" name="">

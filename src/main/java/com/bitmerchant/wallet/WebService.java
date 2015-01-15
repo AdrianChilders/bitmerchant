@@ -2,38 +2,29 @@ package com.bitmerchant.wallet;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
-import static spark.Spark.put;
 import static spark.SparkBase.externalStaticFileLocation;
 import static spark.SparkBase.setPort;
 import static spark.SparkBase.staticFileLocation;
-
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-
 import javax.servlet.http.HttpServletResponse;
 
-
-import org.bitcoin.paymentchannel.Protos.PaymentAck;
-import org.bitcoin.protocols.payments.Protos.Output;
 import org.bitcoin.protocols.payments.Protos.Payment;
-import org.bitcoin.protocols.payments.Protos.Payment.Builder;
 import org.bitcoin.protocols.payments.Protos.PaymentACK;
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
-import org.bitcoinj.core.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.bitmerchant.db.Actions;
+import com.bitmerchant.db.Actions.OrderActions;
+import com.bitmerchant.db.Actions.PaymentActions;
 import com.bitmerchant.db.Tables.Button;
 import com.bitmerchant.db.Tables.Order;
-import com.bitmerchant.db.Tables.Refund;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
-import com.google.protobuf.ByteString;
 
 
 /*
@@ -287,7 +278,7 @@ public class WebService {
 
 				Integer buttonNum = Integer.valueOf(req.params(":button"));
 
-				Order o = Actions.OrderActions.createOrderFromButton(buttonNum, LocalWallet.bitcoin);
+				Order o = Actions.OrderActions.createOrderFromButton(buttonNum);
 
 
 				String json = Actions.OrderActions.showOrder(Integer.valueOf(o.getId().toString()));
@@ -331,7 +322,7 @@ public class WebService {
 				Tools.dbInit();
 
 				// Creates the order and the button from the req body
-				Order o = Actions.OrderActions.createOrder(req.body(), LocalWallet.bitcoin);
+				Order o = Actions.OrderActions.createOrder(req.body());
 
 				String json = Actions.OrderActions.showOrder(Integer.valueOf(o.getId().toString()));
 				Tools.dbClose();
@@ -402,7 +393,7 @@ public class WebService {
 				Order o = Order.findById(orderNum);
 
 				// Builds a payment request from the order row
-				PaymentRequest pr = PaymentTools.createPaymentRequestFromOrder(Integer.valueOf(o.getId().toString()));
+				PaymentRequest pr = OrderActions.createPaymentRequestFromOrder(Integer.valueOf(o.getId().toString()));
 
 				Tools.dbClose();
 
@@ -419,41 +410,26 @@ public class WebService {
 			}
 		});
 
-		post("/payment", PAYMENT_ACK_CONTENT_TYPE , (req, res) -> {
+		post("/create_payment/:order", PAYMENT_ACK_CONTENT_TYPE , (req, res) -> {
 			try {
 				res.type(PAYMENT_ACK_CONTENT_TYPE);
 				res.header("Content-Transfer-Encoding", "binary");
 
-		
+				Integer orderNum = Integer.valueOf(req.params(":order"));
 				
-						
+				Payment payment = Payment.parseFrom(req.raw().getInputStream());
 				
-				Payment p = Payment.parseFrom(req.raw().getInputStream());
-				
-				p.getTransactionsList().get(0).toByteArray();
-				
-				
-//				p.getRefundTo(0).get
-				Builder pb = Payment.newBuilder();
-				
-				Output.Builder refundB = Output.newBuilder();
-				
-				
-				//			p.get
-				
+				PaymentActions.savePaymentToRow(payment, orderNum);
+			
+				PaymentACK pa = PaymentActions.createPaymentAck(payment);
 
-				PaymentACK.Builder paB = PaymentACK.newBuilder();
-				paB.setPayment(p);
-				paB.setMemo("I need less week and more weekend");
-
-				PaymentACK pa = paB.build();
 				HttpServletResponse raw = res.raw();
 				pa.writeTo(raw.getOutputStream());
 				raw.getOutputStream().flush();
 				raw.getOutputStream().close();
 
 
-				log.info("payment = " + p);
+				log.info("payment = " + payment);
 
 				return res.raw();
 			} catch (NoSuchElementException  | IOException e) {
