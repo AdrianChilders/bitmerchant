@@ -28,7 +28,7 @@ public class PaymentToolsTest extends TestCase {
 		Order o = Order.findById(1);
 		
 		if (o == null) {
-			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ);
+			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ, bitcoin);
 		}
 		
 		

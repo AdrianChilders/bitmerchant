@@ -28,11 +28,10 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="buttons" row="id" />
 </row>
-<row name="transaction_id" null="1" autoincrement="0">
+<row name="transaction_hash" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="transactions" row="id" />
-</row>
-<row name="network" null="1" autoincrement="0">
+<default>NULL</default></row>
+<row name="payment_request_url" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
 <row name="payment_url" null="1" autoincrement="0">
@@ -74,7 +73,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="516" y="156" name="order_statuses">
+<table x="489" y="263" name="order_statuses">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -89,19 +88,22 @@
 </key>
 <comment>order_status</comment>
 </table>
-<table x="512" y="9" name="refunds">
+<table x="752" y="177" name="refunds">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="order_id" null="0" autoincrement="0">
+<row name="payment_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="orders" row="id" />
+<default>NULL</default><relation table="payments" row="id" />
 </row>
-<row name="refund_address" null="0" autoincrement="0">
-<datatype>TEXT</datatype>
-<default>'NULL'</default></row>
-<row name="refund_transaction_id" null="0" autoincrement="0">
+<row name="index" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="amount" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="script_bytes" null="0" autoincrement="0">
+<datatype>NONE</datatype>
 <default>NULL</default></row>
 <row name="created_at" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -110,21 +112,19 @@
 <part>id</part>
 </key>
 </table>
-<table x="516" y="264" name="transactions">
+<table x="754" y="19" name="transactions">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="hash" null="0" autoincrement="0">
-<datatype>TEXT</datatype>
-<default>'NULL'</default></row>
-<row name="confidence" null="0" autoincrement="0">
-<datatype>TEXT</datatype>
-<default>'NULL'</default></row>
-<row name="depth" null="0" autoincrement="0">
+<row name="payment_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="payments" row="id" />
+</row>
+<row name="index" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="total_satoshis" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
+<row name="bytes" null="0" autoincrement="0">
+<datatype>NONE</datatype>
 <default>NULL</default></row>
 <row name="created_at" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -133,7 +133,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="308" y="312" name="buttons">
+<table x="299" y="327" name="buttons">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -154,6 +154,9 @@
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="network" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>'test'</default></row>
 <row name="callback_url" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
@@ -214,6 +217,27 @@
 <datatype>TEXT</datatype>
 <default>'NULL'</default></row>
 <row name="created_at" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>CURRENT_TIMESTAMP</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="506" y="22" name="payments">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="order_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="orders" row="id" />
+</row>
+<row name="merchant_data" null="1" autoincrement="0">
+<datatype>NONE</datatype>
+<default>NULL</default></row>
+<row name="memo" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="current_timestamp" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>CURRENT_TIMESTAMP</default></row>
 <key type="PRIMARY" name="">

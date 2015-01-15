@@ -123,7 +123,7 @@ public class Tools {
 		Coin fee = tx.getFee();
 
 		if (value.isPositive()) {
-			map.put("message", "You received payment for an order");
+			map.put("message", "You received payment for an order " + tx.getMemo());
 			//			address = tx.getOutput(0).getAddressFromP2PKHScript(LocalWallet.params);
 			//			address = tx.getOutput(0).getScriptPubKey().getFromAddress(LocalWallet.params);
 

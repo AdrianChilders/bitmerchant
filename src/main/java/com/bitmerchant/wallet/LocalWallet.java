@@ -56,7 +56,7 @@ public class LocalWallet {
 
 	public void init() {
 
-	
+
 		
 		setupDirectories();
 

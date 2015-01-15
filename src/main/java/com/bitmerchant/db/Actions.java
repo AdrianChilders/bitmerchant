@@ -1,12 +1,19 @@
 package com.bitmerchant.db;
 
+import static com.bitmerchant.wallet.LocalWallet.bitcoin;
+
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.kits.WalletAppKit;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -55,10 +62,14 @@ public class Actions {
 			b.set("total_native", n.get("price_string").asText());
 			b.set("native_currency_id", currency.getId().toString());
 
+			
+			
 			if (type != null) 
 				b.set("type_id", type.getId().toString());
 			if (style != null)
 				b.set("style_id", style.getId().toString());
+			if (n.get("network") != null)
+				b.set("network",  n.get("network").asText());
 			if (n.get("text") != null)
 				b.set("text",  n.get("text").asText());
 			if (n.get("description") != null)
@@ -87,7 +98,36 @@ public class Actions {
 
 			JsonNode n = Tools.jsonToNode(b.toJson(false));
 			a.put("button", n);
-			return a.toString();
+			try {
+				return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+			} catch (IOException e) {
+			
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static String listButtons() {
+			List<ButtonView> btns = ButtonView.findAll();
+			
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode a = mapper.createObjectNode();
+
+			ArrayNode an = a.putArray("buttons");
+			
+			for (ButtonView ov : btns) {
+				ObjectNode b = mapper.createObjectNode();
+				b.put("button", Tools.jsonToNode(ov.toJson(false)));
+				an.add(b);
+			}
+			
+			try {
+				return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		/**
@@ -98,6 +138,7 @@ public class Actions {
     "name": "shoe",
     "type": "buy_now",
     "style": "custom_large",
+    "network": "test",
     "text": "Buy with USD/BTC",
     "price_string": "1.23",
     "price_currency_iso": "USD",
@@ -109,7 +150,7 @@ public class Actions {
 		 * @param jsonReq
 		 * @return 
 		 */
-		public static String createButton(String jsonReq) {
+		public static Button createButton(String jsonReq) {
 
 			// Parse the JSON into a tree
 			JsonNode root = Tools.jsonToNode(jsonReq);
@@ -118,10 +159,7 @@ public class Actions {
 			Button b = createButtonObj(root);
 			b.saveIt();
 
-			// Fetch the view back for the user
-			String json = showButton(Integer.valueOf(b.getId().toString()));
-
-			return json;
+			return b;
 
 		}
 
@@ -171,6 +209,8 @@ public class Actions {
 			o.set("button_id", Integer.valueOf(b.getId().toString()));
 
 			o.set("merchant_data", "DickTowel.com");
+			
+		
 			
 			
 
@@ -226,7 +266,30 @@ public class Actions {
 		
 		}
 		
-		public static String createOrder(String jsonReq) {
+		public static String listOrders() {
+			List<OrderView> ovs = OrderView.findAll();
+			
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode a = mapper.createObjectNode();
+
+			ArrayNode an = a.putArray("orders");
+			
+			for (OrderView ov : ovs) {
+				ObjectNode b = mapper.createObjectNode();
+				b.put("order", Tools.jsonToNode(ov.toJson(false)));
+				an.add(b);
+			}
+			
+			try {
+				return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public static Order createOrder(String jsonReq, WalletAppKit bitcoin) {
 
 			// Parse the JSON into a tree
 			JsonNode root = Tools.jsonToNode(jsonReq);
@@ -235,19 +298,61 @@ public class Actions {
 			Order o = createOrderObj(root);
 			o.saveIt();
 			
+			// Add the payment_url from the order id(can only be done after its saved to get the id)
+			// and the receive address
+			o = updateExtraInfo(o, bitcoin);
+			
 			// Fetch the view back for the user
-			String json = showOrder(Integer.valueOf(o.getId().toString()));
+//			String json = showOrder(Integer.valueOf(o.getId().toString()));
 
-			return json;
+			return o;
 
 		}
+		
+		public static Order createOrderFromButton(Integer buttonId, WalletAppKit bitcoin) {
+			
+			
+			Order o = createOrderObj(buttonId);
+			o.saveIt();
+			
+			// Add the payment_url from the order id(can only be done after its saved to get the id)
+			// and the receive address
+			o = updateExtraInfo(o, bitcoin);
+			
+			// Fetch the view back for the user
+//			String json = showOrder(Integer.valueOf(o.getId().toString()));
 
+			return o;
+			
+			
+			
+		}
+		
+		public static Order updateExtraInfo(Order o, WalletAppKit bitcoin) {
+			String id = o.getId().toString();
+			String paymentRequestURL = DataSources.WEB_SERVICE_URL + "payment_request/" + id;
+			o.set("payment_request_url", paymentRequestURL);
+			
+			String paymentURL = DataSources.WEB_SERVICE_URL + "payment";
+			o.set("payment_url", paymentURL);
+			
+			
+			
+			Address receiveAddr = bitcoin.wallet().freshReceiveAddress();
+			o.set("receive_address", receiveAddr.toString());
+			
+			// Set the network on the button
+			String network = (bitcoin.params().getId().equals("org.bitcoin.test")) ? "test" : "main";
+			Button b = Button.findById(o.getInteger("button_id"));
+			b.set("network", network);
+			
+			
+			b.saveIt();
+			o.saveIt();
+			
+			return o;
+		}
 
-
-
-
-
-		//			o.set(namesAndValues)
 
 	}
 

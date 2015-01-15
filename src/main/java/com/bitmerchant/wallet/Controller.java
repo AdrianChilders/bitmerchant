@@ -114,9 +114,17 @@ public class Controller {
 			@Override
 			public void onCoinsReceived(Wallet wallet, Transaction tx,
 					Coin prevBalance, Coin newBalance) {
+				
 				log.info("u received coins");
 				newestReceivedTransaction = tx;
 				log.info(Tools.getTransactionInfo(tx));
+				
+				// TODO for now, just associate the send addresses with the orders
+				// Since the payment_url unfortunately requires SSL
+				PaymentTools.updateOrderFromTransactionReceived(tx);
+
+				
+		
 
 
 			}

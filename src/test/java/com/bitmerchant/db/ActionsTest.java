@@ -1,5 +1,6 @@
 package com.bitmerchant.db;
 
+import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -11,12 +12,15 @@ import com.bitmerchant.db.Tables.Order;
 import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.bitmerchant.wallet.LocalWallet;
 public class ActionsTest extends TestCase {
 
 
 	 @Before
 	public void setUp() {
 		Connections.INSTANCE.open();
+		LocalWallet.INSTANCE.init();
+		bitcoin.awaitRunning();
 		
 		// Create the first button
 		Button b = Button.findById(1);
@@ -29,7 +33,8 @@ public class ActionsTest extends TestCase {
 		Order o = Order.findById(1);
 		
 		if (o == null) {
-			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ);
+
+			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ, bitcoin);
 		}
 	}
 	

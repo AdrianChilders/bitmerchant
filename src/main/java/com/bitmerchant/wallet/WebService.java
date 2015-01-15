@@ -2,43 +2,38 @@ package com.bitmerchant.wallet;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.put;
 import static spark.SparkBase.externalStaticFileLocation;
 import static spark.SparkBase.setPort;
 import static spark.SparkBase.staticFileLocation;
 
 
-
-
-
-import java.awt.image.renderable.RenderableImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-
-
 
 
 import javax.servlet.http.HttpServletResponse;
 
 
+import org.bitcoin.paymentchannel.Protos.PaymentAck;
+import org.bitcoin.protocols.payments.Protos.Output;
+import org.bitcoin.protocols.payments.Protos.Payment;
+import org.bitcoin.protocols.payments.Protos.Payment.Builder;
+import org.bitcoin.protocols.payments.Protos.PaymentACK;
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
+import org.bitcoinj.core.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
-
-
+import com.bitmerchant.db.Actions;
+import com.bitmerchant.db.Tables.Button;
+import com.bitmerchant.db.Tables.Order;
+import com.bitmerchant.db.Tables.Refund;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.google.protobuf.ByteString;
 
 
 /*
@@ -49,9 +44,13 @@ public class WebService {
 	// How long to keep the cookies
 	public static final Integer COOKIE_EXPIRE_SECONDS = Tools.cookieExpiration(1440);
 	static final Logger log = LoggerFactory.getLogger(WebService.class);
-	
+
 	public static final String PROTOCOL_CONTENT_TYPE = "application/octet-stream";
 	public static final String PAYMENTREQUEST_CONTENT_TYPE = "application/bitcoin-paymentrequest";
+	public static final String PAYMENT_CONTENT_TYPE = "application/bitcoin-payment";
+	public static final String PAYMENT_ACK_CONTENT_TYPE = "application/bitcoin-paymentack";
+
+	public static final String JSON_CONTENT_TYPE = "application/json";
 
 	public static void start() {
 		setPort(DataSources.SPARK_WEB_PORT);
@@ -233,67 +232,238 @@ public class WebService {
 			return LocalWallet.INSTANCE.controller.getNewestReceivedTransaction();
 		});
 
-	
-		get("/create_order/:order",PAYMENTREQUEST_CONTENT_TYPE , (req, res) -> {
-			res.type(PAYMENTREQUEST_CONTENT_TYPE);
+		post("/create_button",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+			try {
 
-			Tools.allowResponseHeaders(req, res);
-			Tools.dbInit();
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
 
-			Integer orderNum = Integer.valueOf(req.params(":order"));
-			PaymentRequest pr = PaymentTools.createPaymentRequestFromOrder(orderNum);
+				// Creates the button and the button from the req body
+				Button b = Actions.ButtonActions.createButton(req.body());
 
-			Tools.dbClose();
-			log.info("paymentreq : " + pr.toString());
-			
+				String json = Actions.ButtonActions.showButton(Integer.valueOf(b.getId().toString()));
+				Tools.dbClose();
 
-			String orderPath = PaymentTools.writePaymentRequestToFile(orderNum, pr);
+				return json; 
 
-			res.redirect("/payment_requests" + orderPath);
-
-			return "can not touch this code . jpg";
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
 
 		});
-		
-		get("/orders_alt/:order",PAYMENTREQUEST_CONTENT_TYPE , (req, res) -> {
+
+		get("/buttons/:button",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				// Creates the button and the button from the req body
+				Integer buttonNum = Integer.valueOf(req.params(":button"));
+
+				String json = Actions.ButtonActions.showButton(buttonNum);
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		post("/buttons/:button/create_order",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				Integer buttonNum = Integer.valueOf(req.params(":button"));
+
+				Order o = Actions.OrderActions.createOrderFromButton(buttonNum, LocalWallet.bitcoin);
+
+
+				String json = Actions.OrderActions.showOrder(Integer.valueOf(o.getId().toString()));
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		get("/buttons",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				String json = Actions.ButtonActions.listButtons();
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+
+		post("/create_order",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				// Creates the order and the button from the req body
+				Order o = Actions.OrderActions.createOrder(req.body(), LocalWallet.bitcoin);
+
+				String json = Actions.OrderActions.showOrder(Integer.valueOf(o.getId().toString()));
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		get("/orders/:order",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				// Creates the order and the button from the req body
+				Integer orderNum = Integer.valueOf(req.params(":order"));
+
+				String json = Actions.OrderActions.showOrder(orderNum);
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		get("/orders",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				String json = Actions.OrderActions.listOrders();
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+
+		get("/payment_request/:order",PAYMENTREQUEST_CONTENT_TYPE , (req, res) -> {
 			res.type(PAYMENTREQUEST_CONTENT_TYPE);
 			res.header("Content-Transfer-Encoding", "binary");
-			
-			Integer orderNum = Integer.valueOf(req.params(":order"));
-			String orderPath = DataSources.HOME_DIR + 
-					"/orders/order_" + orderNum + ".bitcoinpaymentrequest";
-//			res.redirect("/payment_requests" + orderPath);
-			
-			// try to return the bytes of the file
-//			Files.readAllBytes(new File(orderPath));
 			try {
-				byte[] bytes = Files.readAllBytes(Paths.get(orderPath));			
-				
+				Integer orderNum = Integer.valueOf(req.params(":order"));
+
+				Tools.allowResponseHeaders(req, res);
+				Tools.dbInit();
+
+				// Fetch the order
+				Order o = Order.findById(orderNum);
+
+				// Builds a payment request from the order row
+				PaymentRequest pr = PaymentTools.createPaymentRequestFromOrder(Integer.valueOf(o.getId().toString()));
+
+				Tools.dbClose();
+
 				HttpServletResponse raw = res.raw();
-				
-				PaymentRequest pr = PaymentRequest.parseFrom(bytes);
-				
 				pr.writeTo(raw.getOutputStream());
-				
 				raw.getOutputStream().flush();
 				raw.getOutputStream().close();
-				
-				
+
+
 				return res.raw();
-				
-				
-				
-				
-//				return new File(orderPath);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (NoSuchElementException  | IOException e) {
+				res.status(666);
+				return e.getMessage();
 			}
-			
-			
-			return "can not touch this code . jpg";
 		});
+
+		post("/payment", PAYMENT_ACK_CONTENT_TYPE , (req, res) -> {
+			try {
+				res.type(PAYMENT_ACK_CONTENT_TYPE);
+				res.header("Content-Transfer-Encoding", "binary");
+
+		
+				
+						
+				
+				Payment p = Payment.parseFrom(req.raw().getInputStream());
+				
+				p.getTransactionsList().get(0).toByteArray();
+				
+				
+//				p.getRefundTo(0).get
+				Builder pb = Payment.newBuilder();
+				
+				Output.Builder refundB = Output.newBuilder();
+				
+				
+				//			p.get
+				
+
+				PaymentACK.Builder paB = PaymentACK.newBuilder();
+				paB.setPayment(p);
+				paB.setMemo("I need less week and more weekend");
+
+				PaymentACK pa = paB.build();
+				HttpServletResponse raw = res.raw();
+				pa.writeTo(raw.getOutputStream());
+				raw.getOutputStream().flush();
+				raw.getOutputStream().close();
+
+
+				log.info("payment = " + p);
+
+				return res.raw();
+			} catch (NoSuchElementException  | IOException e) {
+				res.status(666);
+				return e.getMessage();
+			}
+		
+		});
+
+
 		//		post("/create_button", (req, res) -> {
 		//			Tools.allowResponseHeaders(req, res);
 		//			return Actions.createButton(req.body());
