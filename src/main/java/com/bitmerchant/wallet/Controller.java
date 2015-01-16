@@ -13,8 +13,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
@@ -22,7 +20,6 @@ import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.InsufficientMoneyException;
@@ -37,9 +34,9 @@ import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.params.KeyParameter;
 
+import com.bitmerchant.db.Actions.OrderActions;
 import com.bitmerchant.tools.Tools;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -67,7 +64,7 @@ public class Controller {
 	private String passwordBtnText;
 	private Boolean walletIsEncrypted = false;
 	private Boolean walletIsLocked = false;
-	
+
 	private Transaction newestReceivedTransaction;
 
 	public static final String TAG = Controller.class.getName() + ".target-time";
@@ -114,17 +111,16 @@ public class Controller {
 			@Override
 			public void onCoinsReceived(Wallet wallet, Transaction tx,
 					Coin prevBalance, Coin newBalance) {
-				
+
 				log.info("u received coins");
 				newestReceivedTransaction = tx;
 				log.info(Tools.getTransactionInfo(tx));
-				
+
 				// TODO for now, just associate the send addresses with the orders
 				// Since the payment_url unfortunately requires SSL
-//				PaymentTools.updateOrderFromTransactionReceived(tx);
+				OrderActions.updateOrderFromTransactionReceived(tx);
 
-				
-		
+
 
 
 			}
@@ -236,7 +232,7 @@ public class Controller {
 		checkNotNull(keyCrypter);   // We should never arrive at this GUI if the wallet isn't actually encrypted.
 		KeyDerivationTasks tasks = new KeyDerivationTasks(keyCrypter, password, getTargetTime());
 		try {
-		bitcoin.wallet().decrypt(tasks.getAesKey());
+			bitcoin.wallet().decrypt(tasks.getAesKey());
 		} catch(KeyCrypterException e) {
 			throw new NoSuchElementException("Incorrect password");
 		}
@@ -281,16 +277,16 @@ public class Controller {
 
 		// check to see if wallet words are okay
 		try {
-		MnemonicCode codec = new MnemonicCode();
-	
+			MnemonicCode codec = new MnemonicCode();
+
 			codec.check(Splitter.on(' ').splitToList(walletWords));
 		} catch (MnemonicException | IOException e) {
 			throw new NoSuchElementException("Incorrect wallet words");
 		}
-	
 
 
-		
+
+
 		if (aesKey != null) {
 			// This is weak. We should encrypt the new seed here.
 			return ("Wallet is encrypted. " + 
@@ -324,13 +320,36 @@ public class Controller {
 	}
 
 	public String sendMoney(String amountStr, String addressStr) {
+		Coin amount = Coin.parseCoin(amountStr);
+		Address destination;
+		try {
+			destination = new Address(LocalWallet.params, addressStr);
 
+			Wallet.SendRequest req = Wallet.SendRequest.to(destination, amount);
+
+			String message = sendWalletRequest(req);
+
+			return message;
+
+		} catch (AddressFormatException e) {
+			// Cannot happen because we already validated it when the text field changed.
+			throw new NoSuchElementException("Invalid bitcoin address");
+
+		}
+
+
+	}
+
+	public String sendWalletRequest(Wallet.SendRequest req) {
 		// TODO Address exception cannot happen as we validated it beforehand.
 		try {
-			Coin amount = Coin.parseCoin(amountStr);
-			Address destination = new Address(LocalWallet.params, addressStr);
-			Wallet.SendRequest req = Wallet.SendRequest.to(destination, amount);
+
+			if (walletIsLocked) {
+				return "Wallet is locked, cannot send money.";
+			}
+
 			req.aesKey = aesKey;
+
 			sendResult = bitcoin.wallet().sendCoins(req);
 			Futures.addCallback(sendResult.broadcastComplete, new FutureCallback<Transaction>() {
 				@Override
@@ -356,12 +375,17 @@ public class Controller {
 			//            overlayUI.done();
 		} catch (ECKey.KeyIsEncryptedException e) {
 			//            askForPasswordAndRetry();
-		} catch (AddressFormatException e) {
-			// Cannot happen because we already validated it when the text field changed.
-			throw new NoSuchElementException("Invalid bitcoin address");
-		}
+		} 
 
 		return "Sending money...";
+	}
+
+	public String sendRefund(Transaction tx) {
+
+		Wallet.SendRequest req = Wallet.SendRequest.forTx(tx);
+		String message = sendWalletRequest(req);
+
+		return message;
 	}
 
 	private void updateTitleForBroadcast() {
@@ -398,28 +422,28 @@ public class Controller {
 			realTargetTime = Duration.ofMillis((long) (time * 1.1));
 		}
 	}
-	
-	
-	
 
-	
+
+
+
+
 	public String getTransactionsJSON() {
 
 		
 		List<Transaction> transactions = bitcoin.wallet().getTransactionsByTime();
-		
+
 		return Tools.convertLOMtoJson(Tools.convertTransactionsToLOM(transactions));
 	}
-	
+
 	public String getNewestReceivedTransaction() {
-//		log.info("newest transaction = " + Tools.GSON.toJson(newestReceivedTransaction));
+		//		log.info("newest transaction = " + Tools.GSON.toJson(newestReceivedTransaction));
 		return new Tools.TransactionJSON(newestReceivedTransaction).json();
 	}
-	
+
 	public String getNewestReceivedTransactionHash() {
 		return new Tools.TransactionJSON(newestReceivedTransaction).getHash();
 	}
-	
+
 
 
 	// Reads target time or throws if not set yet (should never happen).

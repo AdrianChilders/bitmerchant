@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
+import com.bitmerchant.db.Tables.OrderView;
 import com.bitmerchant.wallet.LocalWallet;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
@@ -58,28 +59,27 @@ public class Tools {
 	public static final Gson GSON = new Gson();
 	public static final Gson GSON2 = new GsonBuilder().setPrettyPrinting().create();
 	static final Logger log = LoggerFactory.getLogger(Tools.class);
-	
+
 	public static final DateTimeFormatter DTF2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").
 			withZone(DateTimeZone.UTC);
 	public static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").
 			withZone(DateTimeZone.UTC);
 
 
-	public static void allowResponseHeaders(Request req, Response res) {
-//		Connections.INSTANCE.open();
-		
+	public static void allowOnlyLocalHeaders(Request req, Response res) {
+
 		String origin = req.headers("Origin");
 		String host = req.headers("Host");
 		log.info("request host: " + host);
 		log.info("request origin: " + origin);
-		
-//		res.header("Access-Control-Allow-Credentials", "true");
+
+		//		res.header("Access-Control-Allow-Credentials", "true");
 		//		System.out.println("origin = " + origin);
 		//		if (DataSources.ALLOW_ACCESS_ADDRESSES.contains(req.headers("Origin"))) {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
-//		res.header("Access-Control-Allow-Origin", origin);
-
+		
+		res.header("Access-Control-Allow-Origin", "localhost:4567");
 
 	}
 
@@ -107,39 +107,73 @@ public class Tools {
 	public static List<Map<String, String>> convertTransactionsToLOM(List<Transaction> transactions) {
 		List<Map<String, String>> lom = new ArrayList<Map<String,String>>();
 
+		// Get all the orders at once
+		List<OrderView> ovs = OrderView.findAll();
+		
+		// create a map from order hash to order number
+		Map<String, OrderView> orderHashToOrderMap = orderHashToOrderMap(ovs);
+		
 		for (Transaction cT : transactions) {
-			Map<String, String> tMap = convertTransactionToMap(cT);
+			String txHash = cT.getHashAsString();			
+			
+			OrderView ov = (orderHashToOrderMap.get(txHash) != null) ? orderHashToOrderMap.get(txHash) : null;
+			Map<String, String> tMap = convertTransactionToMap(cT, ov);
 			lom.add(tMap);
 
 		}
 
 		return lom;
 	}
+	
+	public static Map<String, OrderView> orderHashToOrderMap(List<OrderView> ovs) {
+		Map<String, OrderView> orderHashToIdMap = new HashMap<String, OrderView>();
+		for (OrderView ov : ovs) {
+			String hash = ov.getString("transaction_hash");
+			orderHashToIdMap.put(hash,  ov);
+		}
+		
+		return orderHashToIdMap;
+	}
 
-	public static Map<String, String>convertTransactionToMap(Transaction tx) {
+	public static Map<String, String>convertTransactionToMap(Transaction tx, 
+			OrderView ov) {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 
 		Coin value = tx.getValue(bitcoin.wallet());
 		Coin fee = tx.getFee();
 
+		map.put("transaction_hash", tx.getHashAsString());
+		
+		
+		String receiveMessage;
+		if (ov != null) {
+			receiveMessage = "You received payment for a ";
+			map.put("button_name", ov.getString("button_name"));
+			map.put("order", ov.getId().toString());
+					
+		} else {
+			receiveMessage = "You received money directly";
+		}
+
+		String moneySent = "You sent bitcoin to an external account" + 
+				"";
+
 		if (value.isPositive()) {
-			map.put("message", "You received payment for an order " + tx.getMemo());
+			map.put("message", receiveMessage);
 			//			address = tx.getOutput(0).getAddressFromP2PKHScript(LocalWallet.params);
 			//			address = tx.getOutput(0).getScriptPubKey().getFromAddress(LocalWallet.params);
 
-			// TODO grab order number from SQL
-			map.put("order", "asdf");
 			map.put("amount", "<span class=\"text-success\"> +" + mBtcFormat(value) + "</span>");
 
 		} else if (value.isNegative()) {
-			map.put("message", "You sent bitcoin to an external account");
+			map.put("message", moneySent);
 			Address address = tx.getOutput(0).getAddressFromP2PKHScript(LocalWallet.params);
 			//			address = tx.getOutput(0).getScriptPubKey().getFromAddress(LocalWallet.params);
 			map.put("address", address.toString());
-			
-			if (fee != null) {
 
-				map.put("fee", "<span class=\"text-muted\">-" + mBtcFormat(fee) + "</span>");
+			if (fee != null) {
+				
+				map.put("fee", "-" + mBtcFormat(fee));
 
 
 				// Subtract the fee from the net amount(in negatives)
@@ -233,7 +267,7 @@ public class Tools {
 	public static String getTransactionInfo(Transaction tx) {
 		List<TransactionOutput> txos = tx.getOutputs();
 		List<TransactionInput> txis = tx.getInputs();
-		
+
 		StringBuilder s = new StringBuilder();
 		s.append("Inputs: \n");
 		for (TransactionInput txi : txis) {
@@ -244,30 +278,30 @@ public class Tools {
 		for (TransactionOutput txo : txos) {
 			s.append(getTransactionOutputAddress(txo) + "\n");
 		}
-		
+
 		s.append("Hash: " + tx.getHashAsString() + "\n");
-	
-		
-	
-	
+
+
+
+
 
 		return s.toString();
 	}
-	
+
 	public static class TransactionJSON {
 		String hash;
 		String amount;
-		
+
 		public TransactionJSON(Transaction tx) {
 			if (tx != null) {
-			hash = tx.getHashAsString();
-			amount = mBtcFormat(tx.getValue(bitcoin.wallet()));
+				hash = tx.getHashAsString();
+				amount = mBtcFormat(tx.getValue(bitcoin.wallet()));
 			} else {
 				hash = "none yet";
 				amount = "none yet";
 			}
 		}
-		
+
 		public String json() {
 			return GSON.toJson(this);
 		}
@@ -279,14 +313,14 @@ public class Tools {
 		public String getAmount() {
 			return amount;
 		}
-		
-		
+
+
 	}
 
 	public static Integer cookieExpiration(Integer minutes) {
 		return minutes*60;
 	}
-	
+
 	public static final String httpGet(String url) {
 		String res = "";
 		try {
@@ -306,47 +340,47 @@ public class Tools {
 		} catch(IOException e) {}
 		return res;
 	}
-	
+
 	public static ByteBuffer getAsByteArray(String urlStr) throws IOException {
 		URL url = new URL(urlStr);
-		
-	    URLConnection connection = url.openConnection();
-	    // Since you get a URLConnection, use it to get the InputStream
-	    InputStream in = connection.getInputStream();
-	    // Now that the InputStream is open, get the content length
-	    int contentLength = connection.getContentLength();
 
-	    // To avoid having to resize the array over and over and over as
-	    // bytes are written to the array, provide an accurate estimate of
-	    // the ultimate size of the byte array
-	    ByteArrayOutputStream tmpOut;
-	    if (contentLength != -1) {
-	        tmpOut = new ByteArrayOutputStream(contentLength);
-	    } else {
-	        tmpOut = new ByteArrayOutputStream(16384); // Pick some appropriate size
-	    }
+		URLConnection connection = url.openConnection();
+		// Since you get a URLConnection, use it to get the InputStream
+		InputStream in = connection.getInputStream();
+		// Now that the InputStream is open, get the content length
+		int contentLength = connection.getContentLength();
 
-	    byte[] buf = new byte[512];
-	    while (true) {
-	        int len = in.read(buf);
-	        if (len == -1) {
-	            break;
-	        }
-	        tmpOut.write(buf, 0, len);
-	    }
-	    in.close();
-	    tmpOut.close(); // No effect, but good to do anyway to keep the metaphor alive
+		// To avoid having to resize the array over and over and over as
+		// bytes are written to the array, provide an accurate estimate of
+		// the ultimate size of the byte array
+		ByteArrayOutputStream tmpOut;
+		if (contentLength != -1) {
+			tmpOut = new ByteArrayOutputStream(contentLength);
+		} else {
+			tmpOut = new ByteArrayOutputStream(16384); // Pick some appropriate size
+		}
 
-	    byte[] array = tmpOut.toByteArray();
+		byte[] buf = new byte[512];
+		while (true) {
+			int len = in.read(buf);
+			if (len == -1) {
+				break;
+			}
+			tmpOut.write(buf, 0, len);
+		}
+		in.close();
+		tmpOut.close(); // No effect, but good to do anyway to keep the metaphor alive
 
-	    //Lines below used to test if file is corrupt
-	    //FileOutputStream fos = new FileOutputStream("C:\\abc.pdf");
-	    //fos.write(array);
-	    //fos.close();
+		byte[] array = tmpOut.toByteArray();
 
-	    return ByteBuffer.wrap(array);
+		//Lines below used to test if file is corrupt
+		//FileOutputStream fos = new FileOutputStream("C:\\abc.pdf");
+		//fos.write(array);
+		//fos.close();
+
+		return ByteBuffer.wrap(array);
 	}
-	
+
 	public static List<Map<String, String>> ListOfMapsPOJO(String json) {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -362,7 +396,7 @@ public class Tools {
 		}
 		return null;
 	}
-	
+
 	public static Map<String, String> mapPOJO(String json) {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -378,7 +412,7 @@ public class Tools {
 		}
 		return null;
 	}
-	
+
 	public static Map<String, Object> mapPOJO2(String json) {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -394,7 +428,7 @@ public class Tools {
 		}
 		return null;
 	}
-	
+
 	public static JsonNode jsonToNode(String json) {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -409,7 +443,7 @@ public class Tools {
 		}
 		return null;
 	}
-	
+
 	public static void runSQLFile(Connection c,File sqlFile) throws SQLException, IOException {
 		Statement stmt = null;
 		stmt = c.createStatement();
@@ -417,7 +451,7 @@ public class Tools {
 		stmt.executeUpdate(sql);
 		stmt.close();
 	}
-	
+
 	public static final void dbInit() {
 		try {
 			Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + DataSources.DB_FILE, "root", "p@ssw0rd");
@@ -427,7 +461,7 @@ public class Tools {
 		}
 
 	}
-	
+
 	public static final void dbClose() {
 		Base.close();
 	}

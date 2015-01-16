@@ -258,9 +258,24 @@
 
               <tr> 
                 <td>{{date}}</td>
-                <td>{{message}} <br> <span class="text-muted">{{#fee}} Network fee {{/fee}}</span></td>
+                <td>{{{message}}} <b>{{button_name}}</b> 
+                 <a href="https://www.biteasy.com/testnet/transactions/{{transaction_hash}}">
+                    <sup>tx</sup></a>
+                {{#order}}
+                  <br> <span class="text-muted"> Order # {{order}} </span>
+                {{/order}}
+                {{#fee}}
+                  <br> <span class="text-muted">Network fee </span>
+                {{/fee}}
+
+                </td>
                 <td>{{status}}</td>
-                <td>{{{amount}}}<br>{{{fee}}}</td>
+                <td>{{{amount}}} 
+                  {{#fee}}
+                    <br><span class="text-muted">{{fee}}</span>
+                  {{/fee}}
+
+                </td>
             
               </tr>
               {{/.}}

@@ -73,7 +73,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="507" y="210" name="order_statuses">
+<table x="506" y="235" name="order_statuses">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -88,7 +88,7 @@
 </key>
 <comment>order_status</comment>
 </table>
-<table x="752" y="177" name="refunds">
+<table x="732" y="211" name="refunds">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -96,7 +96,7 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="payments" row="id" />
 </row>
-<row name="index" null="1" autoincrement="0">
+<row name="index_" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="amount" null="0" autoincrement="0">
@@ -112,7 +112,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="730" y="15" name="transactions">
+<table x="730" y="8" name="transactions">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -120,7 +120,10 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="payments" row="id" />
 </row>
-<row name="index" null="0" autoincrement="0">
+<row name="index_" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="satoshis" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="bytes" null="0" autoincrement="0">
@@ -233,6 +236,9 @@
 </row>
 <row name="merchant_data" null="1" autoincrement="0">
 <datatype>NONE</datatype>
+<default>NULL</default></row>
+<row name="satoshis_received" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="memo" null="1" autoincrement="0">
 <datatype>TEXT</datatype>

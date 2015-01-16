@@ -1,4 +1,4 @@
-package com.bitmerchant.wallet;
+package com.bitmerchant.webservice;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -23,13 +23,17 @@ import com.bitmerchant.db.Actions.OrderActions;
 import com.bitmerchant.db.Actions.PaymentActions;
 import com.bitmerchant.db.Tables.Button;
 import com.bitmerchant.db.Tables.Order;
+import com.bitmerchant.db.Tables.OrderView;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.bitmerchant.wallet.LocalWallet;
 
 
 /*
  * TODO not all of these should be exposed to the web. Really only the paymentrequest
+ * 
  */
+
 public class WebService {
 
 	// How long to keep the cookies
@@ -43,69 +47,72 @@ public class WebService {
 
 	public static final String JSON_CONTENT_TYPE = "application/json";
 
+
+
+
 	public static void start() {
-		setPort(DataSources.SPARK_WEB_PORT);
+		setPort(DataSources.SPARK_WEB_PORT) ;
 
 		staticFileLocation("/web"); // Static files
 		externalStaticFileLocation(DataSources.HOME_DIR);
 		//		externalStaticFileLocation(DataSources.CODE_DIR);
 
-
-
-
+		
 		get("/hello", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return "hi from the bitmerchant wallet web service";
 		});
+		
 		get("/garp", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+
+			Tools.allowOnlyLocalHeaders(req, res);
 			res.redirect("/html/main2.html");
 			return null;
 		});
 
 		get("/status_progress", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			//			return lw.controller.getStatusProgress();
 			return LocalWallet.INSTANCE.controller.getStatusProgress();
 
 		});
 
 		get("/status_text", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getStatusText();
 		});
 
 		get("/receive_address", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getAddressText();
 		});
 
 		get("/balance", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getBalanceText();
 		});
 
 		get("/wallet_words", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getWalletWords();
 		});
 
 		get("/wallet_creation_date", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getWalletCreationDateStr();
 		});
 
 		get("/wallet_is_encrypted", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getWalletIsEncrypted();
 		});
 		get("/wallet_is_locked", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getWalletIsLocked();
 		});
 
 		post("/set_wallet_password", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			String password = Tools.createMapFromAjaxPost(req.body()).get("password");
 			String message = LocalWallet.INSTANCE.controller.setWalletPassword(password);
 			return message;
@@ -113,7 +120,7 @@ public class WebService {
 
 		post("/remove_wallet_password", (req, res) -> {
 			try {
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				String password = Tools.createMapFromAjaxPost(req.body()).get("password");
 				String message = LocalWallet.INSTANCE.controller.removeWalletPassword(password);
 
@@ -127,7 +134,7 @@ public class WebService {
 
 		post("/unlock_wallet", (req, res) -> {
 			try {
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				String password = Tools.createMapFromAjaxPost(req.body()).get("password");
 				String message = LocalWallet.INSTANCE.controller.unlockWallet(password);
 
@@ -142,7 +149,7 @@ public class WebService {
 
 		post("/restore_wallet", (req, res) -> {
 			try {
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 
 				Map<String, String> formItems = Tools.createMapFromAjaxPost(req.body());
 
@@ -162,7 +169,7 @@ public class WebService {
 
 		post("/send_money", (req, res) -> {
 			try {
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 
 				Map<String, String> formItems = Tools.createMapFromAjaxPost(req.body());
 
@@ -183,7 +190,7 @@ public class WebService {
 
 		post("/send_money_encrypted", (req, res) -> {
 			try {
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 
 				Map<String, String> formItems = Tools.createMapFromAjaxPost(req.body());
 
@@ -204,17 +211,21 @@ public class WebService {
 		});
 
 		get("/send_status", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getSendStatus();
 		});
 
 		get("/get_transactions", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
-			return LocalWallet.INSTANCE.controller.getTransactionsJSON();
+			Tools.allowOnlyLocalHeaders(req, res);
+			Tools.dbInit();
+			String txs = LocalWallet.INSTANCE.controller.getTransactionsJSON();
+			Tools.dbClose();
+			return txs;
+
 		});
 
 		get("/newest_received_tx", (req, res) -> {
-			Tools.allowResponseHeaders(req, res);
+			Tools.allowOnlyLocalHeaders(req, res);
 			// use a cookie, not a return
 			//			res.cookie("newestReceivedTransaction", LocalWallet.instance.controller.getNewestReceivedTransaction(),
 			//					COOKIE_EXPIRE_SECONDS, true);
@@ -227,7 +238,7 @@ public class WebService {
 			res.type(JSON_CONTENT_TYPE);
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				// Creates the button and the button from the req body
@@ -250,7 +261,7 @@ public class WebService {
 
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				// Creates the button and the button from the req body
@@ -273,7 +284,7 @@ public class WebService {
 
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				Integer buttonNum = Integer.valueOf(req.params(":button"));
@@ -298,7 +309,7 @@ public class WebService {
 
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				String json = Actions.ButtonActions.listButtons();
@@ -318,7 +329,7 @@ public class WebService {
 			res.type(JSON_CONTENT_TYPE);
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				// Creates the order and the button from the req body
@@ -341,7 +352,7 @@ public class WebService {
 
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				// Creates the order and the button from the req body
@@ -364,7 +375,7 @@ public class WebService {
 
 			try {
 
-				Tools.allowResponseHeaders(req, res);
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				String json = Actions.OrderActions.listOrders();
@@ -386,7 +397,6 @@ public class WebService {
 			try {
 				Integer orderNum = Integer.valueOf(req.params(":order"));
 
-				Tools.allowResponseHeaders(req, res);
 				Tools.dbInit();
 
 				// Fetch the order
@@ -415,12 +425,15 @@ public class WebService {
 				res.type(PAYMENT_ACK_CONTENT_TYPE);
 				res.header("Content-Transfer-Encoding", "binary");
 
+
+				Tools.dbInit();
+
 				Integer orderNum = Integer.valueOf(req.params(":order"));
-				
+
 				Payment payment = Payment.parseFrom(req.raw().getInputStream());
-				
+
 				PaymentActions.savePaymentToRow(payment, orderNum);
-			
+
 				PaymentACK pa = PaymentActions.createPaymentAck(payment);
 
 				HttpServletResponse raw = res.raw();
@@ -428,6 +441,7 @@ public class WebService {
 				raw.getOutputStream().flush();
 				raw.getOutputStream().close();
 
+				Tools.dbClose();
 
 				log.info("payment = " + payment);
 
@@ -436,7 +450,72 @@ public class WebService {
 				res.status(666);
 				return e.getMessage();
 			}
-		
+
+		});
+
+		post("/refund/:order", JSON_CONTENT_TYPE , (req, res) -> {
+			try {
+
+				Tools.dbInit();
+				Integer orderNum = Integer.valueOf(req.params(":order"));
+
+				OrderView ov = OrderView.findById(orderNum);
+
+				// Get the native currency
+				String nativeCurrencyIso = ov.getString("native_currency_iso");
+				String amount = ov.getString("total_native");
+
+
+
+				String message = PaymentActions.sendRefund(orderNum, amount, nativeCurrencyIso);
+
+				Tools.dbClose();
+
+				return message;
+
+			} catch (NoSuchElementException e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		post("/refund/:order/:amount/:currency", JSON_CONTENT_TYPE , (req, res) -> {
+			try {
+
+				Tools.dbInit();
+
+				Integer orderNum = Integer.valueOf(req.params(":order"));
+				String amount =req.params(":amount");
+				String nativeCurrencyIso = req.params(":currency");
+
+
+				String message = PaymentActions.sendRefund(orderNum, amount, nativeCurrencyIso);
+
+				Tools.dbClose();
+
+				return message;
+
+			} catch (NoSuchElementException e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+		get("/currencies", JSON_CONTENT_TYPE , (req, res) -> {
+			try {
+				res.type(JSON_CONTENT_TYPE);
+
+				Tools.dbInit();
+				String json = Actions.listCurrencies();
+				Tools.dbClose();
+
+				return json;
+			} catch (NoSuchElementException e) {
+				res.status(666);
+				return e.getMessage();
+			}
 		});
 
 

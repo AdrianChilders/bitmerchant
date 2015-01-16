@@ -74,16 +74,16 @@ public enum CurrencyConverter {
 		System.out.println(m1);
 
 		System.out.println(m);
-		
+
 		CurrencyConverter cc = CurrencyConverter.INSTANCE;
-		
+
 		Money convertedMoney = cc.convertMoneyForToday(CurrencyUnit.of("USD"), m1);
-		
+
 		System.out.println(convertedMoney);
 		Thread.sleep(6000);
 		convertedMoney = cc.convertMoneyForToday(CurrencyUnit.USD, m);
 		System.out.println(convertedMoney);
-		
+
 	}
 
 
@@ -189,19 +189,19 @@ public enum CurrencyConverter {
 		return convertedSeries;
 	}
 
-	public Money convertMoney(CurrencyUnit cu, DateTime dt, Money unconverted) {
+	public Money convertMoney(CurrencyUnit toCurrency, DateTime dt, Money unconverted) {
 		Money converted = null;
 		try {
 			DateTime startOfDay = getStartOfDay(dt);
 			Double rate;
-			if (!cu.getCode().equals("BTC")) {
-				rate = getBtcRatesCache().get(cu).get(startOfDay);
+			if (!toCurrency.getCode().equals("BTC")) {
+				rate = getBtcRatesCache().get(toCurrency).get(startOfDay);
 			} else {
 				CurrencyUnit fromCurr = unconverted.getCurrencyUnit();
 				rate = 1d/getBtcRatesCache().get(fromCurr).get(startOfDay);
 			}
 
-			converted = unconverted.convertedTo(cu, BigDecimal.valueOf(rate), 
+			converted = unconverted.convertedTo(toCurrency, BigDecimal.valueOf(rate), 
 					RoundingMode.FLOOR);
 
 
@@ -212,12 +212,29 @@ public enum CurrencyConverter {
 
 		return converted;
 	}
-	
-	public Money convertMoneyForToday(CurrencyUnit cu, Money unconverted) {
+
+	public Money convertMoneyForToday(CurrencyUnit toCurrency, Money unconverted) {
 		DateTime now = new DateTime();
-		return convertMoney(cu, now, unconverted);
+		return convertMoney(toCurrency, now, unconverted);
 	}
 
+	public long convertToSatoshisCurrent(String fromCurrIso, BigDecimal amount) {
 
+		long satoshis;
+		if (!fromCurrIso.equals("BTC")) {
+			Money amountM = Money.of(CurrencyUnit.of(fromCurrIso), amount);
+
+			// Convert to BTC using the currency converter
+			Money amountBTC = convertMoneyForToday(CurrencyUnit.of("BTC"), amountM);
+
+			// Convert to satoshis
+			satoshis = amountBTC.getAmount().multiply(BigDecimal.valueOf(1E8)).longValue();
+
+		} else {
+			satoshis = amount.multiply(BigDecimal.valueOf(1E8)).longValue();
+		}
+
+		return satoshis;
+	}
 
 }

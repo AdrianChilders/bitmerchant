@@ -3,10 +3,12 @@ package com.bitmerchant.db;
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
 import junit.framework.TestCase;
 
+import org.bitcoinj.core.Coin;
 import org.junit.Before;
 
 import com.bitmerchant.db.Actions.ButtonActions;
 import com.bitmerchant.db.Actions.OrderActions;
+import com.bitmerchant.db.Actions.PaymentActions;
 import com.bitmerchant.db.Tables.Button;
 import com.bitmerchant.db.Tables.Order;
 import com.bitmerchant.tools.Connections;
@@ -20,7 +22,8 @@ public class ActionsTest extends TestCase {
 	public void setUp() {
 		Connections.INSTANCE.open();
 		LocalWallet.INSTANCE.init();
-		bitcoin.awaitRunning();
+//		bitcoin.awaitRunning();
+	
 		
 		// Create the first button
 		Button b = Button.findById(1);
@@ -65,6 +68,11 @@ public class ActionsTest extends TestCase {
 		System.out.println(OrderActions.showOrder(1));
 	}
 	
+	
+	public void testSendRefund() {
+		bitcoin.awaitRunning();
+		PaymentActions.sendRefund(3, Coin.MILLICOIN);
+	}
 	
 
 }

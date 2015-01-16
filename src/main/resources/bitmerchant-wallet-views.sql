@@ -30,3 +30,5 @@ on buttons.id = orders.button_id
 left join currencies
 on currencies.id = buttons.native_currency_id
 ;
+
+

@@ -84,7 +84,9 @@ public class TableConstants {
 			"new",
 			"completed",
 			"cancelled",
-			"mispaid",
+			"underpaid",
+			"overpaid",
+			"refunded",
 			"expired");
 	
 	

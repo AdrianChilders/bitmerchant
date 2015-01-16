@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
+import com.bitmerchant.webservice.WebService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 
