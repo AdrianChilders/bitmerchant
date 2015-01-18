@@ -1,0 +1,331 @@
+{
+  "h1": [
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "body": "Bitmerchant includes a powerful REST API to accept payments for your business. <br><br> It allows you to:<ul><li> Accept bitcoin payments on your website </li><li> Create items for sale, in your <i>native</i> currency</li><li> Create buttons and payment iframes, with qr codes</li><li> Refund orders, in any currency. </li> </ul>Bitmerchant works using the <a href=\"https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki\">BIP70</a> protocol, meaning full compatibility with wallets such as bitcoin-qt, and the android-wallet.",
+      "endpoint": "http://localhost:4567/api/"
+    },
+    {
+      "id": "currencies",
+      "title": "Currencies",
+      "h2": [
+        {
+          "id": "currencies_supported",
+          "title": "Currencies supported",
+          "body": "A list of the currencies supported. <ul><li>Historical and spot-rate conversions are taken from <a href=\"https://bitcoinaverage.com/#USD\">BitcoinAverage.com</a></li><li> Currency conversion rates are updated every <i>5 minutes</i></li><li>Currencies include : BTC, AUD, BRL, CAD, CHF, CNY, EUR, GBP, HKD, IDR, ILS, MXN, NOK, NZD, PLN, RON, RUB, SEK, SGD, TRY, USD, and ZAR </li></ul>",
+          "http_request": "GET http://localhost:4567/api/currencies",
+          "example_response": "{\n  \"currencies\" : [ {\n    \"currency\" : {\n      \"desc\" : \"Bitcoin\",\n      \"iso\" : \"BTC\",\n      \"unicode\" : \"฿\"\n    }\n  }, {\n    \"currency\" : {\n      \"desc\" : \"Australian Dollar\",\n      \"iso\" : \"AUD\",\n      \"unicode\" : \"$\"\n    }\n  }, {\n    \"currency\" : {\n      \"desc\" : \"Brazilian Real\",\n      \"iso\" : \"BRL\",\n      \"unicode\" : \"R$\"\n    }\n  }, ...\n"
+        }
+      ]
+    },
+    {
+      "id": "buttons",
+      "title": "Buttons",
+      "h2": [
+        {
+          "id": "create_a_new_payment_button",
+          "title": "Create a new payment button",
+          "body": " <p>A button represents a <i>consistent item</i> for sale, like kitten mittens. On Bitmerchant, orders do not exist by themselves. There are two main models:<ul><li>Buttons</li><li>Orders</li></ul>A button has many orders. An order belongs to one button.</p>This endpoint creates a payment button, page, or iFrame to accept bitcoin on your website.",
+          "http_request": "POST http://localhost:4567/api/create_button ",
+          "example_request": "{\n \"button\" : {\n    \"name\": \"kitten mittens\",\n    \"type\": \"buy_now\",\n    \"style\": \"custom_large\",\n    \"network\": \"test\",\n    \"text\": \"Buy with USD\",\n    \"price_string\": \"5\",\n    \"price_currency_iso\": \"USD\",\n    \"callback_url\": \"http://www.example.com/my_custom_button_callback\",\n    \"description\": \"Is your cat making too much noise all the time?\"\n  }\n}",
+          "example_response": "{\n  \"button\" : {\n    \"callback_url\" : \"http://www.example.com/my_custom_button_callback\",\n    \"created_at\" : 1421459084840,\n    \"description\" : \"Is your cat making too much noise all the time?\",\n    \"id\" : 9,\n    \"name\" : \"kitten mittens\",\n    \"native_currency_iso\" : \"USD\",\n    \"price_1\" : null,\n    \"price_2\" : null,\n    \"price_3\" : null,\n    \"price_4\" : null,\n    \"price_5\" : null,\n    \"price_select\" : 0,\n    \"style\" : \"custom_large\",\n    \"text\" : \"Buy with USD\",\n    \"total_native\" : 5,\n    \"type\" : \"buy_now\",\n    \"variable_price\" : 0\n  }\n}\n",
+          "arguments_exist": "true",
+          "arguments": [
+            {
+              "parameter": "button",
+              "type": "hash",
+              "required": "Required",
+              "description": "Button object containing the following params"
+            },
+            {
+              "parameter": "button[name]",
+              "type": "string",
+              "required": "Required",
+              "description": "The name of the item."
+            },
+            {
+              "parameter": "button[price_string]",
+              "type": "string",
+              "required": "Required",
+              "description": "The price of the item."
+            },
+            {
+              "parameter": "button[price_currency_iso]",
+              "type": "string",
+              "required": "Required",
+              "description": "The currency you are selling the item for, such as BTC, USD, EUR...\nUse http://localhost/currencies/ to get a list of currencies."
+            },
+            {
+              "parameter": "button[type]",
+              "type": "string",
+              "required": "Optional",
+              "description": "One of buy_now and donation. Default is buy_now."
+            },
+            {
+              "parameter": "button[style]",
+              "type": "string",
+              "required": "Optional",
+              "description": "One of buy_now_large, buy_now_small, donation_large, donation_small and none. Default is buy_now_large. none is used if you plan on triggering the payment modal yourself using your own button or link."
+            },
+            {
+              "parameter": "button[network]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Either main or test."
+            },
+            {
+              "parameter": "button[text]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Allows you to customize the button text on <b>custom_large</b> and <b>custom_small</b> styles. Default is <i>Pay With Bitcoin.</i>"
+            },
+            {
+              "parameter": "button[description]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A longer description of the item"
+            },
+            {
+              "parameter": "button[callback_url]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A custom callback URL specific to this button."
+            },
+            {
+              "parameter": "button[variable_price]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Setting this parameter to <b>true</b> will allow the user to choose a variable price."
+            },
+            {
+              "parameter": "button[price_select]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Show some suggested prices"
+            },
+            {
+              "parameter": "button[price_1]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_2]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_3]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_4]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_5]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            }
+          ]
+        },
+        {
+          "id": "show_a_button",
+          "title": "Show a button",
+          "body": "Lets you retrieve an individual button.\n",
+          "http_request": "GET http://localhost:4567/api/buttons/:id",
+          "example_response": "{\n  \"button\" : {\n    \"callback_url\" : \"http://www.example.com/my_custom_button_callback\",\n    \"created_at\" : 1421459084840,\n    \"description\" : \"Is your cat making too much noise all the time?\",\n    \"id\" : 1,\n    \"name\" : \"kitten mittens\",\n    \"native_currency_iso\" : \"USD\",\n    \"price_1\" : null,\n    \"price_2\" : null,\n    \"price_3\" : null,\n    \"price_4\" : null,\n    \"price_5\" : null,\n    \"price_select\" : 0,\n    \"style\" : \"custom_large\",\n    \"text\" : \"Buy with USD\",\n    \"total_native\" : 5,\n    \"type\" : \"buy_now\",\n    \"variable_price\" : 0\n  }\n}\n"
+        },
+        {
+          "id": "list_buttons",
+          "title": "List buttons",
+          "body": "Shows you a list of the buttons",
+          "http_request": "GET http://localhost:4567/api/buttons",
+          "example_response": "{\n  \"buttons\" : [ {\n    \"button\" : {\n      \"callback_url\" : \"http://www.example.com/my_custom_button_callback\",\n      \"created_at\" : 1421348879168,\n      \"description\" : \"A derpy shoe\",\n      \"id\" : 1,\n      \"name\" : \"derpsho3e\",\n      \"native_currency_iso\" : \"USD\",\n      \"price_1\" : null,\n      \"price_2\" : null,\n      \"price_3\" : null,\n      \"price_4\" : null,\n      \"price_5\" : null,\n      \"price_select\" : 0,\n      \"style\" : \"custom_large\",\n      \"text\" : \"Buy with USD/BTC\",\n      \"total_native\" : 0.51,\n      \"type\" : \"buy_now\",\n      \"variable_price\" : 0\n    }\n  }, ..."
+        },
+        {
+          "id": "list_orders_for_a_button",
+          "title": "List orders for a button",
+          "body": "Shows you a list of orders for a given button",
+          "http_request": "GET http://localhost:4567/api/buttons/:button_id/orders",
+          "example_response": "{\n  \"orders\" : [ {\n    \"order\" : {\n      \"button_description\" : \"A derpy shoe\",\n      \"button_id\" : 1,\n      \"button_name\" : \"derpsho3e\",\n      \"created_at\" : 1421348881482,\n      \"expire_time\" : 1421349481481,\n      \"id\" : 1,\n      \"memo\" : \"A derpy shoe\",\n      \"merchant_data\" : \"DickTowel.com\",\n      \"native_currency_iso\" : \"USD\",\n      \"network\" : \"test\",\n      \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n      \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n      \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n      \"status\" : \"new\",\n      \"total_native\" : 0.51,\n      \"total_satoshis\" : 233912,\n      \"transaction_hash\" : null\n    }\n  }, ...\n"
+        },
+        {
+          "id": "create_an_order_for_a_button",
+          "title": "Create an order for a button",
+          "body": "Lets you generate an order associated with a button. After generating an order, a BIP70 payment request is created, located at the <i>payment_request_url</i>. <br><br>The status of this newly created order will be <b>new</b>, but can be updated later on. See <a href=\"#orders\">orders</a> for more information.",
+          "http_request": "POST http://localhost:4567/api/buttons/:id/create_order",
+          "example_response": "{\n  \"order\" : {\n    \"button_description\" : \"Dick Towel\",\n    \"button_id\" : 1,\n    \"button_name\" : \"Dick Towel\",\n    \"created_at\" : 1421519994997,\n    \"expire_time\" : 1421520594997,\n    \"id\" : 9,\n    \"memo\" : \"nothing here\",\n    \"merchant_data\" : \"DickTowel.com\",\n    \"native_currency_iso\" : \"USD\",\n    \"network\" : \"test\",\n    \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n    \"payment_url\" : \"http://123.456.7.8:4567/create_payment/1\",\n    \"receive_address\" : \"mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT\",\n    \"status\" : \"new\",\n    \"total_native\" : 0.51,\n    \"total_satoshis\" : 257004,\n    \"transaction_hash\" : null\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": "orders",
+      "title": "Orders",
+      "h2": [
+        {
+          "id": "list_orders",
+          "title": "List orders",
+          "body": "Gives a merchant’s orders that they have received. An order can have any of the following statuses:<ul><li>new - The order was just created</li><li>completed - The order has been completed</li><li>cancelled - The order was cancelled</li><li>overpaid - An over payment was received</li><li>underpaid - An underpayment was received</li><li>refunded - The order was refunded</li><li>expired - No payment was received in the 10-minute time period</li></ul>The <i>transaction_hash</i> can be used to link an order to a transaction.",
+          "http_request": "GET http://localhost:4567/api/orders",
+          "example_response": "{\n  \"orders\" : [ {\n    \"order\" : {\n      \"button_description\" : \"A derpy shoe\",\n      \"button_id\" : 1,\n      \"button_name\" : \"derpsho3e\",\n      \"created_at\" : 1421348881482,\n      \"expire_time\" : 1421349481481,\n      \"id\" : 1,\n      \"memo\" : \"A derpy shoe\",\n      \"merchant_data\" : \"DickTowel.com\",\n      \"native_currency_iso\" : \"USD\",\n      \"network\" : \"test\",\n      \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n      \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n      \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n      \"status\" : \"new\",\n      \"total_native\" : 0.51,\n      \"total_satoshis\" : 233912,\n      \"transaction_hash\" : null\n    }\n  }, ...\n"
+        },
+        {
+          "id": "create_an_order",
+          "title": "Create an order",
+          "body": "This is a shortcut that does two things:<ul><li>Creates a button</li><li>Creates an order for that button</li></ul>The request you provide is exactly like the request for a button. <br><p>A button represents a <i>consistent item</i> for sale, like kitten mittens. On Bitmerchant, orders do not exist by themselves. There are two main models:<ul><li>Buttons</li><li>Orders</li></ul>A button has many orders. An order belongs to one button.",
+          "http_request": "POST http://localhost:4567/api/create_order",
+          "example_request": "{\n \"button\" : {\n    \"name\": \"kitten mittens\",\n    \"type\": \"buy_now\",\n    \"style\": \"custom_large\",\n    \"network\": \"test\",\n    \"text\": \"Buy with USD\",\n    \"price_string\": \"5\",\n    \"price_currency_iso\": \"USD\",\n    \"callback_url\": \"http://www.example.com/my_custom_button_callback\",\n    \"description\": \"Is your cat making too much noise all the time?\"\n  }\n}",
+          "example_response": "{\n  \"order\" : {\n    \"button_description\" : \"A derpy shoe\",\n    \"button_id\" : 1,\n    \"button_name\" : \"derpsho3e\",\n    \"created_at\" : 1421348881482,\n    \"expire_time\" : 1421349481481,\n    \"id\" : 1,\n    \"memo\" : \"A derpy shoe\",\n    \"merchant_data\" : \"DickTowel.com\",\n    \"native_currency_iso\" : \"USD\",\n    \"network\" : \"test\",\n    \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n    \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n    \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n    \"status\" : \"new\",\n    \"total_native\" : 0.51,\n    \"total_satoshis\" : 233912,\n    \"transaction_hash\" : null\n  }\n}",
+          "arguments_exist": "true",
+          "arguments": [
+            {
+              "parameter": "button",
+              "type": "hash",
+              "required": "Required",
+              "description": "Button object containing the following params"
+            },
+            {
+              "parameter": "button[name]",
+              "type": "string",
+              "required": "Required",
+              "description": "The name of the item."
+            },
+            {
+              "parameter": "button[price_string]",
+              "type": "string",
+              "required": "Required",
+              "description": "The price of the item."
+            },
+            {
+              "parameter": "button[price_currency_iso]",
+              "type": "string",
+              "required": "Required",
+              "description": "The currency you are selling the item for, such as BTC, USD, EUR...\nUse http://localhost/currencies/ to get a list of currencies."
+            },
+            {
+              "parameter": "button[type]",
+              "type": "string",
+              "required": "Optional",
+              "description": "One of buy_now and donation. Default is buy_now."
+            },
+            {
+              "parameter": "button[style]",
+              "type": "string",
+              "required": "Optional",
+              "description": "One of buy_now_large, buy_now_small, donation_large, donation_small and none. Default is buy_now_large. none is used if you plan on triggering the payment modal yourself using your own button or link."
+            },
+            {
+              "parameter": "button[network]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Either main or test."
+            },
+            {
+              "parameter": "button[text]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Allows you to customize the button text on <b>custom_large</b> and <b>custom_small</b> styles. Default is <i>Pay With Bitcoin.</i>"
+            },
+            {
+              "parameter": "button[description]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A longer description of the item"
+            },
+            {
+              "parameter": "button[callback_url]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A custom callback URL specific to this button."
+            },
+            {
+              "parameter": "button[variable_price]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Setting this parameter to <b>true</b> will allow the user to choose a variable price."
+            },
+            {
+              "parameter": "button[price_select]",
+              "type": "string",
+              "required": "Optional",
+              "description": "Show some suggested prices"
+            },
+            {
+              "parameter": "button[price_1]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_2]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_3]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_4]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            },
+            {
+              "parameter": "button[price_5]",
+              "type": "string",
+              "required": "Optional",
+              "description": "A suggested price"
+            }
+          ]
+        },
+        {
+          "id": "show_an_order",
+          "title": "Show an order",
+          "body": "Lets you retrieve an individual order.\n",
+          "http_request": "GET http://localhost:4567/api/orders/:id",
+          "example_response": "{\n  \"order\" : {\n    \"button_description\" : \"A derpy shoe\",\n    \"button_id\" : 1,\n    \"button_name\" : \"derpsho3e\",\n    \"created_at\" : 1421348881482,\n    \"expire_time\" : 1421349481481,\n    \"id\" : 1,\n    \"memo\" : \"A derpy shoe\",\n    \"merchant_data\" : \"DickTowel.com\",\n    \"native_currency_iso\" : \"USD\",\n    \"network\" : \"test\",\n    \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n    \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n    \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n    \"status\" : \"new\",\n    \"total_native\" : 0.51,\n    \"total_satoshis\" : 233912,\n    \"transaction_hash\" : null\n  }\n}"
+        },
+        {
+          "id": "refund_an_order",
+          "title": "Refund an order",
+          "body": "Lets you refund an order, at either a specific amount and currency, or in its original native currency and amount",
+          "http_request": "POST http://localhost:4567/api/refund/:order \nOr\n http://localhost:4567/api/refund/:order/:amount/:currency",
+          "example_response": "Order succesfully refunded",
+          "arguments_exist": "true",
+          "arguments": [
+            {
+              "parameter": "order",
+              "type": "string",
+              "required": "Required",
+              "description": "The order number"
+            },
+            {
+              "parameter": "amount",
+              "type": "string",
+              "required": "Required",
+              "description": "The refund amount as a string"
+            },
+            {
+              "parameter": "currency",
+              "type": "string",
+              "required": "Required",
+              "description": "The native refund currency"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

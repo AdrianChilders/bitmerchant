@@ -69,18 +69,19 @@ public class Actions {
 
 			ButtonStyle style = (n.get("style") != null) ? ButtonStyle.findFirst("style=?", n.get("style").asText()) : null;
 
-
 			ButtonType type = (n.get("type") != null) ? ButtonType.findFirst("type=?", n.get("type").asText())  : null;
 
 			Currency currency = (n.get("price_currency_iso") != null) ? Currency.findFirst("iso=?", n.get("price_currency_iso").asText()) :null;
 
 			Button b = new Button();
+			
+			// required
 			b.set("name", n.get("name").asText());
 			b.set("total_native", n.get("price_string").asText());
 			b.set("native_currency_id", currency.getId().toString());
 
 
-
+			// optionals
 			if (type != null) 
 				b.set("type_id", type.getId().toString());
 			if (style != null)
@@ -272,8 +273,7 @@ public class Actions {
 
 		}
 
-		public static String listOrders() {
-			List<OrderView> ovs = OrderView.findAll();
+		public static String listOrders(List<OrderView> ovs) {
 
 			ObjectMapper mapper = new ObjectMapper();
 			ObjectNode a = mapper.createObjectNode();
@@ -293,6 +293,15 @@ public class Actions {
 				e.printStackTrace();
 				return null;
 			}
+		}
+		public static String listAllOrders() {
+			List<OrderView> ovs = OrderView.findAll();
+			
+			return listOrders(ovs);
+		}
+		public static String listOrdersForButton(Integer buttonId) {
+			List<OrderView> ovs = OrderView.find("button_id=?", buttonId);
+			return listOrders(ovs);
 		}
 
 		public static Order createOrder(String jsonReq) {
