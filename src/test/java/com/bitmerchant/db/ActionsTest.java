@@ -29,7 +29,7 @@ public class ActionsTest extends TestCase {
 		Button b = Button.findById(1);
 		
 		if (b == null) {
-			ButtonActions.createButton(DataSources.BUTTON_JSON_REQ);
+			ButtonActions.createButton(Tools.jsonToNode(DataSources.BUTTON_JSON_REQ));
 		}
 		
 		// Create the first order
@@ -59,7 +59,7 @@ public class ActionsTest extends TestCase {
 	}
 	
 	public void testCreateOrderObj() {
-		Order o = OrderActions.createOrderObj(1);
+		Order o = OrderActions.createOrderObj(1, null);
 		
 		System.out.println(o.toJson(true));
 	}

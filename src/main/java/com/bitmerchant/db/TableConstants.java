@@ -7,12 +7,11 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 public class TableConstants {
-	
 
-	
+
+
 	public static final Map<String, String> CURRENCY_MAP = ImmutableMap.<String, String>builder()
 			.put("BTC", "Bitcoin")
-			//			.put("mBTC", "MilliBits")
 			.put("AUD","Australian Dollar")
 			.put( "BRL", "Brazilian Real")
 			.put( "CAD", "Canadian Dollar")
@@ -38,14 +37,15 @@ public class TableConstants {
 
 	public static final Map<String, String> CURRENCY_UNICODES =  ImmutableMap.<String, String>builder()
 			.put("BTC", "\u0E3F")
+			.put( "USD", "\u0024")
+			.put( "EUR", "\u20AC")
+			.put( "GBP", "\u20A4")
 			//			.put("mBTC", "m\u0E3F")
 			.put("AUD","\u0024")
 			.put( "BRL", "R\u0024")
 			.put( "CAD", "\u0024")
 			.put( "CHF", "\u20A3")
 			.put( "CNY", "\u5143")
-			.put( "EUR", "\u20AC")
-			.put( "GBP", "\u20A4")
 			.put( "HKD", "\u0024")
 			.put( "IDR", "\u20B9")
 			.put( "ILS", "\u20AA")
@@ -58,16 +58,16 @@ public class TableConstants {
 			.put( "SEK", "kr")
 			.put( "SGD", "\u0024")
 			.put( "TRY", "\u20BA")
-			.put( "USD", "\u0024")
+
 			.put( "ZAR", "R")
 			.build();
-	
+
 	public static final List<String> BUTTON_TYPES = Arrays.asList(
 			"buy_now",
 			"donation");
-	
+
 	public static final String BUTTON_TYPE_DEFAULT = "buy_now";
-	
+
 	public static final List<String> BUTTON_STYLES = Arrays.asList(
 			"buy_now_large", 
 			"buy_now_small", 
@@ -77,9 +77,9 @@ public class TableConstants {
 			"subscription_small", 
 			"custom_large", 
 			"custom_small");
-	
+
 	public static final String BUTTON_STYLE_DEFAULT = "buy_now_large";
-	
+
 	public static final List<String> ORDER_STATUSES = Arrays.asList(
 			"new",
 			"completed",
@@ -88,7 +88,7 @@ public class TableConstants {
 			"overpaid",
 			"refunded",
 			"expired");
-	
-	
-			
+
+
+
 }

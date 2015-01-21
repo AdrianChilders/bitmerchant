@@ -48,7 +48,8 @@ public class WebService {
 		setPort(DataSources.SPARK_WEB_PORT) ;
 
 		staticFileLocation("/web"); // Static files
-		externalStaticFileLocation(DataSources.HOME_DIR);
+//		staticFileLocation("/web/html"); // Static files
+//		externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
 	
 		WalletService.setup();
 		API.setup();

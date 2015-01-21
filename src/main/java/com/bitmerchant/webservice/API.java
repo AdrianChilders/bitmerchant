@@ -4,6 +4,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,12 +39,12 @@ public class API {
 		post("/api/create_button",JSON_CONTENT_TYPE , (req, res) -> {
 			res.type(JSON_CONTENT_TYPE);
 			try {
-
+				
 				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				// Creates the button and the button from the req body
-				Button b = Actions.ButtonActions.createButton(req.body());
+				Button b = Actions.ButtonActions.createButton(Tools.jsonToNode(req.body()));
 
 				String json = Actions.ButtonActions.showButton(Integer.valueOf(b.getId().toString()));
 				Tools.dbClose();
@@ -128,6 +129,35 @@ public class API {
 			}
 
 		});
+		
+		/**
+		 * This is done when there is a variable price selection
+		 */
+		post("/api/buttons/:button/create_order/:custom_native_price",JSON_CONTENT_TYPE , (req, res) -> {
+			res.type(JSON_CONTENT_TYPE);
+
+			try {
+
+				Tools.allowOnlyLocalHeaders(req, res);
+				Tools.dbInit();
+
+				Integer buttonNum = Integer.valueOf(req.params(":button"));
+				String customPrice = req.params(":custom_native_price");
+
+				Order o = Actions.OrderActions.createOrderFromButton(buttonNum, customPrice);
+				
+
+				String json = Actions.OrderActions.showOrder(Integer.valueOf(o.getId().toString()));
+				Tools.dbClose();
+
+				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
 
 		get("/api/buttons",JSON_CONTENT_TYPE , (req, res) -> {
 			res.type(JSON_CONTENT_TYPE);
@@ -164,6 +194,29 @@ public class API {
 				Tools.dbClose();
 
 				return json; 
+
+			} catch (NoSuchElementException  e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+		
+		post("/api/generate_button" , (req, res) -> {
+		
+			try {
+
+				Tools.allowOnlyLocalHeaders(req, res);
+				Tools.dbInit();
+
+				Map<String, String> postMap = Tools.createMapFromAjaxPost(req.body());
+				// Creates the button and the button from the post map
+				Button b = Actions.ButtonActions.createButton(Tools.createNodeFromPost("button", postMap));				
+				
+				String buttonCode = Actions.ButtonActions.generateButtonCode(b, postMap.get("frameType"));
+				Tools.dbClose();
+				
+				return buttonCode; 
 
 			} catch (NoSuchElementException  e) {
 				res.status(666);
@@ -330,6 +383,7 @@ public class API {
 
 		get("/api/currencies", JSON_CONTENT_TYPE , (req, res) -> {
 			try {
+				Tools.allowOnlyLocalHeaders(req, res);
 				res.type(JSON_CONTENT_TYPE);
 
 				Tools.dbInit();

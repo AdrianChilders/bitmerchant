@@ -1,32 +1,41 @@
 <html>
 
 <head>
-    <title></title>
-    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-    // <script>
-    // $(function() {
-    //     $("#header").load("asdf.html");
-    //     $("#footer").load("footer.html");
-    // });
-    // </script>
+  <title></title>
+  <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+  <link href="https://code.jquery.com/ui/1.11.2/themes/cupertino/jquery-ui.css" rel="stylesheet" />
+
+
+
 
 
 </head>
 
 <body>
 
-    okay now its time for the iframe:
-    <br>
 
-    <iframe src="payment_iframe.html" name="iframe_a" frameborder="0"></iframe>
-    <br>
-    Okay now its time for the button:
-    <br>
+  <br> Button type 2:
+  <br>
+  <a name="15" class="bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only" href="http://96.28.13.51:4567/html/payment_iframe.html" data-title="Purchase" data-width="460" data-height="350">
+    <script src="http://96.28.13.51:4567/html/payment_button.js" type="text/javascript"></script>
+    <span class="ui-button-text"> Pay with Bitcoin </span>
+  </a>
+
+  <!-- <div id="dialog"></div> -->
+
+  <br>
+
+  <br> okay now its time for the iframe:
+  <br>
 
 
-    <div id="header"></div>
-    <!--Remaining section-->
-    <div id="footer"></div>
+
+  <iframe name="15" src="http://96.28.13.51:4567/html/payment_iframe.html" style="width: 460px; height: 350px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); " allowtransparency="true" frameborder="0" white-space="nowrap"></iframe>
+  <br>
+
+
+
 </body>
 
 </html>

@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bitcoin.protocols.payments.Protos.Output;
 import org.bitcoin.protocols.payments.Protos.Payment;
@@ -74,7 +76,7 @@ public class Actions {
 			Currency currency = (n.get("price_currency_iso") != null) ? Currency.findFirst("iso=?", n.get("price_currency_iso").asText()) :null;
 
 			Button b = new Button();
-			
+
 			// required
 			b.set("name", n.get("name").asText());
 			b.set("total_native", n.get("price_string").asText());
@@ -148,6 +150,8 @@ public class Actions {
 			}
 		}
 
+
+
 		/**
 		 * 
 		 *A Sample Request json <br>
@@ -168,10 +172,7 @@ public class Actions {
 		 * @param jsonReq
 		 * @return 
 		 */
-		public static Button createButton(String jsonReq) {
-
-			// Parse the JSON into a tree
-			JsonNode root = Tools.jsonToNode(jsonReq);
+		public static Button createButton(JsonNode root) {
 
 			// Create the button object, save it to the db
 			Button b = createButtonObj(root);
@@ -181,7 +182,25 @@ public class Actions {
 
 		}
 
+		public static String generateButtonCode(Button b, String type) {
+			String code = null;
+			String buttonId = b.getId().toString();
+			if (type.equals("iframe")) {
+				code = "&lt;iframe name=&quot;" + buttonId + "&quot; src=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; style=&quot;width: 460px; height: 350px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); &quot; allowtransparency=&quot;true&quot; frameborder=&quot;0&quot; white-space=&quot;nowrap&quot;&gt;&lt;/iframe&gt;";
+			} else if (type.equals("button")) {
+				code =  "&lt;a name=&quot;" + buttonId + "&quot; class=&quot;bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only&quot; href=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; data-title=&quot;Purchase&quot; data-width=&quot;460&quot; data-height=&quot;350&quot;&gt;&lt;script src=&quot;http://96.28.13.51:4567/html/payment_button.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;&lt;span class=&quot;ui-button-text&quot;&gt; Pay with Bitcoin &lt;/span&gt;&lt;/a&gt;";	
+			}
+
+			return code;
+
+		}
+
+
+
+
 	}
+
+
 
 
 	public static class OrderActions {
@@ -191,7 +210,7 @@ public class Actions {
 		 * @param root
 		 * @return
 		 */
-		public static Order createOrderObj(Integer buttonId) {
+		public static Order createOrderObj(Integer buttonId, String customPrice) {
 
 			Button b = Button.findById(buttonId);
 
@@ -202,12 +221,17 @@ public class Actions {
 
 			o.set("status_id", OrderStatus.findFirst("status=?", "new").getId().toString());
 
-			// TODO For now, set the memo to the button description
-			o.set("memo", b.getString("description"));
+			// TODO For now, set the memo to the button name
+			o.set("memo", b.getString("nameadv"));
 
 			// Set the currency to the most recent currency
 			CurrencyConverter cc = CurrencyConverter.INSTANCE;
-			long satoshis = cc.convertToSatoshisCurrent(currencyIso, b.getBigDecimal("total_native"));
+			long satoshis;
+			if (customPrice == null) {
+				satoshis = cc.convertToSatoshisCurrent(currencyIso, b.getBigDecimal("total_native"));
+			} else {
+				satoshis = cc.convertToSatoshisCurrent(currencyIso, new BigDecimal(customPrice));
+			}
 
 
 			o.set("total_satoshis", satoshis);
@@ -244,7 +268,7 @@ public class Actions {
 				b.saveIt();
 			}
 
-			Order o = createOrderObj(Integer.valueOf(b.getId().toString()));
+			Order o = createOrderObj(Integer.valueOf(b.getId().toString()), null);
 
 			return o;
 
@@ -296,7 +320,7 @@ public class Actions {
 		}
 		public static String listAllOrders() {
 			List<OrderView> ovs = OrderView.findAll();
-			
+
 			return listOrders(ovs);
 		}
 		public static String listOrdersForButton(Integer buttonId) {
@@ -321,10 +345,10 @@ public class Actions {
 
 		}
 
-		public static Order createOrderFromButton(Integer buttonId) {
+		public static Order createOrderFromButton(Integer buttonId, String customPrice) {
 
 
-			Order o = createOrderObj(buttonId);
+			Order o = createOrderObj(buttonId, customPrice);
 			o.saveIt();
 
 			// Add the payment_url from the order id(can only be done after its saved to get the id)
@@ -334,15 +358,17 @@ public class Actions {
 
 			return o;
 
-
-
+		}
+		
+		public static Order createOrderFromButton(Integer buttonId) {
+			return createOrderFromButton(buttonId, null);
 		}
 
 		public static Order updateExtraInfo(Order o) {
 			String id = o.getId().toString();
 
 
-			String paymentURL = DataSources.WEB_SERVICE_URL + "create_payment/" + id;
+			String paymentURL = DataSources.WEB_SERVICE_URL + "api/create_payment/" + id;
 			o.set("payment_url", paymentURL);
 
 			Address receiveAddr = bitcoin.wallet().freshReceiveAddress();

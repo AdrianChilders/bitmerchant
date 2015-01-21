@@ -19,7 +19,7 @@ $(document).ready(function() {
 
   transactionsTable(transactionsTemplate);
 
-  
+
 
 });
 
@@ -98,6 +98,7 @@ function setupSendForm() {
 
 
   getJson('balance').done(function(result) {
+    $('.othermain-col').removeClass('hide');
     var fundsNum = result.replace(/[^0-9\.]+/g, "");
     var usersFunds = parseFloat(fundsNum);
 
@@ -167,8 +168,8 @@ function fetchReceivedTransactions(url, templateHTML) {
 
 
 
-          
-		qrCodeAndReceiveAddress();
+
+          qrCodeAndReceiveAddress();
           fillSimpleText('balance', '.balance');
           transactionsTable(templateHTML);
 

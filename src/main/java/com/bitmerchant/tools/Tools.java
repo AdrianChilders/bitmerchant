@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -36,6 +38,7 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.DBException;
@@ -73,24 +76,28 @@ public class Tools {
 		log.info("request host: " + host);
 		log.info("request origin: " + origin);
 
-		//		res.header("Access-Control-Allow-Credentials", "true");
+
 		//		System.out.println("origin = " + origin);
 		//		if (DataSources.ALLOW_ACCESS_ADDRESSES.contains(req.headers("Origin"))) {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
-		
-		res.header("Access-Control-Allow-Origin", "localhost:4567");
+
+		//		res.header("Access-Control-Allow-Origin", "localhost:4567");
+		res.header("Access-Control-Allow-Origin", "null");
+		res.header("Access-Control-Allow-Credentials", "true");
 
 	}
 
 	public static final Map<String, String> createMapFromAjaxPost(String reqBody) {
-		//				log.info(reqBody);
+		log.info(reqBody);
 		Map<String, String> postMap = new HashMap<String, String>();
 		String[] split = reqBody.split("&");
 		for (int i = 0; i < split.length; i++) {
 			String[] keyValue = split[i].split("=");
 			try {
-				postMap.put(URLDecoder.decode(keyValue[0], "UTF-8"),URLDecoder.decode(keyValue[1], "UTF-8"));
+				if (keyValue.length > 1) {
+					postMap.put(URLDecoder.decode(keyValue[0], "UTF-8"),URLDecoder.decode(keyValue[1], "UTF-8"));
+				}
 			} catch (UnsupportedEncodingException |ArrayIndexOutOfBoundsException e) {
 				e.printStackTrace();
 				throw new NoSuchElementException(e.getMessage());
@@ -103,19 +110,33 @@ public class Tools {
 
 	}
 
+	public static final ObjectNode createNodeFromPost(String name, Map<String, String> postMap) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode bn = mapper.createObjectNode();
+		ObjectNode n = mapper.createObjectNode();
+
+		for (Entry<String, String> e : postMap.entrySet()) {
+			n.put(e.getKey(), e.getValue());
+		}
+
+		bn.put(name, n);
+
+		return bn;
+	}
+
 
 	public static List<Map<String, String>> convertTransactionsToLOM(List<Transaction> transactions) {
 		List<Map<String, String>> lom = new ArrayList<Map<String,String>>();
 
 		// Get all the orders at once
 		List<OrderView> ovs = OrderView.findAll();
-		
+
 		// create a map from order hash to order number
 		Map<String, OrderView> orderHashToOrderMap = orderHashToOrderMap(ovs);
-		
+
 		for (Transaction cT : transactions) {
 			String txHash = cT.getHashAsString();			
-			
+
 			OrderView ov = (orderHashToOrderMap.get(txHash) != null) ? orderHashToOrderMap.get(txHash) : null;
 			Map<String, String> tMap = convertTransactionToMap(cT, ov);
 			lom.add(tMap);
@@ -124,14 +145,14 @@ public class Tools {
 
 		return lom;
 	}
-	
+
 	public static Map<String, OrderView> orderHashToOrderMap(List<OrderView> ovs) {
 		Map<String, OrderView> orderHashToIdMap = new HashMap<String, OrderView>();
 		for (OrderView ov : ovs) {
 			String hash = ov.getString("transaction_hash");
 			orderHashToIdMap.put(hash,  ov);
 		}
-		
+
 		return orderHashToIdMap;
 	}
 
@@ -143,14 +164,14 @@ public class Tools {
 		Coin fee = tx.getFee();
 
 		map.put("transaction_hash", tx.getHashAsString());
-		
-		
+
+
 		String receiveMessage;
 		if (ov != null) {
 			receiveMessage = "You received payment for a ";
 			map.put("button_name", ov.getString("button_name"));
 			map.put("order", ov.getId().toString());
-					
+
 		} else {
 			receiveMessage = "You received money directly";
 		}
@@ -172,7 +193,7 @@ public class Tools {
 			map.put("address", address.toString());
 
 			if (fee != null) {
-				
+
 				map.put("fee", "-" + mBtcFormat(fee));
 
 
@@ -254,6 +275,37 @@ public class Tools {
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public static void pollAndOpenStartPage() {
+		// TODO poll some of the url's every .5 seconds, and load the page when they come back with a result
+		int i = 500;
+		int cTime = 0;
+		while (cTime < 30000) {
+			try {
+				try {
+					String webServiceStartedURL = "http://localhost:4567/status_progress";
+
+					HttpURLConnection connection = null;
+					URL url = new URL(webServiceStartedURL);
+					connection = (HttpURLConnection) url.openConnection();
+					connection.setConnectTimeout(5000);//specify the timeout and catch the IOexception
+					connection.connect();
+					Thread.sleep(2*i);
+					Tools.openWebpage("http://localhost:4567/wallet");
+					cTime = 30000;
+				} catch (IOException e) {
+					log.info("Could not connect to local webservice, retrying in 500ms up to 30 seconds");
+					cTime += i;
+
+					Thread.sleep(i);
+
+				}
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -465,6 +517,8 @@ public class Tools {
 	public static final void dbClose() {
 		Base.close();
 	}
+
+
 
 }
 
