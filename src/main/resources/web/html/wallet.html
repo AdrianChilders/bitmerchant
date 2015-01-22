@@ -168,7 +168,7 @@
           <div class="row">
 
 
-            <div class="col-md-6">
+            <div class="col-md-12">
               <h1 id="page_title"> Your Wallet</h1>
             </div>
 
@@ -190,15 +190,15 @@
             <div class="col-md-12">
               <div class="panel panel-default">
                 <div class="panel-body">
-                  <div class="col-md-6">
+                  <div class="col-md-8">
                     <h4>Balance 
-              <span class="text-primary"> &nbsp; &nbsp; <span class="balance"></span> BTC</span> 
-              <span class="text-muted"> &nbsp; &asymp; &nbsp; <span id="converted_balance"></span> USD</span> 
+              <span class="text-primary balance-cur"> &nbsp; &nbsp; <span class="balance"></span> mBTC</span> 
+              <span class="text-muted"> &nbsp; &asymp; &nbsp; <span id="converted_balance"></span> <span id="merchant_currency_iso"> USD</span></span> 
               </h4>
 
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-4">
 
                     <button id="receieveBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal" data-target="#receiveModal"><i class="fa fa-arrow-circle-o-left fa-fw"></i> Receive</button>
                     <button id="sendBtn" type="button" class="btn btn-default pull-right wallet-btn disabled" data-toggle="modal"><i class="fa fa-arrow-circle-o-right fa-fw"></i> Send</button>
@@ -258,7 +258,7 @@
               {{#.}}
 
               <tr> 
-                <td>{{date}}</td>
+                <td>{{#dateformat}}{{longDate}}{{/dateformat}}</td>
                 <td>{{{message}}} <b>{{button_name}}</b> 
                  <a class="text-muted" href="https://www.biteasy.com/testnet/transactions/{{transaction_hash}}">
                     <sup>tx</sup></a>

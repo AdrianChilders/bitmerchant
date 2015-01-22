@@ -175,9 +175,9 @@ TODO
           <div class="row">
 
             <ul class="nav nav-tabs">
-              <li role="presentation" class="active"><a href="#">Wallet</a>
+              <li role="presentation" class="active"><a href="settings">Wallet</a>
               </li>
-              <li role="presentation"><a href="#">Other</a>
+              <li role="presentation"><a href="merchant_settings">Merchant</a>
               </li>
               <li role="presentation"><a href="#">Other 2</a>
               </li>
@@ -387,7 +387,7 @@ TODO
   <script src="../bower_components/toastr/toastr.js"></script>
   <script src="../bower_components/mustache/mustache.js"></script>
   <script src="../bower_components/holderjs/holder.js"></script>
-  <script src="json.date-extensions.js"></script>
+  <script src="../js/json.date-extensions.min.js"></script>
   <script src="../bower_components/tablesorter/jquery.tablesorter.min.js"></script>
   <script src="../bower_components/highcharts/highcharts.js"></script>
   <script src="../bower_components/highcharts/modules/exporting.js"></script>

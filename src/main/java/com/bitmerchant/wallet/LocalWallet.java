@@ -16,6 +16,7 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bitmerchant.db.InitializeTables;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 import com.bitmerchant.webservice.WebService;
@@ -120,6 +121,14 @@ public class LocalWallet {
 
 	public static void main( String[] args ) {
 
+		Boolean deleteDB = false;
+		if (args.length > 0 && args[0].equals("delete")) {
+			deleteDB = true;
+		}
+		
+		// Initialize the DB if it hasn't already
+		InitializeTables.init(deleteDB);
+		
 		// Start the wallet
 		INSTANCE.init();
 

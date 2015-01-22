@@ -236,5 +236,22 @@ public enum CurrencyConverter {
 
 		return satoshis;
 	}
+	
+	public Money convertFromSatoshisCurrent(String toCurrIso, long satoshis) {
+		
+		// Convert to BTC using the currency converter
+		Money amountBTC = Money.of(CurrencyUnit.of("BTC"), satoshis/1E8);
+		
+		if (!toCurrIso.equals("BTC")) {
+			
+			// Convert to BTC using the currency converter
+			Money amount = convertMoneyForToday(CurrencyUnit.of(toCurrIso), amountBTC);
+
+			return amount;
+		} else {
+			return amountBTC;
+		}
+	
+	}
 
 }

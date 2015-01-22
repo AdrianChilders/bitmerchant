@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+TODO
+- restore from wallet words
+- notify when there are still funds in your current wallet before you restore another
+- 
+
+ -->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <title>BitMerchant</title>
+
+  <!-- favicon -->
+  <!-- <link rel="shortcut icon" href="https://bitpieces.com/favicon.ico" type="image/x-icon" /> -->
+
+  <!-- Bootstrap core CSS -->
+  <link href="../css/united.bootstrap.min.css" rel="stylesheet">
+
+  <!-- Link to font awesome -->
+  <link rel="stylesheet" href="../bower_components/fontawesome/css/font-awesome.min.css">
+
+  <!-- Bootstrap social css -->
+  <link href="../bower_components/bootstrap-social/bootstrap-social.css" rel="stylesheet">
+
+  <!--   Bootstrap validator -->
+  <link rel="stylesheet" href="../bower_components/bootstrapValidator/dist/css/bootstrapValidator.min.css" />
+
+  <!--   toastr css -->
+  <link href="../bower_components/toastr/toastr.css" rel="stylesheet" />
+
+  <!--   typeahead css -->
+  <!-- <link href="typeaheadjs.css" rel="stylesheet" /> -->
+
+  <!-- Pickadate -->
+  <link href="../bower_components/pickadate/lib/themes/default.css" rel="stylesheet" />
+  <link href="../bower_components/pickadate/lib/themes/default.date.css" rel="stylesheet" />
+
+  <!-- Summernote -->
+  <link href="../bower_components/summernote/dist/summernote.css" rel="stylesheet" />
+
+  <!-- Bootstrap datepicker -->
+  <link href="../bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
+
+  <!-- This main css -->
+  <link href="../css/main.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+  <!-- Navbars -->
+
+  <!-- the start of the doc -->
+  <div id="wrapper">
+
+    <!-- header -->
+    <nav class="navbar navbar-default navbar-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">BitMerchant</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a>
+            </li>
+            <li><a href="/wallet">Wallet</a>
+            </li>
+            <li><a href="/api">API</a>
+            </li>
+            <li class="active"><a href="/userdashboard_overview" id="dashboardhref" class="hide">Dashboard</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/about">About BitMerchant</a>
+                </li>
+                <li><a href="/contact">API Reference</a>
+                </li>
+                <li><a href="/FAQ">Frequently Asked Questions</a>
+                </li>
+                <li><a href="/contact">Github</a>
+                </li>
+                <li><a href="/contact">Bounty Source</a>
+                </li>
+                <li><a href="/contact">Bugs/Feature requests</a>
+                </li>
+                <li><a href="/contact">Contact</a>
+                </li>
+
+
+              </ul>
+            </li>
+          </ul>
+          <form id="creator_search" class="navbar-form navbar-right navbar-input-group" role="search">
+            <div class="form-group">
+              <input name="search_input" type="text" class="form-control typeahead" placeholder="Search API...">
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa fa-search"></i>
+            </button>
+          </form>
+
+
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+
+    <!-- The full page with teh sidebar -->
+    <div class="container-fluid">
+      <div class="row">
+
+        <!-- The sidebar -->
+        <div id="side_col" class="col-md-3 sidebar">
+
+          <div class="mini-submenu">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </div>
+          <div class="list-group">
+            <a class="list-group-item" href="wallet" rel="keep-params"><i class="fa fa-bank fa-fw"></i> &nbsp; Wallet</a>
+            <a class="list-group-item" href="orders" rel="keep-params"><i class="fa fa-shopping-cart fa-fw"></i> &nbsp; Orders</a>
+            <a class="list-group-item" href="tools" rel="keep-params"><i class="fa fa-wrench fa-fw"></i> &nbsp; Tools</a>
+            <a class="list-group-item active" href="settings" rel="keep-params"><i class="fa fa-cog fa-fw"></i> &nbsp; Settings</a>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- stop plugging in -->
+
+
+      <!-- Sidebar -->
+      <!--   <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+      <li class="active"><a href="userdashboard_overview.html"><i class="fa fa-dashboard"></i> Overview</a></li>
+      <li><a href="userdashboard_funds.html"><i class="fa fa-bar-chart-o"></i> Funds</a></li>
+      <li><a href="userdashboard_pieces.html"><i class="fa fa-table"></i> Pieces</a></li>
+      <li><a href="userdashboard_prices.html"><i class="fa fa-edit"></i> Prices</a></li>
+    </ul>
+
+  </div> -->
+
+
+
+      <!-- The sidebar -->
+
+
+
+      <!-- The Page -->
+      <div class="row-fluid">
+        <div class="othermain-col col-md-8 col-md-offset-3">
+
+
+
+          <div class="row">
+
+            <ul class="nav nav-tabs">
+              <li role="presentation"><a href="settings">Wallet</a>
+              </li>
+              <li role="presentation" class="active"><a href="merchant_settings">Merchant</a>
+              </li>
+              <li role="presentation"><a href="#">Other 2</a>
+              </li>
+            </ul>
+
+            <div class="col-md-12">
+              <h1 id="page_title"> Merchant Settings</h1>
+            </div>
+
+
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+
+              <ol class="breadcrumb breadcrumb-small">
+                <li><a href="wallet" rel="keep-params"><i class="fa fa-bars"></i> &nbsp; Home</a>
+                </li>
+                <li><a href="settings" rel="keep-params"><i class="fa fa-cog"></i> Settings</li></a>
+                  <li class="active"><i class="fa fa-bank"></i> Merchant</li>
+              </ol>
+            </div>
+          </div>
+          <hr>
+
+          <!-- Page content -->
+
+
+
+
+
+          <div class="alert alert-dismissable alert-danger">
+            <div class="row">
+              <div class="col-md-10">
+                <h2><strong>Warning:</strong> Server not secure!</h2>
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+              </div>
+            </div>
+
+            <p>
+              To enable SSL/TLS <i>encryption</i>(which you <b>definitely should</b> since as a merchant you will be sending and receiving money), You need to place two files in <i>~/.bitmerchant-wallet/</i>, and then restart bitmerchant. This warning will dissapear once this is done.
+            </p>
+            <ul>
+              <li> A <i>.jks</i> java keystore file named <i>keystore.jks</i>
+                <ul>
+                  <li> You can use these keytool commands to generate one:
+                    <br>
+                    <code>openssl pkcs12 -export -in public.crt -inkey privatekey.key -out server.p12 -name pkcs12alias -CAfile intermediate.crt -caname root
+                    </code>
+                    <br>
+                    <br>
+                    <code>keytool -importkeystore  -deststorepass farbar -destkeypass farbar -destkeystore keystore.jks -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass farbar -alias pkcs12alias
+                      </code>
+                  </li>
+                </ul>
+                <li> a file named <i>pass</i>, containing your keystore password.</li>
+            </ul>
+          </div>
+
+
+          <form id="currency_form" class="form-horizontal" role="form">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group row">
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Merchant name</label>
+                  <div class="col-sm-4">
+                    <input id="merchant_name" name="name" type="text" class="form-control " placeholder="DickTowel.com" data-bv-notempty="true" data-bv-notempty-message="A name is required">
+                  </div>
+                  <label class="col-sm-2 control-label" for="formGroupInputLarge">Currency</label>
+                  <div id="currencies" class="col-sm-3 ">
+                    <script id="currencies_template" type="x-tmpl-mustache">
+                      <select id="currency_select" name="price_currency_iso" class="form-control">
+                        {{#currencies}}
+                        <option name="{{currency.iso}}" value="{{currency.iso}}">{{currency.iso}}</option>
+                        {{/currencies}}
+                      </select>
+                    </script>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </form>
+
+
+
+          <div class="row">
+            <hr class="featurette-divider">
+            <footer>
+              <p class="pull-right"><a href="#">Back to top</a>
+              </p>
+              <p>&copy; 2014 Bitpieces, Inc. &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/FAQ">Support</a> &middot; <a href="https://github.com/tchoulihan/bitpieces">Github</a>
+              </p>
+            </footer>
+          </div>
+
+
+          <br>
+
+
+        </div>
+
+
+      </div>
+
+
+      <!-- end of wrapper -->
+    </div>
+
+
+
+  </div>
+
+
+
+
+  <!-- Bootstrap core JavaScript
+      ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
+  <script src="../bower_components/toastr/toastr.js"></script>
+  <script src="../bower_components/mustache/mustache.js"></script>
+  <script src="../bower_components/holderjs/holder.js"></script>
+  <script src="../js/json.date-extensions.min.js"></script>
+  <script src="../bower_components/tablesorter/jquery.tablesorter.min.js"></script>
+  <script src="../bower_components/highcharts/highcharts.js"></script>
+  <script src="../bower_components/highcharts/modules/exporting.js"></script>
+  <script src="../bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+  <script src="../bower_components/pickadate/lib/picker.js"></script>
+  <script src="../bower_components/pickadate/lib/picker.date.js"></script>
+  <script src="../bower_components/summernote/dist/summernote.min.js"></script>
+  <script src="../bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+
+  <!-- my scripts -->
+  <script src="../js/tools.js"></script>
+  <script src="../js/merchant_settings.js"></script>
+
+
+
+</body>
+
+</html>

@@ -32,11 +32,14 @@ import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.wallet.DeterministicSeed;
+import org.joda.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import com.bitmerchant.db.Actions.OrderActions;
+import com.bitmerchant.db.Tables.MerchantInfoView;
+import com.bitmerchant.tools.CurrencyConverter;
 import com.bitmerchant.tools.Tools;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -64,6 +67,8 @@ public class Controller {
 	private String passwordBtnText;
 	private Boolean walletIsEncrypted = false;
 	private Boolean walletIsLocked = false;
+	private Boolean isSSLEncrypted = false;
+
 
 	private Transaction newestReceivedTransaction;
 
@@ -71,6 +76,8 @@ public class Controller {
 
 	private Wallet.SendResult sendResult;
 	private String sendStatus;
+	
+
 
 
 	public void onBitcoinSetup() {
@@ -84,7 +91,7 @@ public class Controller {
 		if (torClient != null) {
 
 			String torMsg = "Initialising Tor...";
-
+			statusProgress = 0.05d;
 			torClient.addInitializationListener(new TorInitializationListener() {
 				@Override
 				public void initializationProgress(String message, int percent) {
@@ -466,6 +473,17 @@ public class Controller {
 	public String getBalanceText() {
 		return MonetaryFormat.BTC.noCode().format(getBalance()).toString();
 	}
+	
+	public String getNativeBalance() {
+
+		String toCurrIso = MerchantInfoView.findById(1).getString("native_currency_iso");
+		long satoshis = getBalance().value;
+		
+		Money amount = CurrencyConverter.INSTANCE.convertFromSatoshisCurrent(toCurrIso, satoshis);
+		
+		return amount.getAmount().toPlainString();
+		
+	}
 
 	public String getAddressText() {
 		return getAddress().toString();
@@ -511,6 +529,13 @@ public class Controller {
 	}
 	public String getSendStatus() {
 		return sendStatus;
+	}
+	
+	public Boolean getIsSSLEncrypted() {
+		return isSSLEncrypted;
+	}
+	public void setIsSSLEncrypted(Boolean isSSLEncrypted) {
+		this.isSSLEncrypted = isSSLEncrypted;
 	}
 
 }

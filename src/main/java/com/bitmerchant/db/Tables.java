@@ -38,6 +38,12 @@ public class Tables {
 	@Table("refunds") 
 	public static class Refund extends Model {}
 	
+	@Table("merchant_info") 
+	public static class MerchantInfo extends Model {}
+	
+	@Table("merchant_info_view") 
+	public static class MerchantInfoView extends Model {}
+	
 
 	
 	

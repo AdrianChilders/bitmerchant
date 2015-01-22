@@ -152,16 +152,16 @@
         },
         {
           "id": "list_orders_for_a_button",
-          "title": "List orders for a button",
-          "body": "Shows you a list of orders for a given button",
+          "title": "List orders for a button.",
+          "body": "Shows you a list of orders for a given button. Orders with a status of <i>new</i> will not be shown.",
           "http_request": "GET http://localhost:4567/api/buttons/:button_id/orders",
           "example_response": "{\n  \"orders\" : [ {\n    \"order\" : {\n      \"button_description\" : \"A derpy shoe\",\n      \"button_id\" : 1,\n      \"button_name\" : \"derpsho3e\",\n      \"created_at\" : 1421348881482,\n      \"expire_time\" : 1421349481481,\n      \"id\" : 1,\n      \"memo\" : \"A derpy shoe\",\n      \"merchant_data\" : \"DickTowel.com\",\n      \"native_currency_iso\" : \"USD\",\n      \"network\" : \"test\",\n      \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n      \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n      \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n      \"status\" : \"new\",\n      \"total_native\" : 0.51,\n      \"total_satoshis\" : 233912,\n      \"transaction_hash\" : null\n    }\n  }, ...\n"
         },
         {
           "id": "create_an_order_for_a_button",
           "title": "Create an order for a button",
-          "body": "Lets you generate an order associated with a button. After generating an order, a BIP70 payment request is created, located at the <i>payment_request_url</i>. <br><br>The status of this newly created order will be <b>new</b>, but can be updated later on. See <a href=\"#orders\">orders</a> for more information.",
-          "http_request": "POST http://localhost:4567/api/buttons/:id/create_order",
+          "body": "Lets you generate an order associated with a button. After generating an order, a BIP70 payment request is created, located at the <i>payment_request_url</i>. <br><br>The status of this newly created order will be <b>new</b>, but can be updated later on. See <a href=\"#orders\">orders</a> for more information.<br><br> The <i>custom_native_price</i> field is used when creating orders from buttons with price selections, and/or a custom price field.",
+          "http_request": "POST http://localhost:4567/api/buttons/:id/create_order or POST /api/buttons/:button/create_order/:custom_native_price",
           "example_response": "{\n  \"order\" : {\n    \"button_description\" : \"Dick Towel\",\n    \"button_id\" : 1,\n    \"button_name\" : \"Dick Towel\",\n    \"created_at\" : 1421519994997,\n    \"expire_time\" : 1421520594997,\n    \"id\" : 9,\n    \"memo\" : \"nothing here\",\n    \"merchant_data\" : \"DickTowel.com\",\n    \"native_currency_iso\" : \"USD\",\n    \"network\" : \"test\",\n    \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n    \"payment_url\" : \"http://123.456.7.8:4567/create_payment/1\",\n    \"receive_address\" : \"mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT\",\n    \"status\" : \"new\",\n    \"total_native\" : 0.51,\n    \"total_satoshis\" : 257004,\n    \"transaction_hash\" : null\n  }\n}"
         }
       ]
@@ -173,7 +173,7 @@
         {
           "id": "list_orders",
           "title": "List orders",
-          "body": "Gives a merchant’s orders that they have received. An order can have any of the following statuses:<ul><li>new - The order was just created</li><li>completed - The order has been completed</li><li>cancelled - The order was cancelled</li><li>overpaid - An over payment was received</li><li>underpaid - An underpayment was received</li><li>refunded - The order was refunded</li><li>expired - No payment was received in the 10-minute time period</li></ul>The <i>transaction_hash</i> can be used to link an order to a transaction.",
+          "body": "Gives a merchant’s orders that they have received. An order can have any of the following statuses:<ul><li>new - The order was just created</li><li>completed - The order has been completed</li><li>cancelled - The order was cancelled</li><li>overpaid - An over payment was received</li><li>underpaid - An underpayment was received</li><li>refunded - The order was refunded</li><li>expired - No payment was received in the 10-minute time period</li></ul>The <i>transaction_hash</i> can be used to link an order to a transaction. <br> Orders with a status of <i>new</i> will not be shown.",
           "http_request": "GET http://localhost:4567/api/orders",
           "example_response": "{\n  \"orders\" : [ {\n    \"order\" : {\n      \"button_description\" : \"A derpy shoe\",\n      \"button_id\" : 1,\n      \"button_name\" : \"derpsho3e\",\n      \"created_at\" : 1421348881482,\n      \"expire_time\" : 1421349481481,\n      \"id\" : 1,\n      \"memo\" : \"A derpy shoe\",\n      \"merchant_data\" : \"DickTowel.com\",\n      \"native_currency_iso\" : \"USD\",\n      \"network\" : \"test\",\n      \"payment_request_url\" : \"bitcoin:mxJRbqzkAgCXJrzfGDGLCvPTa87fgmYoLT?r=http://123.456.7.8:4567/payment_request/9&amount=0.00257004\",\n      \"payment_url\" : \"http://96.28.13.51:4567/create_payment/1\",\n      \"receive_address\" : \"myr8GW8n6QnGGgkmXGa29otvBV9354wx3L\",\n      \"status\" : \"new\",\n      \"total_native\" : 0.51,\n      \"total_satoshis\" : 233912,\n      \"transaction_hash\" : null\n    }\n  }, ...\n"
         },

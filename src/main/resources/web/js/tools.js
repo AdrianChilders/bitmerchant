@@ -45,7 +45,7 @@ function getJson(shortUrl, noToast, external) {
 
 function fillSimpleText(url, divId) {
   var url = sparkService + url // the script where you handle the form input.
-  $.ajax({
+  return $.ajax({
     type: "GET",
     url: url,
     xhrFields: {
@@ -149,7 +149,7 @@ function fillProgressBar(url, divId) {
         clearInterval(intervalID);
       }
     });
-  }, 300); // 1000 milliseconds = 1 second.
+  }, 100); // 1000 milliseconds = 1 second.
 }
 
 function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, noToast) {
@@ -217,7 +217,9 @@ function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, n
     }
   });
 
-  event.preventDefault();
+  if (event != null) {
+    event.preventDefault();
+  }
   return false;
 
 
@@ -262,7 +264,7 @@ function simplePost(shortUrl, postData, reload, successFunctions, noToast, exter
       // Hide the modal, reset the form, show successful
 
       // $(formId)[0].reset();
- 
+
       // console.log(modalId);
       if (!noToast) {
         toastr.success(data);
@@ -285,11 +287,11 @@ function simplePost(shortUrl, postData, reload, successFunctions, noToast, exter
     },
     error: function(request, status, error) {
       toastr.error(request.responseText);
-     
+
     }
   });
 
-  event.preventDefault();
+
   return false;
 
 
@@ -362,15 +364,26 @@ function fillTableFromMustache(url, templateHtml, divId, tableId) {
       // data: seriesData, 
       success: function(data, status, xhr) {
         // console.log(data);
-        // var jsonObj = JSON.parse(data);
+        if (data[0] == '[') {
+          data = JSON.parse(data);
+        }
+
         // JSON.useDateParser();
         // var jsonObj = jQuery.parseJSON(data);
         // JSON.useDateParser();
-        var jsonObj = JSON.parseWithDate(data);
+        // var jsonObj = JSON.parseWithDate(data);
+
+
+
+
+        //formatting the dates
+        $.extend(data, standardDateFormatObj);
+
+        // console.log(data);
 
 
         Mustache.parse(templateHtml); // optional, speeds up future uses
-        var rendered = Mustache.render(templateHtml, jsonObj);
+        var rendered = Mustache.render(templateHtml, data);
         $(divId).html(rendered);
         $(tableId).tablesorter({
           debug: false
@@ -414,7 +427,7 @@ function fillMustacheFromJson(url, templateHtml, divId) {
   // });
 
   var url = sparkService + url // the script where you handle the form input.
-  $.ajax({
+  return $.ajax({
     type: "GET",
     url: url,
     xhrFields: {
@@ -429,14 +442,14 @@ function fillMustacheFromJson(url, templateHtml, divId) {
       // JSON.useDateParser();
       // var jsonObj = JSON.parseWithDate(data);
 
-
+      $.extend(data, standardDateFormatObj);
       Mustache.parse(templateHtml); // optional, speeds up future uses
       var rendered = Mustache.render(templateHtml, data);
       $(divId).html(rendered);
 
       // console.log(jsonObj);
-      console.log(templateHtml);
-      console.log(rendered);
+      // console.log(templateHtml);
+      // console.log(rendered);
 
 
     },
@@ -512,4 +525,36 @@ function getUrlParameter(sParam) {
       return sParameterName[1];
     }
   }
+}
+
+var standardDateFormatObj = {
+  "dateformat": function() {
+    return function(text, render) {
+      var t = render(text);
+      var date = new Date(parseInt(t));
+      // console.log(t);
+      return date.customFormat("#YYYY#/#MM#/#DD# #hh#:#mm# #AMPM#")
+    }
+  }
+};
+
+Date.prototype.customFormat = function(formatString) {
+  var YYYY, YY, MMMM, MMM, MM, M, DDDD, DDD, DD, D, hhh, hh, h, mm, m, ss, s, ampm, AMPM, dMod, th;
+  var dateObject = this;
+  YY = ((YYYY = dateObject.getFullYear()) + "").slice(-2);
+  MM = (M = dateObject.getMonth() + 1) < 10 ? ('0' + M) : M;
+  MMM = (MMMM = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][M - 1]).substring(0, 3);
+  DD = (D = dateObject.getDate()) < 10 ? ('0' + D) : D;
+  DDD = (DDDD = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dateObject.getDay()]).substring(0, 3);
+  th = (D >= 10 && D <= 20) ? 'th' : ((dMod = D % 10) == 1) ? 'st' : (dMod == 2) ? 'nd' : (dMod == 3) ? 'rd' : 'th';
+  formatString = formatString.replace("#YYYY#", YYYY).replace("#YY#", YY).replace("#MMMM#", MMMM).replace("#MMM#", MMM).replace("#MM#", MM).replace("#M#", M).replace("#DDDD#", DDDD).replace("#DDD#", DDD).replace("#DD#", DD).replace("#D#", D).replace("#th#", th);
+
+  h = (hhh = dateObject.getHours());
+  if (h == 0) h = 24;
+  if (h > 12) h -= 12;
+  hh = h < 10 ? ('0' + h) : h;
+  AMPM = (ampm = hhh < 12 ? 'am' : 'pm').toUpperCase();
+  mm = (m = dateObject.getMinutes()) < 10 ? ('0' + m) : m;
+  ss = (s = dateObject.getSeconds()) < 10 ? ('0' + s) : s;
+  return formatString.replace("#hhh#", hhh).replace("#hh#", hh).replace("#h#", h).replace("#mm#", mm).replace("#m#", m).replace("#ss#", ss).replace("#s#", s).replace("#ampm#", ampm).replace("#AMPM#", AMPM);
 }

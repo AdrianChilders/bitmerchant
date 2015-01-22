@@ -16,7 +16,7 @@ on currencies.id = buttons.native_currency_id
 CREATE VIEW orders_view AS 
 SELECT
 orders.id as id, status, type, style, orders.total_satoshis, receive_address,
-buttons.name as button_name, buttons.id as button_id, total_native,
+buttons.name as button_name, buttons.id as button_id, orders.total_native,
 iso as native_currency_iso, description as button_description,
 transaction_hash, network, 
 payment_url, payment_request_url, merchant_data, memo, expire_time, orders.created_at
@@ -35,6 +35,15 @@ on button_styles.id = buttons.style_id
 
 left join currencies
 on currencies.id = buttons.native_currency_id
+;
+
+CREATE VIEW merchant_info_view AS
+SELECT 
+merchant_info.id, name, currency_id, iso as native_currency_iso
+from merchant_info
+
+left join currencies
+on currencies.id = merchant_info.currency_id
 ;
 
 

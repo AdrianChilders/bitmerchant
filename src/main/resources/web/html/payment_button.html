@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <title>BitMerchant</title>
+
+  <!-- favicon -->
+  <!-- <link rel="shortcut icon" href="https://bitpieces.com/favicon.ico" type="image/x-icon" /> -->
+
+  <!-- Bootstrap core CSS -->
+  <link href="../css/united.bootstrap.min.css" rel="stylesheet">
+
+  <!-- Link to font awesome -->
+  <link rel="stylesheet" href="../bower_components/fontawesome/css/font-awesome.min.css">
+
+  <!-- Bootstrap social css -->
+  <link href="../bower_components/bootstrap-social/bootstrap-social.css" rel="stylesheet">
+
+  <!--   Bootstrap validator -->
+  <link rel="stylesheet" href="../bower_components/bootstrapValidator/dist/css/bootstrapValidator.min.css" />
+
+  <!--   toastr css -->
+  <link href="../bower_components/toastr/toastr.css" rel="stylesheet" />
+
+  <!--   typeahead css -->
+  <!-- <link href="typeaheadjs.css" rel="stylesheet" /> -->
+
+  <!-- Pickadate -->
+  <link href="../bower_components/pickadate/lib/themes/default.css" rel="stylesheet" />
+  <link href="../bower_components/pickadate/lib/themes/default.date.css" rel="stylesheet" />
+
+  <!-- Summernote -->
+  <link href="../bower_components/summernote/dist/summernote.css" rel="stylesheet" />
+
+  <!-- Bootstrap datepicker -->
+  <link href="../bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
+
+  <!-- This main css -->
+  <link href="../css/main.css" rel="stylesheet">
+
+<style type="text/css">
+
+</style>
+ <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(window).load(function(){
+        $('#purchaseModal').modal('show');
+    });
+</script>
+
+</head>
+
+<body style="padding: 0; display: inline-block; background-color:transparent;">
+
+
+
+  <button id="receieveBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#purchaseModal"><i class="fa fa-shopping-cart fa-fw"></i> Purchase</button>
+
+
+  <!-- the modal -->
+  <div class="modal fade banner" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="userloginModalLabel">Purchase Item</h4>
+        </div>
+
+        <div class="modal-body">
+          <iframe src="payment_iframe.html" order="1" style="width: 550px; height: 350px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); " allowtransparency="true" frameborder="0" white-space='nowrap'></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+  <!-- Bootstrap core JavaScript
+      ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+ 
+  <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
+  <script src="../bower_components/toastr/toastr.js"></script>
+  <script src="../bower_components/mustache/mustache.js"></script>
+  <script src="../bower_components/holderjs/holder.js"></script>
+  <script src="../js/json.date-extensions.min.js"></script>
+  <script src="../bower_components/tablesorter/jquery.tablesorter.min.js"></script>
+  <script src="../bower_components/highcharts/highcharts.js"></script>
+  <script src="../bower_components/highcharts/modules/exporting.js"></script>
+  <script src="../bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+  <script src="../bower_components/pickadate/lib/picker.js"></script>
+  <script src="../bower_components/pickadate/lib/picker.date.js"></script>
+  <script src="../bower_components/summernote/dist/summernote.min.js"></script>
+  <script src="../bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script src="../bower_components/jquery.qrcode/dist/jquery.qrcode.min.js"></script>
+  <script src="../bower_components/jquery.countdown/dist/jquery.countdown.js"></script>
+
+  <!-- my scripts -->
+  <script src="../js/tools.js"></script>
+
+
+
+</body>
+
+</html>

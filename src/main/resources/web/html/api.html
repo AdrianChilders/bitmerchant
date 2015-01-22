@@ -163,7 +163,7 @@
                             <li><a href="#list_buttons" class="text-overflow">List buttons</a></li>
                         </ul>
                         <ul class="nav nav-stacked">
-                            <li><a href="#list_orders_for_a_button" class="text-overflow">List orders for a button</a></li>
+                            <li><a href="#list_orders_for_a_button" class="text-overflow">List orders for a button.</a></li>
                         </ul>
                         <ul class="nav nav-stacked">
                             <li><a href="#create_an_order_for_a_button" class="text-overflow">Create an order for a button</a></li>
@@ -568,13 +568,13 @@ Use http:&#x2F;&#x2F;localhost&#x2F;currencies&#x2F; to get a list of currencies
                 <hr>
                 <div id="list_orders_for_a_button" class="row">
                     <div class="col-md-6">
-                        <h3>List orders for a button</h3>
+                        <h3>List orders for a button.</h3>
                         <hr>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <p>Shows you a list of orders for a given button</p>
+                        <p>Shows you a list of orders for a given button. Orders with a status of <i>new</i> will not be shown.</p>
                     </div>
 
 
@@ -620,13 +620,13 @@ Use http:&#x2F;&#x2F;localhost&#x2F;currencies&#x2F; to get a list of currencies
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <p>Lets you generate an order associated with a button. After generating an order, a BIP70 payment request is created, located at the <i>payment_request_url</i>. <br><br>The status of this newly created order will be <b>new</b>, but can be updated later on. See <a href="#orders">orders</a> for more information.</p>
+                        <p>Lets you generate an order associated with a button. After generating an order, a BIP70 payment request is created, located at the <i>payment_request_url</i>. <br><br>The status of this newly created order will be <b>new</b>, but can be updated later on. See <a href="#orders">orders</a> for more information.<br><br> The <i>custom_native_price</i> field is used when creating orders from buttons with price selections, and/or a custom price field.</p>
                     </div>
 
 
 
                     <div class="col-md-6">
-                        <pre class="highlight"> POST http:&#x2F;&#x2F;localhost:4567&#x2F;api&#x2F;buttons&#x2F;:id&#x2F;create_order</pre>
+                        <pre class="highlight"> POST http:&#x2F;&#x2F;localhost:4567&#x2F;api&#x2F;buttons&#x2F;:id&#x2F;create_order or POST &#x2F;api&#x2F;buttons&#x2F;:button&#x2F;create_order&#x2F;:custom_native_price</pre>
                           <h4>Example response</h4>
                         <br>
                         <pre class="highlight"> {
@@ -683,7 +683,7 @@ Use http:&#x2F;&#x2F;localhost&#x2F;currencies&#x2F; to get a list of currencies
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <p>Gives a merchant’s orders that they have received. An order can have any of the following statuses:<ul><li>new - The order was just created</li><li>completed - The order has been completed</li><li>cancelled - The order was cancelled</li><li>overpaid - An over payment was received</li><li>underpaid - An underpayment was received</li><li>refunded - The order was refunded</li><li>expired - No payment was received in the 10-minute time period</li></ul>The <i>transaction_hash</i> can be used to link an order to a transaction.</p>
+                        <p>Gives a merchant’s orders that they have received. An order can have any of the following statuses:<ul><li>new - The order was just created</li><li>completed - The order has been completed</li><li>cancelled - The order was cancelled</li><li>overpaid - An over payment was received</li><li>underpaid - An underpayment was received</li><li>refunded - The order was refunded</li><li>expired - No payment was received in the 10-minute time period</li></ul>The <i>transaction_hash</i> can be used to link an order to a transaction. <br> Orders with a status of <i>new</i> will not be shown.</p>
                     </div>
 
 

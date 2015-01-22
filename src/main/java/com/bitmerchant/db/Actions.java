@@ -42,6 +42,7 @@ import com.bitmerchant.db.Tables.ButtonStyle;
 import com.bitmerchant.db.Tables.ButtonType;
 import com.bitmerchant.db.Tables.ButtonView;
 import com.bitmerchant.db.Tables.Currency;
+import com.bitmerchant.db.Tables.MerchantInfo;
 import com.bitmerchant.db.Tables.Order;
 import com.bitmerchant.db.Tables.OrderStatus;
 import com.bitmerchant.db.Tables.OrderView;
@@ -79,7 +80,7 @@ public class Actions {
 
 			// required
 			b.set("name", n.get("name").asText());
-			b.set("total_native", n.get("price_string").asText());
+			b.set("total_native", new BigDecimal(n.get("price_string").asText()));
 			b.set("native_currency_id", currency.getId().toString());
 
 
@@ -102,7 +103,7 @@ public class Actions {
 				b.set("price_select", n.get("price_select").asText());
 			for (int i=1;  i<=5; i++) {
 				if (n.get("price_" + i) != null)
-					b.set("price_" + i,  n.get("price_" + i).asText());
+					b.set("price_" + i,  new BigDecimal(n.get("price_" + i).asText()));
 			}
 
 
@@ -186,9 +187,9 @@ public class Actions {
 			String code = null;
 			String buttonId = b.getId().toString();
 			if (type.equals("iframe")) {
-				code = "&lt;iframe name=&quot;" + buttonId + "&quot; src=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; style=&quot;width: 460px; height: 350px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); &quot; allowtransparency=&quot;true&quot; frameborder=&quot;0&quot; white-space=&quot;nowrap&quot;&gt;&lt;/iframe&gt;";
+				code = "&lt;iframe name=&quot;" + buttonId + "&quot; src=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; style=&quot;width: 460px; height: 450px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); &quot; allowtransparency=&quot;true&quot; frameborder=&quot;0&quot; white-space=&quot;nowrap&quot;&gt;&lt;/iframe&gt;";
 			} else if (type.equals("button")) {
-				code =  "&lt;a name=&quot;" + buttonId + "&quot; class=&quot;bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only&quot; href=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; data-title=&quot;Purchase&quot; data-width=&quot;460&quot; data-height=&quot;350&quot;&gt;&lt;script src=&quot;http://96.28.13.51:4567/html/payment_button.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;&lt;span class=&quot;ui-button-text&quot;&gt; Pay with Bitcoin &lt;/span&gt;&lt;/a&gt;";	
+				code =  "&lt;a name=&quot;" + buttonId + "&quot; class=&quot;bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only&quot; href=&quot;http://96.28.13.51:4567/html/payment_iframe.html&quot; data-title=&quot;Purchase&quot; data-width=&quot;460&quot; data-height=&quot;450&quot;&gt;&lt;script src=&quot;http://96.28.13.51:4567/html/payment_button.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;&lt;span class=&quot;ui-button-text&quot;&gt; Pay with Bitcoin &lt;/span&gt;&lt;/a&gt;";	
 			}
 
 			return code;
@@ -229,11 +230,13 @@ public class Actions {
 			long satoshis;
 			if (customPrice == null) {
 				satoshis = cc.convertToSatoshisCurrent(currencyIso, b.getBigDecimal("total_native"));
+				o.set("total_native", b.getBigDecimal("total_native"));
 			} else {
 				satoshis = cc.convertToSatoshisCurrent(currencyIso, new BigDecimal(customPrice));
+				o.set("total_native", customPrice);
 			}
 
-
+			
 			o.set("total_satoshis", satoshis);
 
 			o.set("expire_time", System.currentTimeMillis() + 600000);
@@ -319,12 +322,13 @@ public class Actions {
 			}
 		}
 		public static String listAllOrders() {
-			List<OrderView> ovs = OrderView.findAll();
+			List<OrderView> ovs = OrderView.find("status !=? ", "new").orderBy("created_at desc");
 
 			return listOrders(ovs);
 		}
 		public static String listOrdersForButton(Integer buttonId) {
-			List<OrderView> ovs = OrderView.find("button_id=?", buttonId);
+			List<OrderView> ovs = OrderView.find("button_id=? and status != ?", buttonId,
+					"new").orderBy("created_at desc");
 			return listOrders(ovs);
 		}
 
@@ -717,6 +721,17 @@ public class Actions {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static String saveMerchantInfo(String name, String currIso) {
+		MerchantInfo mi = MerchantInfo.findById(1);
+		
+		mi.set("name", name);
+		mi.set("currency_id", TableConstants.CURRENCY_LIST().indexOf(currIso)+1);
+		
+		mi.saveIt();
+		
+		return "Saved new merchant info";
 	}
 
 

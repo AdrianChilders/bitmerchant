@@ -6,6 +6,10 @@ import static spark.Spark.post;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.javalite.activejdbc.Model;
+
+import com.bitmerchant.db.Actions;
+import com.bitmerchant.db.Tables.MerchantInfoView;
 import com.bitmerchant.tools.Tools;
 import com.bitmerchant.wallet.LocalWallet;
 
@@ -13,8 +17,13 @@ public class WalletService {
 
 	// How long to keep the cookies
 	public static final Integer COOKIE_EXPIRE_SECONDS = Tools.cookieExpiration(1440);
-	
+
 	public static void setup() {
+
+		get("/ssl", (req, res) -> {
+			Tools.allowOnlyLocalHeaders(req, res);
+			return LocalWallet.INSTANCE.controller.getIsSSLEncrypted();
+		});
 
 		get("/status_progress", (req, res) -> {
 			Tools.allowOnlyLocalHeaders(req, res);
@@ -36,6 +45,14 @@ public class WalletService {
 		get("/balance", (req, res) -> {
 			Tools.allowOnlyLocalHeaders(req, res);
 			return LocalWallet.INSTANCE.controller.getBalanceText();
+		});
+
+		get("/native_balance", (req, res) -> {
+			Tools.allowOnlyLocalHeaders(req, res);
+			Tools.dbInit();
+			String balance = LocalWallet.INSTANCE.controller.getNativeBalance();
+			Tools.dbClose();
+			return balance;
 		});
 
 		get("/wallet_words", (req, res) -> {
@@ -178,6 +195,36 @@ public class WalletService {
 			res.cookie("newestReceivedTransaction", LocalWallet.INSTANCE.controller.getNewestReceivedTransactionHash(),
 					COOKIE_EXPIRE_SECONDS);
 			return LocalWallet.INSTANCE.controller.getNewestReceivedTransaction();
+		});
+
+
+		get("/merchant_info", (req, res) -> {
+			Tools.allowOnlyLocalHeaders(req, res);
+			Tools.dbInit();
+			MerchantInfoView mi = MerchantInfoView.findById(1);
+			Tools.dbClose();
+
+			return mi.toJson(false);
+		});
+
+		post("/save_merchant_info", (req, res) -> {
+			try {
+				Tools.allowOnlyLocalHeaders(req, res);
+				Tools.dbInit();
+				Map<String, String> formItems = Tools.createMapFromAjaxPost(req.body());
+
+				String name = formItems.get("name");
+				String currIso = formItems.get("price_currency_iso");
+
+				String message = Actions.saveMerchantInfo(name, currIso);
+				Tools.dbClose();
+				return message;
+
+			} catch (NoSuchElementException e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
 		});
 
 	}

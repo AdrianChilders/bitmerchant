@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.javalite.activejdbc.Base;
@@ -14,6 +16,7 @@ import org.javalite.activejdbc.Base;
 import com.bitmerchant.db.Tables.ButtonStyle;
 import com.bitmerchant.db.Tables.ButtonType;
 import com.bitmerchant.db.Tables.Currency;
+import com.bitmerchant.db.Tables.MerchantInfo;
 import com.bitmerchant.db.Tables.OrderStatus;
 import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
@@ -21,10 +24,20 @@ import com.bitmerchant.tools.Tools;
 import com.google.common.io.Files;
 
 public class InitializeTables {
-	public static final Boolean DELETE = true;
+	public static Boolean DELETE;
 	public static Boolean FIRST_FILL = true;
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		createTables();
+
+		if (FIRST_FILL) {
+			fillTables();
+		}
+	}
+	
+	public static void init(Boolean delete) {
+		DELETE = delete;
+		
 		createTables();
 
 		if (FIRST_FILL) {
@@ -51,7 +64,7 @@ public class InitializeTables {
 
 				Tools.runSQLFile(c, new File(DataSources.SQL_FILE));
 				Tools.runSQLFile(c, new File(DataSources.SQL_VIEWS_FILE));
-				
+
 				c.close();
 
 				System.out.println("Table created successfully");
@@ -65,7 +78,7 @@ public class InitializeTables {
 		}
 	}
 
-	
+
 	public static void fillTables() {
 		Connections.INSTANCE.open();
 
@@ -75,7 +88,8 @@ public class InitializeTables {
 		setupButtonStyles();
 		setupButtonTypes();
 		setupOrderStatuses();
-		
+		setupMerchantInfo();
+
 		System.out.println("Filled Tables succesfully");
 	}
 
@@ -105,6 +119,12 @@ public class InitializeTables {
 		for (String type: TableConstants.BUTTON_TYPES) {
 			ButtonType.createIt("type", type);
 		}
+	}
+
+	private static void setupMerchantInfo() {
+		Integer currencyId = TableConstants.CURRENCY_LIST().indexOf("USD") + 1;
+		MerchantInfo.createIt("currency_id", currencyId);
+
 	}
 
 

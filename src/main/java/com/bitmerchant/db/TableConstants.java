@@ -1,5 +1,6 @@
 package com.bitmerchant.db;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +13,16 @@ public class TableConstants {
 
 	public static final Map<String, String> CURRENCY_MAP = ImmutableMap.<String, String>builder()
 			.put("BTC", "Bitcoin")
+			.put( "USD", "United States Dollar")
+			.put( "EUR", "Euro")
+			.put( "GBP", "British Pound Sterling")
 			.put("AUD","Australian Dollar")
 			.put( "BRL", "Brazilian Real")
 			.put( "CAD", "Canadian Dollar")
 			.put( "CHF", "Swiss Franc")
 			.put( "CNY", "Chinese Yuan")
-			.put( "EUR", "Euro")
-			.put( "GBP", "British Pound Sterling")
+
+
 			.put( "HKD", "Hong Kong Dollar")
 			.put( "IDR", "Indonesian Rupiah")
 			.put( "ILS", "Israeli New Sheqel")
@@ -31,7 +35,7 @@ public class TableConstants {
 			.put( "SEK", "Swedish Krona")
 			.put( "SGD", "Singapore Dollar")
 			.put( "TRY", "Turkish Lira")
-			.put( "USD", "United States Dollar")
+
 			.put( "ZAR", "South African Rand")
 			.build();
 
@@ -61,6 +65,14 @@ public class TableConstants {
 
 			.put( "ZAR", "R")
 			.build();
+
+	public static final List<String> CURRENCY_LIST() {
+		List<String> currencyList = new ArrayList<>();
+		currencyList.addAll(TableConstants.CURRENCY_MAP.keySet());
+		
+		return currencyList;
+		
+	}
 
 	public static final List<String> BUTTON_TYPES = Arrays.asList(
 			"buy_now",

@@ -1,14 +1,16 @@
 var transactionsTemplate = null;
+var balance;
 
 $(document).ready(function() {
 
+  
 
   setupSendForm();
   fillStatusText('status_text', '#status_text');
 
   fillProgressBar('status_progress', '#progress_bar');
 
-  fillSimpleText('balance', '.balance');
+  fillBalance();
 
   qrCodeAndReceiveAddress();
 
@@ -19,9 +21,34 @@ $(document).ready(function() {
 
   transactionsTable(transactionsTemplate);
 
-
+  balanceHover();
+  pageTitle();
+  nativeBalance();
 
 });
+
+function pageTitle() {
+  getJson('merchant_info').done(function(result) {
+    var mi = JSON.parse(result);
+    var merchantName = mi['name'];
+
+    console.log(merchantName);
+    if (merchantName != null) {
+      $('#page_title').text(merchantName + ' Wallet');
+    }
+
+    var currency = mi['native_currency_iso'];
+    $('#merchant_currency_iso').text(currency);
+
+  });
+}
+
+function nativeBalance() {
+  getJson('native_balance').done(function(result) {
+    $('#converted_balance').text(result);
+  });
+}
+
 
 function qrCodeAndReceiveAddress() {
 
@@ -50,7 +77,7 @@ function transactionsTable(templateHTML) {
 function sendStatus() {
 
   fillSendMoneyStatusText('send_status', '#send_status');
-  fillSimpleText('balance', '.balance');
+  fillBalance();
   transactionsTable(transactionsTemplate);
 }
 
@@ -160,7 +187,7 @@ function fetchReceivedTransactions(url, templateHTML) {
         // console.log('last: ' + lastReceivedHash);
 
         if (nextReceivedHash != lastReceivedHash) {
-          if (nextReceivedHash != 'none yet') {
+          if (nextReceivedHash != 'none yet' && amount[0] != '-') {
             var message = 'You were sent ' + amount;
             toastr.success(message);
           }
@@ -170,7 +197,9 @@ function fetchReceivedTransactions(url, templateHTML) {
 
 
           qrCodeAndReceiveAddress();
-          fillSimpleText('balance', '.balance');
+          fillBalance();
+
+
           transactionsTable(templateHTML);
 
           // Now set the vars to be the same
@@ -188,4 +217,24 @@ function fetchReceivedTransactions(url, templateHTML) {
 
     // console.log(getCookies());
   }, 60000); // 1000 milliseconds = 1 second.
+}
+
+function fillBalance() {
+  getJson('balance').done(function(result) {
+    // convert to mBTC
+    var btc = parseFloat(result);
+    var mBTC = btc * 1000;
+    $('.balance').text(formatMoney(mBTC));
+    console.log(mBTC);
+    balance = mBTC;
+  });
+
+}
+
+function balanceHover() {
+  $('.balance-cur').hover(function() {
+    $('.balance').text(balance);
+  }, function() {
+    $('.balance').text(formatMoney(balance));
+  });
 }
