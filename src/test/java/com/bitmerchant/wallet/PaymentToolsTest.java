@@ -1,22 +1,21 @@
 package com.bitmerchant.wallet;
 
 import static com.bitmerchant.wallet.LocalWallet.bitcoin;
-
 import junit.framework.TestCase;
+
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
-import org.bitcoinj.kits.WalletAppKit;
 import org.junit.Before;
 
 import com.bitmerchant.db.Actions.OrderActions;
 import com.bitmerchant.db.Tables.Order;
-import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
+import com.bitmerchant.tools.Tools;
 
 public class PaymentToolsTest extends TestCase {
 	
 	@Before
 	public void setUp() {
-		Connections.INSTANCE.open();
+		Tools.dbInit();
 		LocalWallet.INSTANCE.init();
 		
 		bitcoin.awaitRunning();
@@ -31,7 +30,7 @@ public class PaymentToolsTest extends TestCase {
 			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ);
 		}
 		
-		
+		Tools.dbClose();
 	}
 	
 	

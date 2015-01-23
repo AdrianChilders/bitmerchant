@@ -11,7 +11,6 @@ import com.bitmerchant.db.Actions.OrderActions;
 import com.bitmerchant.db.Actions.PaymentActions;
 import com.bitmerchant.db.Tables.Button;
 import com.bitmerchant.db.Tables.Order;
-import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 import com.bitmerchant.wallet.LocalWallet;
@@ -20,7 +19,7 @@ public class ActionsTest extends TestCase {
 
 	 @Before
 	public void setUp() {
-		Connections.INSTANCE.open();
+	Tools.dbInit();
 		LocalWallet.INSTANCE.init();
 //		bitcoin.awaitRunning();
 	
@@ -39,6 +38,7 @@ public class ActionsTest extends TestCase {
 
 			OrderActions.createOrder(DataSources.BUTTON_JSON_REQ);
 		}
+		Tools.dbClose();
 	}
 	
 	 

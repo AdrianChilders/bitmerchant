@@ -1,27 +1,18 @@
 package com.bitmerchant.db;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
-
-import org.javalite.activejdbc.Base;
 
 import com.bitmerchant.db.Tables.ButtonStyle;
 import com.bitmerchant.db.Tables.ButtonType;
 import com.bitmerchant.db.Tables.Currency;
 import com.bitmerchant.db.Tables.MerchantInfo;
 import com.bitmerchant.db.Tables.OrderStatus;
-import com.bitmerchant.tools.Connections;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
-import com.google.common.io.Files;
 
 public class InitializeTables {
 	public static Boolean DELETE;
@@ -53,13 +44,13 @@ public class InitializeTables {
 
 		try {
 			if (DELETE == true) {
-				new File(DataSources.DB_FILE).delete();
+				new File(DataSources.DB_FILE()).delete();
 				System.out.println("DB deleted");
 			}
 
 			Class.forName("org.sqlite.JDBC");
-			if (!new File(DataSources.DB_FILE).exists()) {
-				c = DriverManager.getConnection("jdbc:sqlite:" + DataSources.DB_FILE);
+			if (!new File(DataSources.DB_FILE()).exists()) {
+				c = DriverManager.getConnection("jdbc:sqlite:" + DataSources.DB_FILE());
 				System.out.println("Opened database successfully");
 
 				Tools.runSQLFile(c, new File(DataSources.SQL_FILE));
@@ -80,7 +71,7 @@ public class InitializeTables {
 
 
 	public static void fillTables() {
-		Connections.INSTANCE.open();
+		Tools.dbInit();
 
 		System.out.println("Filling tables...");
 
@@ -90,6 +81,7 @@ public class InitializeTables {
 		setupOrderStatuses();
 		setupMerchantInfo();
 
+		Tools.dbClose();
 		System.out.println("Filled Tables succesfully");
 	}
 

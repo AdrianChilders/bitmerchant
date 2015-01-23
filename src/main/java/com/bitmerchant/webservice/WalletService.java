@@ -6,8 +6,6 @@ import static spark.Spark.post;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.javalite.activejdbc.Model;
-
 import com.bitmerchant.db.Actions;
 import com.bitmerchant.db.Tables.MerchantInfoView;
 import com.bitmerchant.tools.Tools;

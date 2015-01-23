@@ -1,16 +1,12 @@
 package com.bitmerchant.tools;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.bitcoin.protocols.payments.Protos.PaymentDetails;
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
-import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.tools.PaymentProtocolTool;
 
 
@@ -54,7 +50,7 @@ public class ReadPaymentRequest {
 
 	public static void main3(String[] args) throws IOException {
 		
-		Connections.INSTANCE.open();
+		
 //		LocalWallet.INSTANCE.init();
 //		bitcoin.awaitRunning();
 //		PaymentRequest prDerp = PaymentTools.createPaymentRequestFromOrder(1);

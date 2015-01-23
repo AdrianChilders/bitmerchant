@@ -6,9 +6,14 @@ import javax.annotation.Nullable;
 
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicSeed;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,17 +40,21 @@ public class LocalWallet {
 	static final Logger log = LoggerFactory.getLogger(LocalWallet.class);
 
 
-	public static NetworkParameters params = TestNet3Params.get();
+	public static NetworkParameters params;
 	public static WalletAppKit bitcoin;
 	public Controller controller;
 
 	public static LocalWallet INSTANCE = new LocalWallet();
 
+	
+    @Option(name="-testnet",usage="Run using the Bitcoin testnet3")
+    private boolean testnet;
+
+    @Option(name="-deleteDB",usage="Delete the sqlite DB before running.")
+    private boolean deleteDB;
+    
+    
 	public void init() {
-
-
-
-		
 
 
 		setupWalletKit(null);
@@ -122,14 +131,16 @@ public class LocalWallet {
 		Tools.restartApplication();
 	}
 
-	public static void main( String[] args ) {
+	public void doMain(String[] args) {
 
-		setupDirectories();
+
 		
-		Boolean deleteDB = false;
-		if (args.length > 0 && args[0].equals("delete")) {
-			deleteDB = true;
-		}
+		parseArguments(args);
+
+		params = (testnet) ? TestNet3Params.get() : MainNetParams.get();
+		DataSources.HOME_DIR = (testnet) ? DataSources.HOME_DIR  + "/testnet" : DataSources.HOME_DIR;
+		
+		setupDirectories();
 		
 		// Initialize the DB if it hasn't already
 		InitializeTables.init(deleteDB);
@@ -143,8 +154,36 @@ public class LocalWallet {
 		Tools.pollAndOpenStartPage();
 		
 
-
-
-
 	}
+
+	private void parseArguments(String[] args) {
+		CmdLineParser parser = new CmdLineParser(this);
+		
+		try {
+
+			parser.parseArgument(args);
+			
+		} catch (CmdLineException e) {
+			 // if there's a problem in the command line,
+            // you'll get this exception. this will report
+            // an error message.
+            System.err.println(e.getMessage());
+            System.err.println("java LocalWallet [options...] arguments...");
+            // print the list of available options
+            parser.printUsage(System.err);
+            System.err.println();
+
+
+            return;
+		}
+	}
+	public static void main( String[] args ) {
+		
+		new LocalWallet().doMain(args);
+		
+	}
+	
+
+	
+	
 }

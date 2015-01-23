@@ -1,8 +1,6 @@
 package com.bitmerchant.webservice;
 
 import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.SparkBase.externalStaticFileLocation;
 import static spark.SparkBase.setPort;
 import static spark.SparkBase.staticFileLocation;
 
@@ -10,25 +8,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.bitcoin.protocols.payments.Protos.Payment;
-import org.bitcoin.protocols.payments.Protos.PaymentACK;
-import org.bitcoin.protocols.payments.Protos.PaymentRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spark.SparkBase;
 
-import com.bitmerchant.db.Actions;
-import com.bitmerchant.db.Actions.OrderActions;
-import com.bitmerchant.db.Actions.PaymentActions;
-import com.bitmerchant.db.Tables.Button;
-import com.bitmerchant.db.Tables.Order;
-import com.bitmerchant.db.Tables.OrderView;
 import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 import com.bitmerchant.wallet.LocalWallet;

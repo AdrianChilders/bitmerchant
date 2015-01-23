@@ -311,10 +311,17 @@ public class Tools {
 	}
 
 	public static String getTransactionOutputAddress(TransactionOutput txo) {
+		try {
 		log.info("txo here " + txo + "\n" + LocalWallet.params + "\n");
 //		log.info(txo.getAddressFromP2SH( LocalWallet.params).toString());
+		
 		log.info(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
 		return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
+		} catch (NullPointerException e) { 
+			e.printStackTrace();
+			log.info("Probably no tx out here yet");
+			return null;
+		}
 		
 	}
 
@@ -513,7 +520,7 @@ public class Tools {
 
 	public static final void dbInit() {
 		try {
-			Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + DataSources.DB_FILE, "root", "p@ssw0rd");
+			Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + DataSources.DB_FILE(), "root", "p@ssw0rd");
 		} catch (DBException e) {
 			dbClose();
 			dbInit();
