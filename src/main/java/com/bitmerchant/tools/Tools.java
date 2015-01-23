@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
+import com.bitmerchant.db.Actions.OrderActions;
 import com.bitmerchant.db.Tables.OrderView;
 import com.bitmerchant.wallet.LocalWallet;
 import com.google.common.io.Files;
@@ -136,7 +137,7 @@ public class Tools {
 
 		for (Transaction cT : transactions) {
 			String txHash = cT.getHashAsString();			
-
+			OrderActions.updateOrderFromTransactionReceived(cT);
 			OrderView ov = (orderHashToOrderMap.get(txHash) != null) ? orderHashToOrderMap.get(txHash) : null;
 			Map<String, String> tMap = convertTransactionToMap(cT, ov);
 			lom.add(tMap);
@@ -310,12 +311,18 @@ public class Tools {
 	}
 
 	public static String getTransactionOutputAddress(TransactionOutput txo) {
+		log.info("txo here " + txo + "\n" + LocalWallet.params + "\n");
+//		log.info(txo.getAddressFromP2SH( LocalWallet.params).toString());
+		log.info(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
 		return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
+		
 	}
 
 	public static String getTransactionInputAddress(TransactionInput txi) {
+		log.info("txi here " + txi + "\n" + LocalWallet.params + "\n");
 		return getTransactionOutputAddress(txi.getConnectedOutput());
 	}
+	
 	public static String getTransactionInfo(Transaction tx) {
 		List<TransactionOutput> txos = tx.getOutputs();
 		List<TransactionInput> txis = tx.getInputs();

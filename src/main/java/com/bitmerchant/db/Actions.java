@@ -236,7 +236,7 @@ public class Actions {
 				o.set("total_native", customPrice);
 			}
 
-			
+
 			o.set("total_satoshis", satoshis);
 
 			o.set("expire_time", System.currentTimeMillis() + 600000);
@@ -363,7 +363,7 @@ public class Actions {
 			return o;
 
 		}
-		
+
 		public static Order createOrderFromButton(Integer buttonId) {
 			return createOrderFromButton(buttonId, null);
 		}
@@ -488,23 +488,29 @@ public class Actions {
 			// associate the tx outputs with the order receive_addresses 
 			// Get addresses
 
-			Connections.INSTANCE.open();
 
 
-			for (TransactionOutput txo : tx.getOutputs()) {
-				String txReceive = Tools.getTransactionOutputAddress(txo);
+			try {
+			
+				for (TransactionOutput txo : tx.getOutputs()) {
+					String txReceive = Tools.getTransactionOutputAddress(txo);
 
-				Order o = Order.findFirst("receive_address=?", txReceive);
+					Order o = Order.findFirst("receive_address=?", txReceive);
 
-				if (o != null) {
-					// Found it! now update the row
-					log.info("Associating order #" + o.getId() + " with tx " +  tx.getHashAsString());
-					o.set("transaction_hash", tx.getHashAsString());
-					System.out.println("tx value = " + tx.getValue(bitcoin.wallet()));
-					System.out.println("order value = " + o.getInteger("total_satoshis"));
+					if (o != null) {
+						// Found it! now update the row
+						log.info("Associating order #" + o.getId() + " with tx " +  tx.getHashAsString());
+						o.set("transaction_hash", tx.getHashAsString());
+						System.out.println("tx value = " + tx.getValue(bitcoin.wallet()));
+						System.out.println("order value = " + o.getInteger("total_satoshis"));
 
-					o.saveIt();
+						o.saveIt();
+					}
 				}
+			} catch(Exception e) {
+
+			} finally {
+			
 			}
 
 
@@ -722,15 +728,15 @@ public class Actions {
 			return null;
 		}
 	}
-	
+
 	public static String saveMerchantInfo(String name, String currIso) {
 		MerchantInfo mi = MerchantInfo.findById(1);
-		
+
 		mi.set("name", name);
 		mi.set("currency_id", TableConstants.CURRENCY_LIST().indexOf(currIso)+1);
-		
+
 		mi.saveIt();
-		
+
 		return "Saved new merchant info";
 	}
 

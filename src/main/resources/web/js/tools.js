@@ -152,7 +152,7 @@ function fillProgressBar(url, divId) {
   }, 100); // 1000 milliseconds = 1 second.
 }
 
-function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, noToast) {
+function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, noToast, clearForm) {
   // !!!!!!They must have names unfortunately
   // An optional arg
   modalId = (typeof modalId === "undefined") ? "defaultValue" : modalId;
@@ -160,6 +160,8 @@ function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, n
   reload = (typeof reload === "undefined") ? false : reload;
 
   noToast = (typeof noToast === "undefined") ? false : noToast;
+
+  clearForm = (typeof clearForm === "undefined") ? false : clearForm;
 
 
 
@@ -206,7 +208,9 @@ function standardFormPost(shortUrl, formId, modalId, reload, successFunctions, n
       }
 
       btn.button('reset');
-
+      if (clearForm) {
+        $(formId)[0].reset();
+      }
       // console.log(document.cookie);
       return data;
 
@@ -375,11 +379,11 @@ function fillTableFromMustache(url, templateHtml, divId, tableId) {
 
 
 
-
+        console.log(data);
         //formatting the dates
         $.extend(data, standardDateFormatObj);
 
-        // console.log(data);
+
 
 
         Mustache.parse(templateHtml); // optional, speeds up future uses

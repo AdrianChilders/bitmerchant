@@ -163,7 +163,7 @@ function setupFields(orderNum, url) {
     $('#type').html(type);
 
     var total_native = j['order']['total_native'];
-    total_native = formatMoney(total_native);
+    total_native = total_native;
     $('.total_native').html(total_native);
 
 

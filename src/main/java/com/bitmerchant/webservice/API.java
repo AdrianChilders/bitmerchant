@@ -152,7 +152,7 @@ public class API {
 
 				return json; 
 
-			} catch (NoSuchElementException  e) {
+			} catch (NoSuchElementException  | ArithmeticException e) {
 				res.status(666);
 				return e.getMessage();
 			}

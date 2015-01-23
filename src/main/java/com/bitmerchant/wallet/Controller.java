@@ -86,12 +86,14 @@ public class Controller {
 
 		// Set the wallet words
 		initializeWalletSettings(null);
-
+		
+		statusProgress = 0.05d;
+		
 		TorClient torClient = bitcoin.peerGroup().getTorClient();
 		if (torClient != null) {
 
 			String torMsg = "Initialising Tor...";
-			statusProgress = 0.05d;
+			
 			torClient.addInitializationListener(new TorInitializationListener() {
 				@Override
 				public void initializationProgress(String message, int percent) {
@@ -119,17 +121,14 @@ public class Controller {
 			public void onCoinsReceived(Wallet wallet, Transaction tx,
 					Coin prevBalance, Coin newBalance) {
 
-				log.info("u received coins");
-				newestReceivedTransaction = tx;
+				log.info("u received coins2");
 				log.info(Tools.getTransactionInfo(tx));
+				
+				newestReceivedTransaction = tx;
+				
 
 				// TODO for now, just associate the send addresses with the orders
 				// Since the payment_url unfortunately requires SSL
-				OrderActions.updateOrderFromTransactionReceived(tx);
-
-
-
-
 			}
 		});
 

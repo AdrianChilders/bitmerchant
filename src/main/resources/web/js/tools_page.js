@@ -14,7 +14,7 @@ $(document).ready(function() {
       excluded: [':disabled'],
       submitButtons: 'button[type="submit"]'
     })
-    .on('success.form.bv', function(event) {
+  .on('success.form.bv', function(event) {
       event.preventDefault();
       standardFormPost('api/generate_button', "#generatorForm",
         null, false, successStuff, true);

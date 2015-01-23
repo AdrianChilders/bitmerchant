@@ -22,9 +22,9 @@ $(document).ready(function() {
 
       $('#currency_select').on('change', function() {
         var formData = $('#currency_form').serializeArray();
-        // console.log(formData);
+        console.log(formData);
         standardFormPost('save_merchant_info', "#currency_form",
-          null, false, null, true);
+          null, false, null, true, false);
       });
     });
 
@@ -43,10 +43,10 @@ $(document).ready(function() {
 
       wto = setTimeout(function() {
         var formData = $('#currency_form').serializeArray();
-        // console.log(formData);
+        console.log(formData);
 
         standardFormPost('save_merchant_info', "#currency_form",
-          null, false, null, true);
+          null, false, null, true, false);
       }, 1000);
 
 

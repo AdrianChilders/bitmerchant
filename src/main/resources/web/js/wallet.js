@@ -3,7 +3,7 @@ var balance;
 
 $(document).ready(function() {
 
-  
+
 
   setupSendForm();
   fillStatusText('status_text', '#status_text');
@@ -23,7 +23,7 @@ $(document).ready(function() {
 
   balanceHover();
   pageTitle();
-  nativeBalance();
+
 
 });
 
@@ -43,11 +43,7 @@ function pageTitle() {
   });
 }
 
-function nativeBalance() {
-  getJson('native_balance').done(function(result) {
-    $('#converted_balance').text(result);
-  });
-}
+
 
 
 function qrCodeAndReceiveAddress() {
@@ -103,7 +99,7 @@ function setupSendForm() {
     .on('success.form.bv', function(event) {
       event.preventDefault();
       standardFormPost('send_money_encrypted', "#sendMoneyEncryptedForm",
-        "#sendEncryptedModal", false, sendStatus);
+        "#sendEncryptedModal", false, sendStatus, false, true);
     });
 
   $('#sendMoneyForm').bootstrapValidator({
@@ -114,7 +110,7 @@ function setupSendForm() {
     .on('success.form.bv', function(event) {
       event.preventDefault();
       standardFormPost('send_money', "#sendMoneyForm",
-        "#sendModal", false, sendStatus);
+        "#sendModal", false, sendStatus, false, true);
     });
 
 
@@ -219,14 +215,22 @@ function fetchReceivedTransactions(url, templateHTML) {
   }, 60000); // 1000 milliseconds = 1 second.
 }
 
+
 function fillBalance() {
   getJson('balance').done(function(result) {
     // convert to mBTC
     var btc = parseFloat(result);
     var mBTC = btc * 1000;
     $('.balance').text(formatMoney(mBTC));
+    $('.balance-btc').text(btc);
+    $('[name="funds"]').text(btc);
+    $('[name="sendAmount"]').attr('placeholder', 'Current funds : ' + btc);
     console.log(mBTC);
     balance = mBTC;
+  });
+
+  getJson('native_balance').done(function(result) {
+    $('#converted_balance').text(result);
   });
 
 }
