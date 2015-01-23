@@ -290,8 +290,9 @@ function simplePost(shortUrl, postData, reload, successFunctions, noToast, exter
 
     },
     error: function(request, status, error) {
-      toastr.error(request.responseText);
-
+      if (!noToast) {
+        toastr.error(request.responseText);
+      }
     }
   });
 

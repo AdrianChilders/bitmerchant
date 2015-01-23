@@ -24,8 +24,47 @@ $(document).ready(function() {
   balanceHover();
   pageTitle();
 
+  powerStuff();
 
 });
+
+function powerStuff() {
+
+  $("#power_off").click(function(event) {
+    simplePost('power_off', null, false, null, true, false);
+    powerToast();
+    event.preventDefault();
+  });
+
+  $("#restart").click(function(event) {
+    simplePost('restart', null, false, null, true, false);
+    restartToast();
+    event.preventDefault();
+  });
+}
+
+function powerToast() {
+  toastr.success('Bitmerchant is powering off...');
+
+  setTimeout(function() {
+
+    window.close();
+
+  }, 2000);
+
+}
+
+function restartToast() {
+  toastr.success('Bitmerchant is restarting...');
+
+  setTimeout(function() {
+
+    window.close();
+
+  }, 3000);
+
+}
+
 
 function pageTitle() {
   getJson('merchant_info').done(function(result) {

@@ -106,13 +106,20 @@ public class LocalWallet {
 
 
 
-
+	
 
 	public void stop() throws Exception {
 		bitcoin.stopAsync();
 		bitcoin.awaitTerminated();
 		// Forcibly terminate the JVM because Orchid likes to spew non-daemon threads everywhere.
 		Runtime.getRuntime().exit(0);
+	}
+	
+	public void restart() throws Exception {
+		bitcoin.stopAsync();
+		bitcoin.awaitTerminated();
+		
+		Tools.restartApplication();
 	}
 
 	public static void main( String[] args ) {

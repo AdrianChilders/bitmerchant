@@ -25,6 +25,35 @@ public class WalletService {
 			return LocalWallet.INSTANCE.controller.getIsSSLEncrypted();
 		});
 
+		post("/power_off", (req, res) -> {
+			try {
+				Tools.allowOnlyLocalHeaders(req, res);
+
+				LocalWallet.INSTANCE.stop();
+				return "A yellow brick road";
+
+			} catch (Exception e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+		
+		post("/restart", (req, res) -> {
+			try {
+				Tools.allowOnlyLocalHeaders(req, res);
+
+				LocalWallet.INSTANCE.restart();
+				return "A yellow brick road ";
+
+			} catch (Exception e) {
+				res.status(666);
+				return e.getMessage();
+			}
+
+		});
+
+
 		get("/status_progress", (req, res) -> {
 			Tools.allowOnlyLocalHeaders(req, res);
 			//			return lw.controller.getStatusProgress();
