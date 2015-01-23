@@ -26,18 +26,18 @@ To run Bitmerchant
 <pre>
 java -jar target/bitmerchant.jar [parameters]
 
-or better, use the handy script, which also creates a log.out:
+or better, use run script, which also creates a log.out:
 
 ./run.sh [parameters]
 
 parameters:
-	-testnet : run on the bitcoin testnet3
+	-testnet  : run on the bitcoin testnet3
 	-deleteDB : delete the local database before starting
 </pre>
 
 
 ## Features include
-* A fully-functioning bitcoin [wallet](TODO), in a slick bootstrap-based WEBGUI. 
+* A fully-functioning bitcoin [wallet](TODO), in a slick bootstrap-based web GUI. 
 * A well-documented [API](TODO).
 * A slick [payment-button generator](TODO) that can create orders using your own *native currency*.
 * Refund orders at the [click of a button](TODO).
