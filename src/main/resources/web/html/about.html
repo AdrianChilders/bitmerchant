@@ -110,8 +110,69 @@
 
     <div class="container">
 
-      <h1> About </h1>
-      <hr>
+      <div class="row">
+        <div class="col-md-4">
+          <h3> What is Bitmerchant? </h3>
+          <hr>
+          <p> Bitmerchant is a self-hostable, bitcoinj-based payment processor. It's a self-contained jar, that sets up a fully functional local bitcoin wallet, and web service, so that you can accept bitcoin payments and donations on your own website, to a bitcoin wallet that <b>you control</b>.
+          </p>
+
+        </div>
+
+        <div class="col-md-4">
+          <h3> How do I accept Bitcoin? </h3>
+          <hr>
+          <p> Bitmerchant has a fully functional, json-based <a href="/api">API</a>, that lets you create orders and items for sale. There's also a very easy-to-use tool, called the <i>payment button generator</i>, that lets you create buttons and use them on your own website.
+          </p>
+
+        </div>
+
+        <div class="col-md-4">
+          <h3> Additional Features </h3>
+          <hr>
+          <p> Bitmerchant can create orders in your own <i>native currency</i>, give suggested or custom prices for items, and even refund orders at the click of a button.
+            <br>
+            <br>It uses the <a href="https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki">BIP 70</a> Payment protocol.
+          </p>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h3> How do I install it?</h3>
+          <hr>
+          <div class="col-md-6">
+            <p> First, make sure you have both java 8 and maven installed, then run these commands:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>git clone https://github.com/tchoulihan/bitmerchant
+cd bitmerchant
+mvn install
+            </pre>
+          </div>
+          <div class="col-md-6">
+            <p> To run Bitmerchant, run the following command:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>java -jar target/bitmerchant.jar [parameters]</pre>
+          </div>
+          <div class="col-md-6">
+            <p>or better, use the run script, which also creates a log.out:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>./run.sh [parameters]</pre>
+            <pre>parameters:
+    -testnet  : run on the bitcoin testnet3
+    -deleteDB : Deelete the local database
+            </pre>
+          </div>
+
+
+          <p> Post any questions or feature requests you have to the <a href="https://github.com/tchoulihan/bitmerchant">Github</a> repository, and we'll try to get them solved/fixed as soon as possible.
+          </p>
+        </div>
+      </div>
 
 
 

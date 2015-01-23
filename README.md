@@ -26,7 +26,7 @@ To run Bitmerchant
 <pre>
 java -jar target/bitmerchant.jar [parameters]
 
-or better, use run script, which also creates a log.out:
+or better, use the run script, which also creates a log.out:
 
 ./run.sh [parameters]
 
