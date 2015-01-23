@@ -11,6 +11,24 @@ Bitmerchant is a full [Bitcoinj](https://github.com/bitcoinj/bitcoinj)-based mer
 For more information, head over to
 TODO bitmerchant.github.io.
 
+## Installation
+
+To install Bitmerchant, make sure you have both java 8, and maven installed. Then run the following commands:
+```
+git clone https://github.com/tchoulihan/bitmerchant
+cd bitmerchant
+./install.sh
+```
+
+
+To run Bitmerchant
+<pre>
+java -jar target/bitmerchant.jar -params
+parameters:
+-testnet : run on the bitcoin testnet3
+-deleteDB : delete the local database before starting
+
+</pre>
 
 
 It was inspired by [ActiveRecord ORM](https://github.com/rails/rails/tree/master/activerecord) from Ruby on Rails.
