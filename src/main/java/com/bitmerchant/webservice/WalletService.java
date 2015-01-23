@@ -52,6 +52,12 @@ public class WalletService {
 		});
 
 
+		get("/", (req, res) -> {
+			res.redirect("wallet");
+			return "a yellow brick road";
+		});
+		
+		
 		get("/status_progress", (req, res) -> {
 			Tools.allowOnlyLocalHeaders(req, res);
 			//			return lw.controller.getStatusProgress();
