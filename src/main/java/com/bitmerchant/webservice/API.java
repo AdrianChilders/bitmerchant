@@ -334,6 +334,7 @@ public class API {
 		post("/api/refund/:order", JSON_CONTENT_TYPE , (req, res) -> {
 			try {
 
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 				Integer orderNum = Integer.valueOf(req.params(":order"));
 
@@ -361,6 +362,7 @@ public class API {
 		post("/api/refund/:order/:amount/:currency", JSON_CONTENT_TYPE , (req, res) -> {
 			try {
 
+				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				Integer orderNum = Integer.valueOf(req.params(":order"));
