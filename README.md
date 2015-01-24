@@ -35,6 +35,8 @@ parameters:
 	-deleteDB : delete the local database before starting
 </pre>
 
+If accessing from another machine, the wallet is accessible from: http://your.host.ip:4567/ .
+
 
 ## Features include
 * A fully-functioning bitcoin [wallet](TODO), in a slick bootstrap-based web GUI. 
