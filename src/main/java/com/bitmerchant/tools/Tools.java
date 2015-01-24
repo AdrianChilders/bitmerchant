@@ -98,11 +98,15 @@ public class Tools {
 		log.info("request host = " + req.host());
 		log.info("request url = " + req.url());
 	
+		
 //				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
 //		res.header("Access-Control-Allow-Origin", "null");
-		res.header("Access-Control-Allow-Origin", "*");
+//		res.header("Access-Control-Allow-Origin", "*");
 //		res.header("Access-Control-Allow-Credentials", "true");
 			
+		if (!req.ip().equals("127.0.0.1")) {
+			throw new NoSuchElementException("Not a local ip, can't access");
+		}
 	}
 
 	public static final Map<String, String> createMapFromAjaxPost(String reqBody) {
