@@ -92,7 +92,8 @@ public class Tools {
 		for (String header : req.headers()) {
 			log.info("request header | " + header + " : " + req.headers(header));
 		}
-				res.header("Access-Control-Allow-Origin", "localhost:4567");
+	
+				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
 //		res.header("Access-Control-Allow-Origin", "null");
 //		res.header("Access-Control-Allow-Credentials", "true");
 			
