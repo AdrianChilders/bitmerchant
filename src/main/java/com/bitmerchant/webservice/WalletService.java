@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 
 import com.bitmerchant.db.Actions;
 import com.bitmerchant.db.Tables.MerchantInfoView;
+import com.bitmerchant.tools.DataSources;
 import com.bitmerchant.tools.Tools;
 import com.bitmerchant.wallet.LocalWallet;
 
@@ -55,6 +56,13 @@ public class WalletService {
 		get("/", (req, res) -> {
 			res.redirect("wallet");
 			return "a yellow brick road";
+		});
+		
+		get("/web_service_url", (req, res) -> {
+			Tools.allowOnlyLocalHeaders(req, res);
+			//			return lw.controller.getStatusProgress();
+			return DataSources.WEB_SERVICE_URL;
+
 		});
 		
 		

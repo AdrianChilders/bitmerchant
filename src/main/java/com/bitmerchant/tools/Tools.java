@@ -6,9 +6,11 @@ import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -19,6 +21,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,8 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -312,24 +315,24 @@ public class Tools {
 
 	public static String getTransactionOutputAddress(TransactionOutput txo) {
 		try {
-		log.info("txo here " + txo + "\n" + LocalWallet.params + "\n");
-//		log.info(txo.getAddressFromP2SH( LocalWallet.params).toString());
-		
-		log.info(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
-		return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
+			log.info("txo here " + txo + "\n" + LocalWallet.params + "\n");
+			//		log.info(txo.getAddressFromP2SH( LocalWallet.params).toString());
+
+			log.info(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
+			return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
 		} catch (NullPointerException e) { 
 			e.printStackTrace();
 			log.info("Probably no tx out here yet");
 			return null;
 		}
-		
+
 	}
 
 	public static String getTransactionInputAddress(TransactionInput txi) {
 		log.info("txi here " + txi + "\n" + LocalWallet.params + "\n");
 		return getTransactionOutputAddress(txi.getConnectedOutput());
 	}
-	
+
 	public static String getTransactionInfo(Transaction tx) {
 		List<TransactionOutput> txos = tx.getOutputs();
 		List<TransactionInput> txis = tx.getInputs();
@@ -534,22 +537,58 @@ public class Tools {
 
 	public static void restartApplication() throws URISyntaxException, IOException
 	{
-	  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-	  final File currentJar = new File(Tools.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		final File currentJar = new File(Tools.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-	  /* is it a jar file? */
-	  if(!currentJar.getName().endsWith(".jar"))
-	    return;
+		/* is it a jar file? */
+		if(!currentJar.getName().endsWith(".jar"))
+			return;
 
-	  /* Build command: java -jar application.jar */
-	  final ArrayList<String> command = new ArrayList<String>();
-	  command.add(javaBin);
-	  command.add("-jar");
-	  command.add(currentJar.getPath());
+		/* Build command: java -jar application.jar */
+		final ArrayList<String> command = new ArrayList<String>();
+		command.add(javaBin);
+		command.add("-jar");
+		command.add(currentJar.getPath());
 
-	  final ProcessBuilder builder = new ProcessBuilder(command);
-	  builder.start();
-	  System.exit(0);
+		final ProcessBuilder builder = new ProcessBuilder(command);
+		builder.start();
+		System.exit(0);
+	}
+
+	public static void addExternalWebServiceVarToTools() {
+		String sparkLine = "var externalSparkService ='http://96.28.13.51:4567/';\n\n";
+		try {
+//			RandomAccessFile f = new RandomAccessFile(new File(DataSources.TOOLS_JS), "rw");
+//			f.seek(0); // to the beginning
+//			if (!f.readLine().equals(sparkLine))
+//				f.write(sparkLine.getBytes());
+//
+//			f.close();
+		
+			List<String> lines = java.nio.file.Files.readAllLines(Paths.get(DataSources.TOOLS_JS));
+			
+			log.info("0 = " + lines.get(0));
+			
+			// insert
+			if (!lines.get(0).startsWith("var externalSparkService")) {
+				
+				lines.add(0, sparkLine);
+			}
+			// otherwise, replace the first line
+			else {
+				lines.set(0,  sparkLine);
+			}
+			
+			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
+			
+		
+
+	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

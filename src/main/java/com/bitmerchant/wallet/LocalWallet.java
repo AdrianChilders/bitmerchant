@@ -145,6 +145,9 @@ public class LocalWallet {
 		// Initialize the DB if it hasn't already
 		InitializeTables.init(deleteDB);
 		
+		// Add external web service url to beginning of javascript tools
+		Tools.addExternalWebServiceVarToTools();
+		
 		// Start the wallet
 		INSTANCE.init();
 

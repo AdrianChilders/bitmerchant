@@ -1,6 +1,14 @@
-var sparkService = "http://localhost:4567/"
-  // var sparkService ='http://96.28.13.51:4567/';
-var externalSpark = 'http://96.28.13.51:4567/';
+var externalSparkService ='http://96.28.13.51:4567/';
+
+
+
+
+
+
+
+
+
+var sparkService = "http://localhost:4567/";
 
 var pageNumbers = {};
 // var cookie_path_name = "/";
@@ -10,13 +18,22 @@ function getJson(shortUrl, noToast, external) {
 
   noToast = (typeof noToast === "undefined") ? false : noToast;
   external = (typeof external === "undefined") ? false : external;
+
   var url;
+
   if (external) {
-    url = externalSpark + shortUrl;
+    url = externalSparkService + shortUrl;
+
   } else {
     url = sparkService + shortUrl;
   }
 
+  return simpleAjax(url, noToast);
+
+
+}
+
+function simpleAjax(url, noToast) {
   return $.ajax({
     type: "GET",
     url: url,
@@ -25,15 +42,7 @@ function getJson(shortUrl, noToast, external) {
     },
     // data: seriesData, 
     success: function(data, status, xhr) {
-      // console.log(data);
-      // var jsonObj = JSON.parse(data);
-      // JSON.useDateParser();
-      // var jsonObj = jQuery.parseJSON(data);
-      // JSON.useDateParser();
-      // var jsonObj = JSON.parse(data);
-      // $('[data-spy="scroll"]').each(function() {
-      //     $(this).scrollspy('refresh');
-      // });
+
     },
     error: function(request, status, error) {
       if (!noToast) {
@@ -42,6 +51,10 @@ function getJson(shortUrl, noToast, external) {
     }
   });
 }
+
+
+
+
 
 function fillSimpleText(url, divId) {
   var url = sparkService + url // the script where you handle the form input.
@@ -245,7 +258,7 @@ function simplePost(shortUrl, postData, reload, successFunctions, noToast, exter
 
   var url;
   if (external) {
-    url = externalSpark + shortUrl;
+    url = externalSparkService + shortUrl;
   } else {
     url = sparkService + shortUrl;
   }

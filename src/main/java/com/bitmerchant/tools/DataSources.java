@@ -16,6 +16,8 @@ public class DataSources {
 	
 	public static final String CODE_DIR = System.getProperty("user.dir");
 	
+	public static final String TOOLS_JS = CODE_DIR + "/src/main/resources/web/js/tools.js";
+	
 	public static String DB_FILE() {
 		return HOME_DIR + "/" + APP_NAME + ".db";
 	}

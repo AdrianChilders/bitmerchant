@@ -5,6 +5,7 @@ $(document).ready(function() {
 
 
 
+
   setupSendForm();
   fillStatusText('status_text', '#status_text');
 
@@ -101,6 +102,7 @@ function setupSendForm() {
       event.preventDefault();
       standardFormPost('send_money_encrypted', "#sendMoneyEncryptedForm",
         "#sendEncryptedModal", false, sendStatus, false, true);
+      setupSendForm();
     });
 
   $('#sendMoneyForm').bootstrapValidator({
@@ -112,6 +114,7 @@ function setupSendForm() {
       event.preventDefault();
       standardFormPost('send_money', "#sendMoneyForm",
         "#sendModal", false, sendStatus, false, true);
+      setupSendForm();
     });
 
 

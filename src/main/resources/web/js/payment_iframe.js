@@ -194,7 +194,7 @@ function setupFields(orderNum, url) {
 }
 
 function checkStatus(orderNum, url) {
-  var url = externalSpark + url // the script where you handle the form input.
+  var url = externalSparkService + url // the script where you handle the form input.
   var intervalID = setInterval(function() {
     $.ajax({
       type: "GET",
