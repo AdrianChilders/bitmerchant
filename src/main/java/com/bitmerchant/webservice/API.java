@@ -110,7 +110,7 @@ public class API {
 
 			try {
 
-				Tools.allowOnlyLocalHeaders(req, res);
+//				Tools.allowOnlyLocalHeaders(req, res);
 				Tools.dbInit();
 
 				Integer buttonNum = Integer.valueOf(req.params(":button"));
