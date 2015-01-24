@@ -558,32 +558,26 @@ public class Tools {
 	public static void addExternalWebServiceVarToTools() {
 		String sparkLine = "var externalSparkService ='http://96.28.13.51:4567/';\n\n";
 		try {
-//			RandomAccessFile f = new RandomAccessFile(new File(DataSources.TOOLS_JS), "rw");
-//			f.seek(0); // to the beginning
-//			if (!f.readLine().equals(sparkLine))
-//				f.write(sparkLine.getBytes());
-//
-//			f.close();
-		
-			List<String> lines = java.nio.file.Files.readAllLines(Paths.get(DataSources.TOOLS_JS));
-			
-			log.info("0 = " + lines.get(0));
-			
-			// insert
-			if (!lines.get(0).startsWith("var externalSparkService")) {
-				
-				lines.add(0, sparkLine);
-			}
-			// otherwise, replace the first line
-			else {
-				lines.set(0,  sparkLine);
-			}
-			
-			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
-			
-		
+			//			RandomAccessFile f = new RandomAccessFile(new File(DataSources.TOOLS_JS), "rw");
+			//			f.seek(0); // to the beginning
+			//			if (!f.readLine().equals(sparkLine))
+			//				f.write(sparkLine.getBytes());
+			//
+			//			f.close();
 
-	
+			List<String> lines = java.nio.file.Files.readAllLines(Paths.get(DataSources.TOOLS_JS));
+
+			log.info("0 = " + lines.get(0));
+
+
+			lines.set(0,  sparkLine);
+
+
+			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
+
+
+
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
