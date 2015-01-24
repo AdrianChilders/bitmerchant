@@ -32,15 +32,18 @@ public class WebService {
 
 	public static void start() {
 		
+		setupSSL();
 		
 		setPort(DataSources.SPARK_WEB_PORT) ;
+		
+
 
 		staticFileLocation("/web"); // Static files
 		//		staticFileLocation("/web/html"); // Static files
 		//		externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
 
 		// Set up the secure keystore
-		setupSSL();
+	
 
 
 
