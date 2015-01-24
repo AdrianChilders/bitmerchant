@@ -76,9 +76,11 @@ public class Tools {
 	public static void allowOnlyLocalHeaders(Request req, Response res) {
 
 		String origin = req.headers("Origin");
+		String origin2 = req.headers("origin");
 		String host = req.headers("Host");
 		log.info("request host: " + host);
 		log.info("request origin: " + origin);
+		log.info("request origin2: " + origin2);
 
 
 		//		System.out.println("origin = " + origin);
