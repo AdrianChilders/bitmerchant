@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.activation.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +73,9 @@ public class WebService {
 				String pass;
 
 				pass = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_PASSWORD_FILE)));
+				
 				log.info("pass = " + pass);
+				log.info("keystore file = " + DataSources.KEYSTORE_FILE);
 				SparkBase.setSecure(DataSources.KEYSTORE_FILE, pass,null,null);
 				LocalWallet.INSTANCE.controller.setIsSSLEncrypted(true);
 			} else {
