@@ -28,8 +28,8 @@ public class DataSources {
 	
 	public static final String BUTTON_JSON_REQ ="{\n \"button\" : {\n    \"name\": \"kittin mittinz\",\n    \"type\": \"buy_now\",\n       \"text\": \"Buy with USD/BTC\",\n    \"price_string\": \"0.50\",\n    \"price_currency_iso\": \"USD\",\n  \"network\": \"test\",\n   \"callback_url\": \"http://www.example.com/my_custom_button_callback\",\n    \"description\": \"Sample description\"\n  }\n   \n}";
 	
-	public static final String KEYSTORE_FILE = HOME_DIR + "keystore.jks";
+	public static final String KEYSTORE_FILE = HOME_DIR + "/keystore.jks";
 	
-	public static final String KEYSTORE_PASSWORD_FILE = HOME_DIR + "pass";
+	public static final String KEYSTORE_PASSWORD_FILE = HOME_DIR + "/pass";
 	
 }
