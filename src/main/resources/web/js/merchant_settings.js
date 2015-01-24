@@ -2,6 +2,15 @@ var currenciesTemplate = null;
 
 $(document).ready(function() {
 
+  // remove the ssl warning if necessary
+  getJson('ssl').done(function(isSSL) {
+    console.log(isSSL);
+    if (isSSL) {
+      console.log('hiding ssl warning');
+      $('#ssl_warning').addClass('hide');
+    }
+  });
+
   // Fill the currency options
   currenciesTemplate = $('#currencies_template').html();
 
