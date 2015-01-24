@@ -20,7 +20,7 @@ public class WalletService {
 	public static void setup() {
 
 		get("/ssl", (req, res) -> {
-			Tools.allowOnlyLocalHeaders(req, res);
+			
 			return LocalWallet.INSTANCE.controller.getIsSSLEncrypted();
 		});
 
