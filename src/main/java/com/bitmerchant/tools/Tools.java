@@ -94,7 +94,8 @@ public class Tools {
 		}
 	
 //				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
-		res.header("Access-Control-Allow-Origin", "null");
+//		res.header("Access-Control-Allow-Origin", "null");
+		res.header("Access-Control-Allow-Origin", "*");
 //		res.header("Access-Control-Allow-Credentials", "true");
 			
 	}
