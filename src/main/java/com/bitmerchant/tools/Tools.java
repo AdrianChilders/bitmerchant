@@ -556,7 +556,7 @@ public class Tools {
 	}
 
 	public static void addExternalWebServiceVarToTools() {
-		String sparkLine = "var externalSparkService ='http://96.28.13.51:4567/';\n\n";
+		String sparkLine = "var externalSparkService ='" + DataSources.WEB_SERVICE_URL + "';\n\n";
 		try {
 			//			RandomAccessFile f = new RandomAccessFile(new File(DataSources.TOOLS_JS), "rw");
 			//			f.seek(0); // to the beginning
