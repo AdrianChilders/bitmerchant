@@ -30,11 +30,9 @@ public class WebService {
 	static final Logger log = LoggerFactory.getLogger(WebService.class);
 
 
-
-
-
-
 	public static void start() {
+		
+		
 		setPort(DataSources.SPARK_WEB_PORT) ;
 
 		staticFileLocation("/web"); // Static files
@@ -42,7 +40,7 @@ public class WebService {
 		//		externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
 
 		// Set up the secure keystore
-
+		setupSSL();
 
 
 

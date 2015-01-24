@@ -148,6 +148,8 @@ public class LocalWallet {
 		// Add external web service url to beginning of javascript tools
 		Tools.addExternalWebServiceVarToTools();
 		
+		
+		
 		// Start the wallet
 		INSTANCE.init();
 
