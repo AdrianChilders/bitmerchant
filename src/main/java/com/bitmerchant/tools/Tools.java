@@ -93,8 +93,8 @@ public class Tools {
 			log.info("request header | " + header + " : " + req.headers(header));
 		}
 	
-				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
-//		res.header("Access-Control-Allow-Origin", "null");
+//				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
+		res.header("Access-Control-Allow-Origin", "null");
 //		res.header("Access-Control-Allow-Credentials", "true");
 			
 	}
