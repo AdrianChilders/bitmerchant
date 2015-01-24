@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,11 +88,11 @@ public class Tools {
 		//		if (DataSources.ALLOW_ACCESS_ADDRESSES.contains(req.headers("Origin"))) {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
-
+		log.info("request headers = " + Arrays.asList(req.headers().toArray()));
 				res.header("Access-Control-Allow-Origin", "localhost:4567");
 //		res.header("Access-Control-Allow-Origin", "null");
 //		res.header("Access-Control-Allow-Credentials", "true");
-
+			
 	}
 
 	public static final Map<String, String> createMapFromAjaxPost(String reqBody) {
