@@ -88,7 +88,7 @@ public class Tools {
 
 				res.header("Access-Control-Allow-Origin", "localhost:4567");
 //		res.header("Access-Control-Allow-Origin", "null");
-		res.header("Access-Control-Allow-Credentials", "true");
+//		res.header("Access-Control-Allow-Credentials", "true");
 
 	}
 
