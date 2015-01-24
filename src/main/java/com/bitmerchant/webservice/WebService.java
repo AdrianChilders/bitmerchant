@@ -68,7 +68,7 @@ public class WebService {
 				String pass;
 
 				pass = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_PASSWORD_FILE)));
-
+				log.info("pass = " + pass);
 				SparkBase.setSecure(DataSources.KEYSTORE_FILE, pass,null,null);
 				LocalWallet.INSTANCE.controller.setIsSSLEncrypted(true);
 			} else {
