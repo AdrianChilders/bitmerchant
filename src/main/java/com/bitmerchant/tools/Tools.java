@@ -79,6 +79,7 @@ public class Tools {
 		String origin = req.headers("Origin");
 		String origin2 = req.headers("origin");
 		String host = req.headers("Host");
+		
 	
 		log.info("request host: " + host);
 		log.info("request origin: " + origin);
@@ -92,6 +93,10 @@ public class Tools {
 		for (String header : req.headers()) {
 			log.info("request header | " + header + " : " + req.headers(header));
 		}
+		log.info("request ip = " + req.ip());
+		log.info("request pathInfo = " + req.pathInfo());
+		log.info("request host = " + req.host());
+		log.info("request url = " + req.url());
 	
 //				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
 //		res.header("Access-Control-Allow-Origin", "null");
