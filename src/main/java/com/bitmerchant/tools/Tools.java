@@ -79,6 +79,7 @@ public class Tools {
 		String origin = req.headers("Origin");
 		String origin2 = req.headers("origin");
 		String host = req.headers("Host");
+	
 		log.info("request host: " + host);
 		log.info("request origin: " + origin);
 		log.info("request origin2: " + origin2);
@@ -88,7 +89,9 @@ public class Tools {
 		//		if (DataSources.ALLOW_ACCESS_ADDRESSES.contains(req.headers("Origin"))) {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
-		log.info("request headers = " + Arrays.asList(req.headers().toArray()));
+		for (String header : req.headers()) {
+			log.info("request header | " + header + " : " + req.headers(header));
+		}
 				res.header("Access-Control-Allow-Origin", "localhost:4567");
 //		res.header("Access-Control-Allow-Origin", "null");
 //		res.header("Access-Control-Allow-Credentials", "true");
