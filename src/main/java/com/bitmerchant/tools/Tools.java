@@ -103,7 +103,7 @@ public class Tools {
 //		res.header("Access-Control-Allow-Origin", "null");
 //		res.header("Access-Control-Allow-Origin", "*");
 //		res.header("Access-Control-Allow-Credentials", "true");
-			
+
 		if (!req.ip().equals("127.0.0.1")) {
 			throw new NoSuchElementException("Not a local ip, can't access");
 		}

@@ -63,7 +63,7 @@ public class API {
 
 			try {
 
-				Tools.allowOnlyLocalHeaders(req, res);
+				
 				Tools.dbInit();
 
 				// Creates the button and the button from the req body
