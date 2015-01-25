@@ -8,8 +8,9 @@ Bitmerchant &mdash; A free, self-hostable Bitcoin payment processor.
 
 Bitmerchant is a full [Bitcoinj](https://github.com/bitcoinj/bitcoinj)-based merchant-services platform. It lets you accept bitcoin payments or donations on your own website, without having to go through an intermediary service like coinbase or bitpay; the purchases or donations go directly into a wallet that **you control**, running on your server.
 
-For more information, head over to
-TODO bitmerchant.github.io.
+
+
+For more information, head over to http://tchoulihan.github.io/bitmerchant/api.html
 
 ## Installation
 
@@ -42,14 +43,13 @@ https://localhost:4567/ once you've enabled ssl.
 
 
 ## Features include
-* A fully-functioning bitcoin [wallet](TODO), in a slick bootstrap-based web GUI. 
-* A well-documented [API](TODO).
-* A slick [payment-button generator](TODO) that can create orders using your own *native currency*.
-* Refund orders at the [click of a button](TODO).
+* A fully-functioning bitcoin [wallet](http://imgur.com/a/laYYn), in a slick bootstrap-based web GUI. 
+* A well-documented [API](http://imgur.com/a/laYYn).
+* A slick [payment-button generator](http://imgur.com/a/laYYn) that can create orders using your own *native currency*.
+* Refund orders at the click of a button.
 * Uses the BIP70 Payment protocol to ensure correct payment amounts, and refund addresses.
 * Implement your own SSL certs.
 
+## Thanks
+* Special thanks to Mike Hearn and Andreas Schildbach for their assistance with BIP70 and refunding orders.
 
-## Documentation
-
-For more information, follow here: http://bitmerchant.github.io
