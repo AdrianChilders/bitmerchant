@@ -1,0 +1,20 @@
+api
+orders
+order_details
+merchant_settings
+settings
+tools
+wallet
+about
+
+symlinks
+-----
+ln -s html/orders.html orders
+ln -s html/api.html api
+ln -s html/order_details.html order_details
+ln -s html/merchant_settings.html merchant_settings
+ln -s html/tools_page.html tools
+ln -s html/settings.html settings
+ln -s html/wallet.html wallet
+ln -s html/about.html about
+
