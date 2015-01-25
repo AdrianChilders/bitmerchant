@@ -12,6 +12,15 @@ Bitmerchant is a full [Bitcoinj](https://github.com/bitcoinj/bitcoinj)-based mer
 
 For more information, head over to http://tchoulihan.github.io/bitmerchant/
 
+## Features include
+* A fully-functioning bitcoin [wallet](http://imgur.com/a/laYYn), in a slick bootstrap-based web GUI. 
+* A well-documented [API](http://tchoulihan.github.io/bitmerchant/api.html).
+* A slick [payment-button generator](http://imgur.com/a/laYYn) that can create orders using your own *native currency*.
+* Refund orders at the click of a button.
+* Uses the BIP70 Payment protocol to ensure correct payment amounts, and refund addresses.
+* Implement your own SSL certs.
+
+
 ## Installation
 
 To install Bitmerchant, make sure you have both java 8, and maven installed. Then run the following commands:
@@ -42,13 +51,7 @@ http://localhost:4567/ , or
 https://localhost:4567/ once you've enabled ssl.
 
 
-## Features include
-* A fully-functioning bitcoin [wallet](http://imgur.com/a/laYYn), in a slick bootstrap-based web GUI. 
-* A well-documented [API](http://tchoulihan.github.io/bitmerchant/api.html).
-* A slick [payment-button generator](http://imgur.com/a/laYYn) that can create orders using your own *native currency*.
-* Refund orders at the click of a button.
-* Uses the BIP70 Payment protocol to ensure correct payment amounts, and refund addresses.
-* Implement your own SSL certs.
+
 
 ## Thanks
 * Special thanks to Mike Hearn and Andreas Schildbach for their assistance with BIP70 and refunding orders.
