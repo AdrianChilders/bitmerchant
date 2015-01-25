@@ -10,7 +10,7 @@ Bitmerchant is a full [Bitcoinj](https://github.com/bitcoinj/bitcoinj)-based mer
 
 
 
-For more information, head over to http://tchoulihan.github.io/bitmerchant/api.html
+For more information, head over to http://tchoulihan.github.io/bitmerchant/
 
 ## Installation
 
