@@ -1,4 +1,4 @@
-package com.bitmerchant.tools;
+package com.bitmerchant.wallet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import org.bitcoin.protocols.payments.Protos.PaymentDetails;
 import org.bitcoin.protocols.payments.Protos.PaymentRequest;
 import org.bitcoinj.tools.PaymentProtocolTool;
+
+import com.bitmerchant.tools.Tools;
 
 
 public class ReadPaymentRequest {

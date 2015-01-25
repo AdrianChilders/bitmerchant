@@ -57,9 +57,10 @@ public enum CurrencyConverter {
 							//								Entry<DateTime, Double> recentRate = getMostRecentConversionRateForTodayCoinbase(currentRes);
 
 							rates.put(recentRate.getKey(), recentRate.getValue());
-							log.info("recent rate put = " + recentRate.getValue());
+						
 
-							System.out.println("Recaching BTC -> " + cu.getCurrencyCode());
+							log.info("Recaching BTC -> " + cu.getCurrencyCode());
+							log.info("Most Recent conversion rate = " + recentRate.getValue());
 							return rates;
 						}
 					});
@@ -71,18 +72,18 @@ public enum CurrencyConverter {
 
 		Money m1 = Money.parse("BTC 6.18");
 
-		System.out.println(m1);
+		log.info(m1.toString());
 
-		System.out.println(m);
+		log.info(m.toString());
 
 		CurrencyConverter cc = CurrencyConverter.INSTANCE;
 
 		Money convertedMoney = cc.convertMoneyForToday(CurrencyUnit.of("USD"), m1);
 
-		System.out.println(convertedMoney);
+		log.info(convertedMoney.toString());
 		Thread.sleep(6000);
 		convertedMoney = cc.convertMoneyForToday(CurrencyUnit.USD, m);
-		System.out.println(convertedMoney);
+		log.info(convertedMoney.toString());
 
 	}
 

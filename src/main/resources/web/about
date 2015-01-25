@@ -43,6 +43,9 @@
   <!-- Bootstrap datepicker -->
   <link href="../bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
 
+  <!-- Jquery ui -->
+  <link href="https://code.jquery.com/ui/1.11.2/themes/cupertino/jquery-ui.css" rel="stylesheet" />
+
   <!-- This main css -->
   <link href="../css/main.css" rel="stylesheet">
 
@@ -114,7 +117,9 @@
         <div class="col-md-4">
           <h3> What is Bitmerchant? </h3>
           <hr>
-          <p> Bitmerchant is a self-hostable, bitcoin payment processor. It's a self-contained jar, that sets up a fully functional local bitcoin wallet, and web service, so that you can accept bitcoin payments and donations on your own website, to a bitcoin wallet that <b>you control</b>.
+          <p> Bitmerchant is a self-hostable, bitcoin payment processor made for merchants. It's a self-contained, runnable jar, that sets up a fully functioning local bitcoin wallet and web service, so that you can accept bitcoin payments and donations on your own website, to a bitcoin wallet that <b>you control</b>.
+            <br>
+            <br> Have a look at some screenshots <a href="http://imgur.com/a/laYYn">here</a>
           </p>
 
         </div>
@@ -122,7 +127,7 @@
         <div class="col-md-4">
           <h3> How do I accept Bitcoin? </h3>
           <hr>
-          <p> Bitmerchant has a fully functional, json-based <a href="/api">API</a>, that lets you create orders and items for sale. There's also a very easy-to-use tool, called the <i>payment button generator</i>, that lets you create buttons and use them on your own website.
+          <p> Bitmerchant has a fully functional, json-based <a href="api">API</a>, that lets you create orders and items for sale. There's also a very easy-to-use tool, called the <i>payment button generator</i>, that lets you create buttons and use them on your own website.
           </p>
 
         </div>
@@ -164,18 +169,29 @@ mvn install
             <pre>./run.sh [parameters]</pre>
             <pre>parameters:
     -testnet  : run on the bitcoin testnet3
-    -deleteDB : Delete the local database</pre>
+    -deleteDB : Delete the local database
+    -loglevel [INFO,WARN, etc] : Sets the log level</pre>
           </div>
           <div class="col-md-6">
             <p> If accessing from another machine, VNC to the machine(or vpn to the local network), and point your browser to: </p>
           </div>
           <div class="col-md-6">
             <pre>http://localhost:4567/</pre>
+            <p>or</p>
+            <pre>https://localhost:4567/</pre> once you follow the instructions to enable SSL.
           </div>
 
           <div class="col-md-12">
-            <p> Post any questions or feature requests you have to the <a href="https://github.com/tchoulihan/bitmerchant">Github</a> repository, and we'll try to get them solved/fixed as soon as possible.
+           <br>
+            <p> Post any questions or feature requests you have to the <a href="https://github.com/tchoulihan/bitmerchant">Github</a> repository, and I'll try to get them solved/fixed as soon as possible.
             </p>
+
+            <p> If you'd like to contribute to the project, you can either post bounties for desired features <a href="https://www.bountysource.com/trackers/9805417-tchoulihan-bitmerchant">here</a>, or below:</p>
+
+            <a name="1" class="bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only" href="https://bitmerchant.tk:4567/html/payment_iframe.html" data-title="Purchase" data-width="460" data-height="450">
+              <script src="https://bitmerchant.tk:4567/html/payment_button.js" type="text/javascript"></script><span class="ui-button-text"> <i class="fa fa-beer"></i> Contribute </span>
+            </a>
+
           </div>
         </div>
       </div>
@@ -185,8 +201,6 @@ mvn install
       <!-- The Page -->
       <div class="row">
         <div class="col-md-12">
-
-
 
           <div class="row">
             <hr class="featurette-divider">
@@ -223,6 +237,8 @@ mvn install
       ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
   <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
   <script src="../bower_components/toastr/toastr.js"></script>

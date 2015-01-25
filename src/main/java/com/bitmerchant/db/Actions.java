@@ -490,8 +490,8 @@ public class Actions {
 						// Found it! now update the row
 						log.info("Associating order #" + o.getId() + " with tx " +  tx.getHashAsString());
 						o.set("transaction_hash", tx.getHashAsString());
-						System.out.println("tx value = " + tx.getValue(bitcoin.wallet()));
-						System.out.println("order value = " + o.getInteger("total_satoshis"));
+						log.debug("tx value = " + tx.getValue(bitcoin.wallet()));
+						log.debug("order value = " + o.getInteger("total_satoshis"));
 
 						o.saveIt();
 					}
@@ -595,7 +595,6 @@ public class Actions {
 			for (int i = 0; i < p.getRefundToCount(); i++) {
 				log.info("refund info = " + p.getRefundToList());
 
-				log.info("2 = " + p.getRefundTo(0));
 				Output o = p.getRefundTo(i);
 				long amount = o.getAmount();
 				byte[] sBytes = o.getScript().toByteArray();

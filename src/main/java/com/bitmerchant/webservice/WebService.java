@@ -75,7 +75,6 @@ public class WebService {
 				String pass = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_PASSWORD_FILE))).trim();
 				String domain = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_DOMAIN_FILE))).trim();
 	
-				log.info("pass = " + pass);
 				log.info("keystore file = " + DataSources.KEYSTORE_FILE);
 				SparkBase.setSecure(DataSources.KEYSTORE_FILE, pass,null,null);
 				LocalWallet.INSTANCE.controller.setIsSSLEncrypted(true);
@@ -86,7 +85,7 @@ public class WebService {
 				
 				
 			} else {
-				log.info("One of the 3 java keystore files is missing");
+				log.info("One of the 3 java keystore files is missing. you need a keystore.jks, domain, and pass file");
 			}
 
 		} catch (IOException e) {

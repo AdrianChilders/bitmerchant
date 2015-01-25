@@ -1,3 +1,6 @@
+var sparkService = 'http://localhost:4567/';
+var externalSparkService ='http://96.28.13.51:4567/';
+
 
 
 
@@ -386,7 +389,7 @@ function fillTableFromMustache(url, templateHtml, divId, tableId) {
 
 
 
-        console.log(data);
+        // console.log(data);
         //formatting the dates
         $.extend(data, standardDateFormatObj);
 

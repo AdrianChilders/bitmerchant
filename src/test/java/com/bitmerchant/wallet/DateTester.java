@@ -1,4 +1,4 @@
-package com.bitmerchant.tools;
+package com.bitmerchant.wallet;
 
 import java.util.Date;
 

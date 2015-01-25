@@ -102,7 +102,7 @@ function setupSendForm() {
       event.preventDefault();
       standardFormPost('send_money_encrypted', "#sendMoneyEncryptedForm",
         "#sendEncryptedModal", false, sendStatus, false, true);
-      setupSendForm();
+    
     });
 
   $('#sendMoneyForm').bootstrapValidator({
@@ -114,30 +114,29 @@ function setupSendForm() {
       event.preventDefault();
       standardFormPost('send_money', "#sendMoneyForm",
         "#sendModal", false, sendStatus, false, true);
-      setupSendForm();
+   
     });
 
 
+    updateSendForm();
+
+}
+
+function updateSendForm(balanceBTC) {
 
 
-
-
-
-
-  getJson('balance').done(function(result) {
     $('.othermain-col').removeClass('hide');
-    var fundsNum = result.replace(/[^0-9\.]+/g, "");
-    var usersFunds = parseFloat(fundsNum);
+    var usersFunds = balanceBTC;
 
-    $('[name="funds"]').text(result);
-    $('[name="sendAmount"]').attr('placeholder', 'Current funds : ' + result);
+    $('[name="funds"]').text(balanceBTC);
+    $('[name="sendAmount"]').attr('placeholder', 'Current funds : ' + usersFunds);
     $('[name="sendAmount"]').bind('keyup', function(f) {
       var sendAmount = parseFloat($(this).val());
 
       var fundsLeft = usersFunds - sendAmount;
       if (!isNaN(fundsLeft)) {
 
-        $('[name="fundsLeft"]').text('$' + fundsLeft);
+        $('[name="fundsLeft"]').text(fundsLeft);
 
         if (fundsLeft < 0) {
 
@@ -151,8 +150,6 @@ function setupSendForm() {
           $('[name="fundsLeft"]').removeClass("text-danger");
         }
       }
-
-    });
   });
 
   // $("#placeSendBtn").click(function(event) {
@@ -222,15 +219,18 @@ function fetchReceivedTransactions(url, templateHTML) {
 
 function fillBalance() {
   getJson('balance').done(function(result) {
+    // console.log(result);
     // convert to mBTC
-    var btc = parseFloat(result);
+    var btc = parseFloat(result).toFixed(8);
     var mBTC = btc * 1000;
+  
     $('.balance').text(formatMoney(mBTC));
     $('.balance-btc').text(btc);
     $('[name="funds"]').text(btc);
     $('[name="sendAmount"]').attr('placeholder', 'Current funds : ' + btc);
-    console.log(mBTC);
+    // console.log(mBTC);
     balance = mBTC;
+    updateSendForm(btc);
   });
 
   getJson('native_balance').done(function(result) {
@@ -241,7 +241,7 @@ function fillBalance() {
 
 function balanceHover() {
   $('.balance-cur').hover(function() {
-    $('.balance').text(balance);
+    $('.balance').text(balance.toFixed(5));
   }, function() {
     $('.balance').text(formatMoney(balance));
   });

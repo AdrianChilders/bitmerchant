@@ -33,6 +33,7 @@ or better, use the run script, which also creates a log.out:
 parameters:
 	-testnet  : run on the bitcoin testnet3
 	-deleteDB : delete the local database before starting
+	-loglevel [INFO,WARN, etc] : Sets the log level
 </pre>
 
 If accessing from another machine, the wallet is accessible from: http://your.host.ip:4567/ .

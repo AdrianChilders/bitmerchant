@@ -14,8 +14,10 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.omg.CORBA.PRIVATE_MEMBER;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 import com.bitmerchant.db.InitializeTables;
 import com.bitmerchant.tools.DataSources;
@@ -37,8 +39,8 @@ import com.bitmerchant.webservice.WebService;
  */
 public class LocalWallet {
 
-	static final Logger log = LoggerFactory.getLogger(LocalWallet.class);
-
+	static  Logger log = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+	
 
 	public static NetworkParameters params;
 	public static WalletAppKit bitcoin;
@@ -53,90 +55,18 @@ public class LocalWallet {
     @Option(name="-deleteDB",usage="Delete the sqlite DB before running.")
     private boolean deleteDB;
     
+    @Option(name="-loglevel", usage="Sets the log level [INFO, DEBUG, etc.]")     
+    private String loglevel = "INFO";
     
-	public void init() {
-
-
-		setupWalletKit(null);
-
-
-		bitcoin.startAsync();
-
-
-	}
-
-	public static void setupDirectories() {
-		log.info("Setting up dirs");
-		new File(DataSources.HOME_DIR).mkdirs();
-	}
-
-	public void setupWalletKit(@Nullable DeterministicSeed seed) {
-		controller = new Controller();
-		// If seed is non-null it means we are restoring from backup.
-		bitcoin = new WalletAppKit(params, new File(DataSources.HOME_DIR), DataSources.APP_NAME) {
-
-			@Override
-			protected void onSetupCompleted() {
-				// Don't make the user wait for confirmations for now, as the intention is they're sending it
-				// their own money!
-				bitcoin.wallet().allowSpendingUnconfirmedTransactions();
-				if (params != RegTestParams.get())
-					bitcoin.peerGroup().setMaxConnections(11);
-				bitcoin.peerGroup().setBloomFilterFalsePositiveRate(0.00001);
-				controller.onBitcoinSetup();
-				//                Platform.runLater(controller::onBitcoinSetup);
-			}
-
-		};
-		// Now configure and start the appkit. This will take a second or two - we could show a temporary splash screen
-		// or progress widget to keep the user engaged whilst we initialise, but we don't.
-		if (params == RegTestParams.get()) {
-			bitcoin.connectToLocalHost();   // You should run a regtest mode bitcoind locally.
-		} else if (params == TestNet3Params.get()) {
-			// As an example!
-			//			bitcoin.useTor();
-			// bitcoin.setDiscovery(new HttpDiscovery(params, URI.create("http://localhost:8080/peers"), ECKey.fromPublicOnly(BaseEncoding.base16().decode("02cba68cfd0679d10b186288b75a59f9132b1b3e222f6332717cb8c4eb2040f940".toUpperCase()))));
-		}
-
-		// The progress bar stuff
-
-		bitcoin.setDownloadListener(controller.progressBarUpdater())
-		.setBlockingStartup(false)
-		.setUserAgent(DataSources.APP_NAME, "1.0");
-
-		if (seed != null)
-			bitcoin.restoreWalletFromSeed(seed);
-
-
-
-
-	}
-
-
-
-
-	
-
-	public void stop() throws Exception {
-		bitcoin.stopAsync();
-		bitcoin.awaitTerminated();
-		// Forcibly terminate the JVM because Orchid likes to spew non-daemon threads everywhere.
-		Runtime.getRuntime().exit(0);
-	}
-	
-	public void restart() throws Exception {
-		bitcoin.stopAsync();
-		bitcoin.awaitTerminated();
-		
-		Tools.restartApplication();
-	}
-
 	public void doMain(String[] args) {
-
 
 		
 		parseArguments(args);
+		
+		
+		log.setLevel(Level.toLevel(loglevel));
 
+		// get the correct network
 		params = (testnet) ? TestNet3Params.get() : MainNetParams.get();
 		DataSources.HOME_DIR = (testnet) ? DataSources.HOME_DIR  + "/testnet" : DataSources.HOME_DIR;
 		
@@ -186,6 +116,77 @@ public class LocalWallet {
 		
 		new LocalWallet().doMain(args);
 		
+	}
+
+	public void init() {
+	
+	
+		setupWalletKit(null);
+	
+	
+		bitcoin.startAsync();
+	
+	}
+
+	public static void setupDirectories() {
+		log.info("Setting up ~/.bitmerchant dirs");
+		new File(DataSources.HOME_DIR).mkdirs();
+	}
+
+	public void stop() throws Exception {
+		bitcoin.stopAsync();
+		bitcoin.awaitTerminated();
+		// Forcibly terminate the JVM because Orchid likes to spew non-daemon threads everywhere.
+		Runtime.getRuntime().exit(0);
+	}
+
+	public void restart() throws Exception {
+		bitcoin.stopAsync();
+		bitcoin.awaitTerminated();
+		
+		Tools.restartApplication();
+	}
+
+	public void setupWalletKit(@Nullable DeterministicSeed seed) {
+		controller = new Controller();
+		// If seed is non-null it means we are restoring from backup.
+		bitcoin = new WalletAppKit(params, new File(DataSources.HOME_DIR), DataSources.APP_NAME) {
+	
+			@Override
+			protected void onSetupCompleted() {
+				// Don't make the user wait for confirmations for now, as the intention is they're sending it
+				// their own money!
+				bitcoin.wallet().allowSpendingUnconfirmedTransactions();
+				if (params != RegTestParams.get())
+					bitcoin.peerGroup().setMaxConnections(11);
+				bitcoin.peerGroup().setBloomFilterFalsePositiveRate(0.00001);
+				controller.onBitcoinSetup();
+				//                Platform.runLater(controller::onBitcoinSetup);
+			}
+	
+		};
+		// Now configure and start the appkit. This will take a second or two - we could show a temporary splash screen
+		// or progress widget to keep the user engaged whilst we initialise, but we don't.
+		if (params == RegTestParams.get()) {
+			bitcoin.connectToLocalHost();   // You should run a regtest mode bitcoind locally.
+		} else if (params == TestNet3Params.get()) {
+			// As an example!
+			//			bitcoin.useTor();
+			// bitcoin.setDiscovery(new HttpDiscovery(params, URI.create("http://localhost:8080/peers"), ECKey.fromPublicOnly(BaseEncoding.base16().decode("02cba68cfd0679d10b186288b75a59f9132b1b3e222f6332717cb8c4eb2040f940".toUpperCase()))));
+		}
+	
+		// The progress bar stuff
+	
+		bitcoin.setDownloadListener(controller.progressBarUpdater())
+		.setBlockingStartup(false)
+		.setUserAgent(DataSources.APP_NAME, "1.0");
+	
+		if (seed != null)
+			bitcoin.restoreWalletFromSeed(seed);
+	
+	
+	
+	
 	}
 	
 

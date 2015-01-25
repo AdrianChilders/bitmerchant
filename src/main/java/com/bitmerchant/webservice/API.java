@@ -321,7 +321,7 @@ public class API {
 
 				Tools.dbClose();
 
-				log.info("payment = " + payment);
+				log.info("BIP70 payment created = " + payment);
 
 				return res.raw();
 			} catch (NoSuchElementException  | IOException e) {

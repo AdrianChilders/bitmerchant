@@ -77,14 +77,29 @@ public class Tools {
 
 	public static void allowOnlyLocalHeaders(Request req, Response res) {
 
+
+
+
+
+		//		res.header("Access-Control-Allow-Origin", "http://mozilla.com");
+		//		res.header("Access-Control-Allow-Origin", "null");
+		//		res.header("Access-Control-Allow-Origin", "*");
+		//		res.header("Access-Control-Allow-Credentials", "true");
+
+		if (!req.ip().equals("127.0.0.1")) {
+			throw new NoSuchElementException("Not a local ip, can't access");
+		}
+	}
+
+	public static void logRequestInfo(Request req) {
 		String origin = req.headers("Origin");
 		String origin2 = req.headers("origin");
 		String host = req.headers("Host");
-		
-	
-		log.info("request host: " + host);
-		log.info("request origin: " + origin);
-		log.info("request origin2: " + origin2);
+
+
+		log.debug("request host: " + host);
+		log.debug("request origin: " + origin);
+		log.debug("request origin2: " + origin2);
 
 
 		//		System.out.println("origin = " + origin);
@@ -92,26 +107,16 @@ public class Tools {
 		//			res.header("Access-Control-Allow-Origin", origin);
 		//		}
 		for (String header : req.headers()) {
-			log.info("request header | " + header + " : " + req.headers(header));
+			log.debug("request header | " + header + " : " + req.headers(header));
 		}
-		log.info("request ip = " + req.ip());
-		log.info("request pathInfo = " + req.pathInfo());
-		log.info("request host = " + req.host());
-		log.info("request url = " + req.url());
-	
-		
-//				res.header("Access-Control-Allow-Origin", "http://mozilla.com");
-//		res.header("Access-Control-Allow-Origin", "null");
-//		res.header("Access-Control-Allow-Origin", "*");
-//		res.header("Access-Control-Allow-Credentials", "true");
-
-		if (!req.ip().equals("127.0.0.1")) {
-			throw new NoSuchElementException("Not a local ip, can't access");
-		}
+		log.debug("request ip = " + req.ip());
+		log.debug("request pathInfo = " + req.pathInfo());
+		log.debug("request host = " + req.host());
+		log.debug("request url = " + req.url());
 	}
 
 	public static final Map<String, String> createMapFromAjaxPost(String reqBody) {
-		log.info(reqBody);
+		log.debug(reqBody);
 		Map<String, String> postMap = new HashMap<String, String>();
 		String[] split = reqBody.split("&");
 		for (int i = 0; i < split.length; i++) {
@@ -126,7 +131,7 @@ public class Tools {
 			}
 		}
 
-		log.info(GSON2.toJson(postMap));
+		log.debug(GSON2.toJson(postMap));
 
 		return postMap;
 
@@ -238,19 +243,24 @@ public class Tools {
 
 		// For now, if the value transferred is greater than 1 BTC, require 6 confirmations.
 		// Otherwise, require only for it to be in the building state
-		if (status.equals("BUILDING")) {
-			int depth = tx.getConfidence().getDepthInBlocks();
 
-			if (value.isGreaterThan(Coin.COIN)) {
-				if (depth >=6) {
-					status = "COMPLETED";
-				} else {
-					status = "PENDING";
-				}
+		int depth = tx.getConfidence().getDepthInBlocks();
+
+		// If its greater than 1 bitcoin, only show completed after depth is 6. Otherwise, require a depth of 1.
+		if (value.isGreaterThan(Coin.COIN)) {
+			if (depth >=6) {
+				status = "<span class=\"label label-success\"> COMPLETED </span>";
 			} else {
-				status = "COMPLETED";
+				status = "<span class=\"label label-warning\"> PENDING </span>";
 			}
-		} 
+		} else {
+			if (depth >=1) {
+				status = "<span class=\"label label-success\"> COMPLETED </span>";
+			} else {
+				status = "<span class=\"label label-warning\"> PENDING </span>";
+			}
+		}
+
 
 		map.put("status", status);
 		map.put("depth",String.valueOf(tx.getConfidence().getDepthInBlocks()));
@@ -333,21 +343,21 @@ public class Tools {
 
 	public static String getTransactionOutputAddress(TransactionOutput txo) {
 		try {
-			log.info("txo here " + txo + "\n" + LocalWallet.params + "\n");
+			log.debug("txo here " + txo + "\n" + LocalWallet.params + "\n");
 			//		log.info(txo.getAddressFromP2SH( LocalWallet.params).toString());
 
-			log.info(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
+			log.debug(txo.getAddressFromP2PKHScript(LocalWallet.params).toString());
 			return txo.getAddressFromP2PKHScript(LocalWallet.params).toString();
 		} catch (NullPointerException e) { 
 			e.printStackTrace();
-			log.info("Probably no tx out here yet");
+			log.debug("Probably no tx out here yet");
 			return null;
 		}
 
 	}
 
 	public static String getTransactionInputAddress(TransactionInput txi) {
-		log.info("txi here " + txi + "\n" + LocalWallet.params + "\n");
+		log.debug("txi here " + txi + "\n" + LocalWallet.params + "\n");
 		return getTransactionOutputAddress(txi.getConnectedOutput());
 	}
 
@@ -575,7 +585,7 @@ public class Tools {
 
 	public static void addExternalWebServiceVarToTools() {
 		String externalSparkLine = "var externalSparkService ='" + DataSources.WEB_SERVICE_URL + "';";
-		
+
 		String internalSparkLine = LocalWallet.INSTANCE.controller.getIsSSLEncrypted() ? 
 				"var sparkService = 'https://localhost:4567/';" :
 					"var sparkService = 'http://localhost:4567/';";
@@ -583,14 +593,14 @@ public class Tools {
 
 
 			List<String> lines = java.nio.file.Files.readAllLines(Paths.get(DataSources.TOOLS_JS));
-		
+
 			lines.set(0,  internalSparkLine);
 			lines.set(1, externalSparkLine);
-			
-			
+
+
 			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
 			Files.touch(new File(DataSources.TOOLS_JS));
-			
+
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -121,7 +121,7 @@ public class Controller {
 			public void onCoinsReceived(Wallet wallet, Transaction tx,
 					Coin prevBalance, Coin newBalance) {
 
-				log.info("u received coins2");
+				log.info("You received coins:");
 				log.info(Tools.getTransactionInfo(tx));
 				
 				newestReceivedTransaction = tx;
@@ -140,7 +140,7 @@ public class Controller {
 			super.progress(pct, blocksLeft, date);
 
 			statusProgress = pct / 100.0;
-			log.info("Progress = " + statusProgress);
+			log.debug("Progress = " + statusProgress);
 		}
 
 		@Override

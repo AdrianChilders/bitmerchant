@@ -6,6 +6,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bitmerchant.db.Tables.ButtonStyle;
 import com.bitmerchant.db.Tables.ButtonType;
 import com.bitmerchant.db.Tables.Currency;
@@ -17,7 +20,8 @@ import com.bitmerchant.tools.Tools;
 public class InitializeTables {
 	public static Boolean DELETE;
 	public static Boolean FIRST_FILL = true;
-
+	static final Logger log = LoggerFactory.getLogger(InitializeTables.class);
+	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		createTables();
 
@@ -27,6 +31,8 @@ public class InitializeTables {
 	}
 	
 	public static void init(Boolean delete) {
+		
+		log.info("Using database located at : " + DataSources.DB_FILE());
 		DELETE = delete;
 		
 		createTables();
@@ -41,26 +47,26 @@ public class InitializeTables {
 	public static void createTables() {
 		Connection c = null;
 
-
+		
 		try {
 			if (DELETE == true) {
 				new File(DataSources.DB_FILE()).delete();
-				System.out.println("DB deleted");
+				log.info("DB deleted");
 			}
 
 			Class.forName("org.sqlite.JDBC");
 			if (!new File(DataSources.DB_FILE()).exists()) {
 				c = DriverManager.getConnection("jdbc:sqlite:" + DataSources.DB_FILE());
-				System.out.println("Opened database successfully");
+				log.info("Opened database successfully");
 
 				Tools.runSQLFile(c, new File(DataSources.SQL_FILE));
 				Tools.runSQLFile(c, new File(DataSources.SQL_VIEWS_FILE));
 
 				c.close();
 
-				System.out.println("Table created successfully");
+				log.info("Table created successfully");
 			} else {
-				System.out.println("DB already exists");
+				log.info("DB already exists");
 				FIRST_FILL = false;
 			}
 		} catch ( Exception e ) {
@@ -73,7 +79,7 @@ public class InitializeTables {
 	public static void fillTables() {
 		Tools.dbInit();
 
-		System.out.println("Filling tables...");
+		log.info("Filling tables...");
 
 		setupCurrencies();
 		setupButtonStyles();
@@ -82,7 +88,7 @@ public class InitializeTables {
 		setupMerchantInfo();
 
 		Tools.dbClose();
-		System.out.println("Filled Tables succesfully");
+		log.info("Filled Tables succesfully");
 	}
 
 
