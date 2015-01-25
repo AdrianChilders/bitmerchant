@@ -50,9 +50,6 @@ public class WebService {
 		// Set up the secure keystore
 	
 
-
-
-
 		WalletService.setup();
 		API.setup();
 
