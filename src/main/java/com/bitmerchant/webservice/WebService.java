@@ -2,7 +2,7 @@ package com.bitmerchant.webservice;
 
 import static spark.Spark.get;
 import static spark.SparkBase.setPort;
-import static spark.SparkBase.staticFileLocation;
+import static spark.SparkBase.externalStaticFileLocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +43,9 @@ public class WebService {
 		
 
 
-		staticFileLocation("/web"); // Static files
+//		staticFileLocation("/web"); // Static files
 		//		staticFileLocation("/web/html"); // Static files
-		//		externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
+				externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
 
 		// Set up the secure keystore
 	

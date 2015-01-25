@@ -590,6 +590,7 @@ public class Tools {
 			
 			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
 			Files.touch(new File(DataSources.TOOLS_JS));
+			
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
