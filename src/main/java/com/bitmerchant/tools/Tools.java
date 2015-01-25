@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -586,9 +587,9 @@ public class Tools {
 			lines.set(0,  internalSparkLine);
 			lines.set(1, externalSparkLine);
 			
-
+			new File(DataSources.TOOLS_JS).setLastModified(new Date().getTime());
 			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
-
+		
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
