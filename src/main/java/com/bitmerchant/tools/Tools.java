@@ -587,9 +587,9 @@ public class Tools {
 			lines.set(0,  internalSparkLine);
 			lines.set(1, externalSparkLine);
 			
-			new File(DataSources.TOOLS_JS).setLastModified(new Date().getTime());
+			
 			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
-		
+			Files.touch(new File(DataSources.TOOLS_JS));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
