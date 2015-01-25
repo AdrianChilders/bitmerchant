@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- For the gh_pages(just about and api), do these replacements(from, to)
+a href="api.html"
+a href="api.html"
 
+<a class="navbar-brand" href="about.html">BitMerchant</a>
+<a class="navbar-brand" href="/about">BitMerchant</a>
+
+src/main/resources/web/
+src/main/resources/web/
+
+ -->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,8 +53,14 @@
   <!-- Bootstrap datepicker -->
   <link href="src/main/resources/web/bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
 
+  <!-- Jquery ui -->
+  <link href="https://code.jquery.com/ui/1.11.2/themes/cupertino/jquery-ui.css" rel="stylesheet" />
+
   <!-- This main css -->
   <link href="src/main/resources/web/css/main.css" rel="stylesheet">
+
+    <script src="src/main/resources/web/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 
 
 </head>
@@ -66,7 +82,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">BitMerchant</a>
+          <a class="navbar-brand" href="about.html">BitMerchant</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -110,18 +126,94 @@
 
     <div class="container">
 
-      <h3> What is Bitmerchant? </h3>
-      <hr>
-      <p> Bitmerchant is a self-hostable, bitcoinj-based payment processor. It's a self-contained jar, that sets up a local bitcoin wallet and web service, so that you can accept bitcoin payments and donations on your own website. 
-      </p> 
+      <div class="row">
+        <div class="col-md-4">
+          <h3> What is Bitmerchant? </h3>
+          <hr>
+          <p> Bitmerchant is a self-hostable, bitcoin payment processor made for merchants. It's a self-contained, runnable jar, that sets up a fully functioning local bitcoin wallet and web service, so that you can accept bitcoin payments and donations on your own website, to a bitcoin wallet that <b>you control</b>.
+            <br>
+            <br> Have a look at some screenshots <a href="http://imgur.com/a/laYYn">here</a>.
+          </p>
+
+        </div>
+
+        <div class="col-md-4">
+          <h3> How do I accept Bitcoin? </h3>
+          <hr>
+          <p> Bitmerchant has a fully functional, json-based <a href="api">API</a>, that lets you create orders and items for sale. There's also a very easy-to-use tool, called the <i>payment button generator</i>, that lets you create buttons and use them on your own website.
+          </p>
+
+        </div>
+
+        <div class="col-md-4">
+          <h3> Additional Features </h3>
+          <hr>
+          <p> Bitmerchant can create orders in your own <i>native currency</i>, give suggested or custom prices for items, and even refund orders at the click of a button.
+            <br>
+            <br>It uses the <a href="https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki">BIP 70</a> Payment protocol.
+          </p>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h3> How do I install it?</h3>
+          <hr>
+          <div class="col-md-6">
+            <p> First, make sure you have both java 8 and maven installed, then run these commands:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>git clone https://github.com/tchoulihan/bitmerchant
+cd bitmerchant
+mvn install
+            </pre>
+          </div>
+          <div class="col-md-6">
+            <p> To run Bitmerchant, run the following command:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>java -jar target/bitmerchant.jar [parameters]</pre>
+          </div>
+          <div class="col-md-6">
+            <p>or better, use the run script, which also creates a log.out:</p>
+          </div>
+          <div class="col-md-6">
+            <pre>./run.sh [parameters]</pre>
+            <pre>parameters:
+    -testnet  : run on the bitcoin testnet3
+    -deleteDB : Delete the local database
+    -loglevel [INFO,WARN, etc] : Sets the log level</pre>
+          </div>
+          <div class="col-md-6">
+            <p> If accessing from another machine, VNC to the machine(or vpn to the local network), and point your browser to: </p>
+          </div>
+          <div class="col-md-6">
+            <pre>http://localhost:4567/</pre>
+            <p>or</p>
+            <pre>https://localhost:4567/</pre> once you follow the instructions to enable SSL.
+          </div>
+
+          <div class="col-md-12">
+           <br>
+            <p> Post any questions or feature requests you have to the <a href="https://github.com/tchoulihan/bitmerchant">Github</a> repository, and I'll try to get them solved/fixed as soon as possible.
+            </p>
+
+            <p> If you'd like to contribute to the project, you can either post bounties for desired features <a href="https://www.bountysource.com/trackers/9805417-tchoulihan-bitmerchant">here</a>, or below:</p>
+
+            <a name="1" class="bitmerchant-button ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only" href="https://bitmerchant.tk:4567/html/payment_iframe.html" data-title="Donate" data-width="460" data-height="470">
+              <script src="https://bitmerchant.tk:4567/html/payment_button.js" type="text/javascript"></script><span class="ui-button-text"> <i class="fa fa-beer"></i> Contribute </span>
+            </a>
+
+          </div>
+        </div>
+      </div>
 
 
 
       <!-- The Page -->
       <div class="row">
         <div class="col-md-12">
-
-
 
           <div class="row">
             <hr class="featurette-divider">
@@ -157,7 +249,8 @@
   <!-- Bootstrap core JavaScript
       ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
-  <script src="src/main/resources/web/bower_components/jquery/dist/jquery.min.js"></script>
+
+
   <script src="src/main/resources/web/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="src/main/resources/web/bower_components/bootstrapValidator/dist/js/bootstrapValidator.min.js "></script>
   <script src="src/main/resources/web/bower_components/toastr/toastr.js"></script>

@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- For the gh_pages(just about and api), do these replacements(from, to)
+a href="/api"
+a href="api.html"
 
+<a class="navbar-brand" href="/">BitMerchant</a>
+<a class="navbar-brand" href="/about">BitMerchant</a>
+
+../
+src/main/resources/web/
+
+ -->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -87,7 +97,7 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/API">API Reference</a>
+                <li><a href="/api">API Reference</a>
                 </li>
                 <li><a href="/FAQ">Frequently Asked Questions</a>
                 </li>
