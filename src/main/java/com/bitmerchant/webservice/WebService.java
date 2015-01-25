@@ -45,7 +45,7 @@ public class WebService {
 
 //		staticFileLocation("/web"); // Static files
 		//		staticFileLocation("/web/html"); // Static files
-				externalStaticFileLocation(DataSources.CODE_DIR+ "/web");
+				externalStaticFileLocation(DataSources.CODE_DIR+ "/src/main/resources/web/");
 
 		// Set up the secure keystore
 	
