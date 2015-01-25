@@ -2,7 +2,7 @@
 ==================
 
 
-Bitmerchant &mdash; A free, self-hostable Bitcoin payment processor.
+[Bitmerchant](http://tchoulihan.github.io/bitmerchant/) &mdash; A free, self-hostable Bitcoin payment processor.
 ==========
 
 
