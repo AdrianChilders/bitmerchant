@@ -262,7 +262,7 @@
               <tr> 
                 <td>{{#dateformat}}{{longDate}}{{/dateformat}}</td>
                 <td>{{{message}}} <b>{{button_name}}</b> 
-                 <a class="text-muted" href="{{biteasy_url}}">
+                 <a class="text-muted" href="{{blockexplorer_url}}">
                     <sup>tx</sup></a>
                 {{#order}}
                   <br> <a class="text-muted" href="/order_details?order={{order}}"> Order # {{order}} </a>

@@ -194,14 +194,14 @@ public class Tools {
 
 		map.put("transaction_hash", tx.getHashAsString());
 		
-		String biteasyURL;
+		String blockExplorerURL;
 		if (LocalWallet.params.equals(TestNet3Params.get())) {
-			biteasyURL = "https://www.biteasy.com/testnet/transactions/" + tx.getHashAsString();
+			blockExplorerURL = "https://www.blockexplorer.com/testnet/tx/" + tx.getHashAsString();
 		} else {
-			biteasyURL = "https://www.biteasy.com/transactions/" + tx.getHashAsString();
+			blockExplorerURL = "https://www.blockexplorer.com/transactions/" + tx.getHashAsString();
 		}
 		
-		map.put("biteasy_url", biteasyURL);
+		map.put("blockexplorer_url", blockExplorerURL);
 
 
 		String receiveMessage;
