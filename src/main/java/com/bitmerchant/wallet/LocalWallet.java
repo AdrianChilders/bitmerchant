@@ -144,9 +144,7 @@ public class LocalWallet {
 		
 		// Initialize the DB if it hasn't already
 		InitializeTables.init(deleteDB);
-		
-		// Add external web service url to beginning of javascript tools
-		Tools.addExternalWebServiceVarToTools();
+	
 		
 		
 		
@@ -155,6 +153,8 @@ public class LocalWallet {
 
 		// Start the web service
 		WebService.start();
+		
+
 
 		Tools.pollAndOpenStartPage();
 		

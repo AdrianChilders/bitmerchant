@@ -5,7 +5,7 @@ $(document).ready(function() {
   // remove the ssl warning if necessary
   getJson('ssl').done(function(isSSL) {
     console.log(isSSL);
-    if (isSSL) {
+    if (isSSL == 'true') {
       console.log('hiding ssl warning');
       $('#ssl_warning').addClass('hide');
     }

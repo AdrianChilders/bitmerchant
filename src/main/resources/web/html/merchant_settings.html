@@ -221,22 +221,16 @@ TODO
             </div>
 
             <p>
-              To enable SSL/TLS <i>encryption</i>(which you <b>definitely should</b> since as a merchant you will be sending and receiving money), You need to place two files in <i>~/.bitmerchant-wallet/</i>, and then restart bitmerchant. This warning will dissapear once this is done.
+              To enable SSL/TLS <i>encryption</i>(which you <b>definitely should</b> since as a merchant you will be sending and receiving money), You need to place <b>three</b> files in <i>~/.bitmerchant-wallet/</i>, and then restart bitmerchant. This warning will dissapear once this is done.
             </p>
             <ul>
-              <li> A <i>.jks</i> java keystore file named <i>keystore.jks</i>
+              <li> a file named <i>keystore.jks</i>
                 <ul>
-                  <li> You can use these keytool commands to generate one:
-                    <br>
-                    <code>openssl pkcs12 -export -in public.crt -inkey privatekey.key -out server.p12 -name pkcs12alias -CAfile intermediate.crt -caname root
-                    </code>
-                    <br>
-                    <br>
-                    <code>keytool -importkeystore  -deststorepass farbar -destkeypass farbar -destkeystore keystore.jks -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass farbar -alias pkcs12alias
-                      </code>
+                  <li> You can use openssl, and keytool commands at <a href="http://docs.codehaus.org/display/JETTY/How+to+configure+SSL">this</a> site to generate a keystore.jks from your domain name and ssl certificates.
                   </li>
                 </ul>
                 <li> a file named <i>pass</i>, containing your keystore password.</li>
+                <li> a file named <i>domain</i> containing your domain name, IE, example.com . You don't need to include the <i>https://</i>.</li>
             </ul>
           </div>
 

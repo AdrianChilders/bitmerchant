@@ -36,6 +36,9 @@ public class WebService {
 		
 		setupSSL();
 		
+		// Add external web service url to beginning of javascript tools
+		Tools.addExternalWebServiceVarToTools();
+		
 		setPort(DataSources.SPARK_WEB_PORT) ;
 		
 
@@ -69,17 +72,24 @@ public class WebService {
 
 		try {
 			if (new File(DataSources.KEYSTORE_FILE).exists() && 
-					new File(DataSources.KEYSTORE_PASSWORD_FILE).exists()) {
-				String pass;
-
-				pass = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_PASSWORD_FILE))).trim();
+					new File(DataSources.KEYSTORE_PASSWORD_FILE).exists() && 
+					new File(DataSources.KEYSTORE_DOMAIN_FILE).exists()) {
+				
+				String pass = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_PASSWORD_FILE))).trim();
+				String domain = new String(Files.readAllBytes(Paths.get(DataSources.KEYSTORE_DOMAIN_FILE))).trim();
 	
 				log.info("pass = " + pass);
 				log.info("keystore file = " + DataSources.KEYSTORE_FILE);
 				SparkBase.setSecure(DataSources.KEYSTORE_FILE, pass,null,null);
 				LocalWallet.INSTANCE.controller.setIsSSLEncrypted(true);
+				
+				// Change the spark web service URL
+				DataSources.WEB_SERVICE_URL = "https://" + domain + ":" + DataSources.SPARK_WEB_PORT + "/";
+				
+				
+				
 			} else {
-				log.info("No Java Keystore Exists");
+				log.info("One of the 3 java keystore files is missing");
 			}
 
 		} catch (IOException e) {

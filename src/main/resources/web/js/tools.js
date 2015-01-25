@@ -1,14 +1,7 @@
-var externalSparkService ='http://96.28.13.51:4567/';
 
 
 
 
-
-
-
-
-
-var sparkService = "http://localhost:4567/";
 
 var pageNumbers = {};
 // var cookie_path_name = "/";

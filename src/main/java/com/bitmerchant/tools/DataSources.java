@@ -9,7 +9,7 @@ public class DataSources {
 		
 	public static final String EXTERNAL_IP = Tools.httpGet("http://checkip.amazonaws.com/").trim();
 	
-	public static final String WEB_SERVICE_URL = "http://" + EXTERNAL_IP + ":" + SPARK_WEB_PORT + "/";
+	public static String WEB_SERVICE_URL = "http://" + EXTERNAL_IP + ":" + SPARK_WEB_PORT + "/";
 	
 	// The path to the bitmerchant dir
 	public static String HOME_DIR = System.getProperty( "user.home" ) + "/.bitmerchant";
@@ -31,5 +31,7 @@ public class DataSources {
 	public static final String KEYSTORE_FILE = HOME_DIR + "/keystore.jks";
 	
 	public static final String KEYSTORE_PASSWORD_FILE = HOME_DIR + "/pass";
+	
+	public static final String KEYSTORE_DOMAIN_FILE = HOME_DIR + "/domain";
 	
 }

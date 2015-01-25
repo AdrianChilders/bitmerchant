@@ -573,26 +573,21 @@ public class Tools {
 	}
 
 	public static void addExternalWebServiceVarToTools() {
-		String sparkLine = "var externalSparkService ='" + DataSources.WEB_SERVICE_URL + "';\n\n";
+		String externalSparkLine = "var externalSparkService ='" + DataSources.WEB_SERVICE_URL + "';";
+		
+		String internalSparkLine = LocalWallet.INSTANCE.controller.getIsSSLEncrypted() ? 
+				"var sparkService = 'https://localhost:4567/';" :
+					"var sparkService = 'http://localhost:4567/';";
 		try {
-			//			RandomAccessFile f = new RandomAccessFile(new File(DataSources.TOOLS_JS), "rw");
-			//			f.seek(0); // to the beginning
-			//			if (!f.readLine().equals(sparkLine))
-			//				f.write(sparkLine.getBytes());
-			//
-			//			f.close();
+
 
 			List<String> lines = java.nio.file.Files.readAllLines(Paths.get(DataSources.TOOLS_JS));
-
-			log.info("0 = " + lines.get(0));
-
-
-			lines.set(0,  sparkLine);
-
+		
+			lines.set(0,  internalSparkLine);
+			lines.set(1, externalSparkLine);
+			
 
 			java.nio.file.Files.write(Paths.get(DataSources.TOOLS_JS), lines);
-
-
 
 
 		} catch (IOException e) {
