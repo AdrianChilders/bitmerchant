@@ -198,7 +198,7 @@ public class Tools {
 		if (LocalWallet.params.equals(TestNet3Params.get())) {
 			blockExplorerURL = "https://www.blockexplorer.com/testnet/tx/" + tx.getHashAsString();
 		} else {
-			blockExplorerURL = "https://www.blockexplorer.com/transactions/" + tx.getHashAsString();
+			blockExplorerURL = "https://www.blockexplorer.com/tx/" + tx.getHashAsString();
 		}
 		
 		map.put("blockexplorer_url", blockExplorerURL);
