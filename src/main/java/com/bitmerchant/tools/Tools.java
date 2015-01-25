@@ -40,6 +40,8 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -191,6 +193,15 @@ public class Tools {
 		Coin fee = tx.getFee();
 
 		map.put("transaction_hash", tx.getHashAsString());
+		
+		String biteasyURL;
+		if (LocalWallet.params.equals(TestNet3Params.get())) {
+			biteasyURL = "https://www.biteasy.com/testnet/transactions/" + tx.getHashAsString();
+		} else {
+			biteasyURL = "https://www.biteasy.com/transactions/" + tx.getHashAsString();
+		}
+		
+		map.put("biteasy_url", biteasyURL);
 
 
 		String receiveMessage;
