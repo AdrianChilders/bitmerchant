@@ -36,7 +36,9 @@ parameters:
 	-loglevel [INFO,WARN, etc] : Sets the log level
 </pre>
 
-If accessing from another machine, the wallet is accessible from: http://your.host.ip:4567/ .
+If accessing from another machine, vnc to the machine, or use a vpn service, and access either
+http://localhost:4567/ , or
+https://localhost:4567/ once you've enabled ssl.
 
 
 ## Features include
